@@ -1,0 +1,3 @@
+#!/bin/bash
+
+coffee -b -w  -o ./classobject -c ./src
