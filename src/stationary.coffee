@@ -1,9 +1,14 @@
-class stationary
-	constructor:(@obj)->
+# x, y, xs, ys, g, image, chara_w, chara_h, opacity, behavior, animlist, anime, visible
+class stationary extends originSprite
+	constructor:(@sprite)->
+		super(@sprite)
 
-	behavior:->
-		if (@obj.x < -16 || @obj.x > SCREEN_WIDTH - 16)
-			@obj.xs *= -1
-		if (@obj.y > SCREEN_HEIGHT - 32)
-			@obj.ys *= -1
-			@obj.y = SCREEN_HEIGHT - 32
+#	behavior:->
+
+#	touchesBegan:(e)->
+
+#	touchesMoved:(e)->
+
+#	touchesEnded:(e)->
+
+#	touchesCanceled:(e)->
