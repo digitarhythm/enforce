@@ -1,6 +1,7 @@
 class originSprite
 	constructor:(@sprite)->
 		@childlist = []
+
 		@sprite.addEventListener 'touchstart', (e)=>
 			if (typeof @touchesBegan == 'function')
 				@touchesBegan(e)
@@ -18,11 +19,3 @@ class originSprite
 		@childlist.push(sprite)
 		core.rootScene.addChild(sprite);
 
-	removeObject:(obj)=>
-		for s in obj.childlist
-			core.rootScene.removeChild(s)
-		obj.sprite.active = false;
-		obj.sprite.visible = false;
-		obj.sprite.seedobj = null;
-		obj.sprite.removeEventListener('enterframe');
-		obj.sprite.characterObj = null;
