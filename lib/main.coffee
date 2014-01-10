@@ -35,6 +35,7 @@ createObject = (motionObj = undefined, kind = 0, x = 0, y = 0, xs = 0, ys = 0, g
 
 	obj = _getNullObject()
 	if (obj == undefined)
+		JSLog("object undefined")
 		return undefined
 
 	# kindによってスプライトを生成する
