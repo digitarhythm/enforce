@@ -25,21 +25,6 @@ window.onload = function() {
       _objects[i] = new _originObject();
     }
     main = new enchantMain();
-    /*
-    		core.rootScene.addEventListener 'touchstart', (e)->
-    			if (typeof(main.touchesBegan) == 'function')
-    				main.touchesBegan(e)
-    		core.rootScene.addEventListener 'touchmove', (e)->
-    			if (typeof(main.touchesMoved) == 'function')
-    				main.touchesMoved(e)
-    		core.rootScene.addEventListener 'touchend', (e)->
-    			if (typeof(main.touchesEnded) == 'function')
-    				main.touchesEnded(e)
-    		core.rootScene.addEventListener 'touchcancel', (e)->
-    			if (typeof(main.touchesCanceled) == 'function')
-    				main.touchesCanceled(e)
-    */
-
     return core.rootScene.addEventListener('enterframe', function(e) {
       return lapsedtime = Math.floor(core.frame / FPS);
     });
@@ -103,6 +88,7 @@ createObject = function(motionObj, kind, x, y, xs, ys, g, image, cellx, celly, o
       obj.sprite = new Sprite();
       obj.sprite.animlist = animlist;
       obj.sprite.animnum = animnum;
+      obj.sprite.frame = 0;
       obj.sprite.backgroundColor = "transparent";
       obj.sprite.x = x;
       obj.sprite.y = y;
@@ -162,20 +148,24 @@ createObject = function(motionObj, kind, x, y, xs, ys, g, image, cellx, celly, o
   });
   if (motionObj !== void 0) {
     obj.motionObj = new motionObj(obj.sprite);
+    obj.motionObj._objnum = obj._objnum;
   } else {
     obj.motionObj = void 0;
   }
   return obj;
 };
 
-removeObject = function(obj) {
+removeObject = function(_obj) {
+  var num, obj;
+  num = _obj._objnum;
+  obj = _objects[num];
   if ((obj.motionObj != null) && typeof obj.motionObj.destructor === 'function') {
     obj.motionObj.destructor();
   }
-  obj.motionObj = 0;
   obj.sprite.removeEventListener('enterframe');
   core.rootScene.removeChild(obj.sprite);
-  return obj.active = false;
+  obj.active = false;
+  return obj.motionObj = 0;
 };
 
 _getNullObject = function() {
@@ -185,6 +175,7 @@ _getNullObject = function() {
     if (_objects[i].active === false) {
       obj = _objects[i];
       obj.active = true;
+      obj._objnum = i;
       break;
     }
   }

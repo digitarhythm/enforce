@@ -24,21 +24,6 @@ window.onload = ->
 			_objects[i] = new _originObject()
 		main = new enchantMain()
 
-		###
-		core.rootScene.addEventListener 'touchstart', (e)->
-			if (typeof(main.touchesBegan) == 'function')
-				main.touchesBegan(e)
-		core.rootScene.addEventListener 'touchmove', (e)->
-			if (typeof(main.touchesMoved) == 'function')
-				main.touchesMoved(e)
-		core.rootScene.addEventListener 'touchend', (e)->
-			if (typeof(main.touchesEnded) == 'function')
-				main.touchesEnded(e)
-		core.rootScene.addEventListener 'touchcancel', (e)->
-			if (typeof(main.touchesCanceled) == 'function')
-				main.touchesCanceled(e)
-        ###
-
 		core.rootScene.addEventListener 'enterframe', (e)->
 			lapsedtime = Math.floor(core.frame / FPS)
 
@@ -59,7 +44,7 @@ createObject = (motionObj = undefined, kind = 0, x = 0, y = 0, xs = 0, ys = 0, g
 			obj.sprite = new Sprite()
 			obj.sprite.animlist = animlist
 			obj.sprite.animnum = animnum
-			#obj.sprite.frame = 0
+			obj.sprite.frame = 0
 			obj.sprite.backgroundColor = "transparent"
 			obj.sprite.x = x
 			obj.sprite.y = y
@@ -122,6 +107,7 @@ createObject = (motionObj = undefined, kind = 0, x = 0, y = 0, xs = 0, ys = 0, g
 	# 動きを定義したオブジェクトを生成する
 	if (motionObj != undefined)
 		obj.motionObj = new motionObj(obj.sprite)
+		obj.motionObj._objnum = obj._objnum
 	else
 		obj.motionObj = undefined
 
@@ -130,13 +116,15 @@ createObject = (motionObj = undefined, kind = 0, x = 0, y = 0, xs = 0, ys = 0, g
 
 #########################################################################
 #########################################################################
-removeObject = (obj)->
+removeObject = (_obj)->
+	num = _obj._objnum
+	obj = _objects[num]
 	if (obj.motionObj? && typeof(obj.motionObj.destructor) == 'function')
 		obj.motionObj.destructor()
-	obj.motionObj = 0
 	obj.sprite.removeEventListener('enterframe')
 	core.rootScene.removeChild(obj.sprite)
 	obj.active = false
+	obj.motionObj = 0
 
 #########################################################################
 #########################################################################
@@ -146,5 +134,6 @@ _getNullObject = ->
 		if (_objects[i].active == false)
 			obj = _objects[i]
 			obj.active = true
+			obj._objnum = i
 			break
 	return obj
