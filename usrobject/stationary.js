@@ -8,10 +8,17 @@ stationary = (function(_super) {
   __extends(stationary, _super);
 
   function stationary(sprite) {
-    this.sprite = sprite;
-    stationary.__super__.constructor.call(this, this.sprite);
+    stationary.__super__.constructor.call(this, sprite);
   }
+
+  stationary.prototype.destructor = function() {
+    return stationary.__super__.destructor.call(this);
+  };
+
+  stationary.prototype.behavior = function() {
+    return stationary.__super__.behavior.call(this);
+  };
 
   return stationary;
 
-})(originSprite);
+})(_stationary);

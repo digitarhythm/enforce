@@ -18,130 +18,133 @@ window.onload = ->
 	core.rootScene.backgroundColor = BGCOLOR
 	core.fps = FPS
 	core.preload(IMAGELIST)
+
 	core.onload = ->
-
-		#########################################################################
-		seedObject = Class.create Sprite,
-			initialize: ->
-				@active = false
-		#########################################################################
-
 		for i in [0...OBJECTNUM]
-			_objects[i] = new seedObject()
+			_objects[i] = new _originObject()
 		main = new enchantMain()
 
+		###
 		core.rootScene.addEventListener 'touchstart', (e)->
 			if (typeof(main.touchesBegan) == 'function')
 				main.touchesBegan(e)
-
 		core.rootScene.addEventListener 'touchmove', (e)->
 			if (typeof(main.touchesMoved) == 'function')
 				main.touchesMoved(e)
-
 		core.rootScene.addEventListener 'touchend', (e)->
 			if (typeof(main.touchesEnded) == 'function')
 				main.touchesEnded(e)
-
 		core.rootScene.addEventListener 'touchcancel', (e)->
 			if (typeof(main.touchesCanceled) == 'function')
 				main.touchesCanceled(e)
+        ###
 
 		core.rootScene.addEventListener 'enterframe', (e)->
 			lapsedtime = Math.floor(core.frame / FPS)
 
 	core.start()
 
-#########################################################################
-#########################################################################
-createObject = (x, y, xs, ys, g, image, cellx, celly, opacity, seedobj, animlist, animnum, visible)->
+createObject = (motionObj = undefined, kind = 0, x = 0, y = 0, xs = 0, ys = 0, g = 0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true)->
+	if (motionObj == null)
+		motionObj = undefined
+
 	obj = _getNullObject()
-	if (obj == null) 
-		return
+	if (obj == undefined)
+		return undefined
 
-	Sprite.call(obj, cellx, celly)
-	obj.backgroundColor = "transparent"
-	obj.x = x
-	obj.y = y
-	obj.width = cellx
-	obj.height = celly
-	obj.opacity = opacity
-	obj.originX = cellx / 2
-	obj.originY = celly / 2
-	obj.rotation = 0.0
-	obj.scaleX = 1.0
-	obj.scaleY = 1.0
-	core.rootScene.addChild(obj)
+	# kindによってスプライトを生成する
+	switch kind
+		when 0 # Sprite
+			# パラメータ初期化
+			obj.sprite = new Sprite()
+			obj.sprite.animlist = animlist
+			obj.sprite.animnum = animnum
+			#obj.sprite.frame = 0
+			obj.sprite.backgroundColor = "transparent"
+			obj.sprite.x = x
+			obj.sprite.y = y
+			obj.sprite.xs = xs
+			obj.sprite.ys = ys
+			obj.sprite.gravity = g
+			obj.sprite.width = cellx
+			obj.sprite.height = celly
+			obj.sprite.originX = cellx / 2
+			obj.sprite.originY = celly / 2
+			obj.sprite.opacity = opacity
+			obj.sprite.rotation = 0.0
+			obj.sprite.scaleX = 1.0
+			obj.sprite.scaleY = 1.0
+			obj.sprite.visible = visible
 
-	obj.xs = xs
-	obj.ys = ys
-	obj.gravity = g
-	obj.animlist = animlist
-	obj.animnum = animnum
+		when 1 # Label
+			# パラメータ初期化
+			obj.sprite = new Label()
+			obj.sprite.x = x
+			obj.sprite.y = y
+			obj.sprite.xs = xs
+			obj.sprite.ys = ys
+			obj.sprite.gravity = g
+			obj.sprite.opacity = opacity
+			obj.sprite.text = ""
+			obj.sprite.font = "12pt 'Arial'"
+			obj.sprite.color = "black"
+			obj.sprite.rotation = 0.0
+			obj.sprite.scaleX = 1.0
+			obj.sprite.scaleY = 1.0
+			obj.sprite.visible = visible
 
-	obj.visible = visible
+		else
+			obj.sprite = undefined
 
-	if (IMAGELIST[image] != null)
-		obj.image = core.assets[IMAGELIST[image]]
+	if (obj.sprite?)
+		core.rootScene.addChild(obj.sprite)
 
-	if (obj.animlist != null)
-		animpattern = obj.animlist[obj.animnum]
-		obj.frame = animpattern[0]
+	if (IMAGELIST[image]? && animlist?)
+		obj.sprite.image = core.assets[IMAGELIST[image]]
 
-	if (seedobj != null)
-		obj.characterObj = new seedobj(obj)
+	if (animlist?)
+		animpattern = obj.sprite.animlist[obj.sprite.animnum]
+		obj.sprite.frame = animpattern[0]
 
-	obj.addEventListener 'enterframe', ->
-		obj.ys += obj.gravity
-		obj.x += obj.xs
-		obj.y += obj.ys
+	# イベント定義
+	obj.sprite.addEventListener 'enterframe', ->
+		obj.sprite.ys += obj.sprite.gravity
+		obj.sprite.x += obj.sprite.xs
+		obj.sprite.y += obj.sprite.ys
 
-		if (obj.animlist != null)
-			animpattern = obj.animlist[obj.animnum]
-			obj.frame = animpattern[obj.age % animpattern.length]
+		if (animlist? && obj.motionObj != undefined)
+			animpattern = obj.sprite.animlist[obj.sprite.animnum]
+			obj.sprite.frame = animpattern[obj.sprite.age % animpattern.length]
 
-		if (obj.characterObj != null && typeof(obj.characterObj.behavior) == 'function')
-			obj.characterObj.behavior()
+		if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
+			obj.motionObj.behavior()
+
+	# 動きを定義したオブジェクトを生成する
+	if (motionObj != undefined)
+		obj.motionObj = new motionObj(obj.sprite)
+	else
+		obj.motionObj = undefined
+
 
 	return obj
 
 #########################################################################
 #########################################################################
 removeObject = (obj)->
-		for i in [0...obj.childlist.length]
-			s = obj.childlist[i]
-			core.rootScene.removeChild(s)
-		obj.sprite.backgroundColor = "transparent"
-		obj.sprite.width = 0
-		obj.sprite.height = 0
-		obj.sprite.opacity = 0
-		obj.sprite.originX = 0
-		obj.sprite.originY = 0
-		obj.sprite.rotation = 0
-		obj.sprite.scaleX = 0
-		obj.sprite.scaleY = 0
-
-		obj.sprite.x = 0
-		obj.sprite.y = 0
-		obj.sprite.xs = 0
-		obj.sprite.ys = 0
-		obj.sprite.gravity = 0
-		obj.sprite.animlist = []
-		obj.sprite.animnum = 0
-
-		obj.sprite.active = false
-		obj.sprite.visible = false
-		obj.sprite.removeEventListener('enterframe')
-		obj.sprite.characterObj = null
-		core.rootScene.removeChild(obj.sprite)
+	if (obj.motionObj? && typeof(obj.motionObj.destructor) == 'function')
+		obj.motionObj.destructor()
+	obj.motionObj = 0
+	obj.sprite.removeEventListener('enterframe')
+	core.rootScene.removeChild(obj.sprite)
+	obj.active = false
 
 #########################################################################
 #########################################################################
 _getNullObject = ->
-	obj = null
+	obj = undefined
 	for i in [0..._objects.length]
 		if (_objects[i].active == false)
 			obj = _objects[i]
 			obj.active = true
-			obj.visible = false
 			break
 	return obj

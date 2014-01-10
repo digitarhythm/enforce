@@ -5,16 +5,26 @@
     <meta http-equiv="x-ua-compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <script type="text/javascript" src="lib/enchant.js"></script>
-    <script type="text/javascript" src="lib/library.js"></script>
     <script type="text/javascript" src="environ.js"></script>
-    <script type="text/javascript" src="lib/main.js"></script>
-    <script type="text/javascript" src="lib/originSprite.js"></script>
 <?php
-	$srcdir = "./classobject";
+	$srcdir = "./sysobject";
+	$dir = opendir($srcdir);
+	$plugin = [];
+	while ($fname = readdir($dir)) {
+		if (is_dir($srcdir."/".$fname) || !preg_match("/.*\.js$/", $fname)) {
+			continue;
+		}
+		$plugin[] = $fname;
+	}
+	sort($plugin);
+	foreach ($plugin as $f) {
+		echo "<script type='text/javascript' src='$srcdir/$f'></script>";
+	}
+
+	$srcdir = "./usrobject";
 	$dir = opendir($srcdir);
 	while ($fname = readdir($dir)) {
-		if (is_dir($srcdir."/".$fname)) {
+		if (is_dir($srcdir."/".$fname) || preg_match("/stationary.js/", $fname)) {
 			continue;
 		}
 		echo "<script type='text/javascript' src='$srcdir/$fname'></script>";

@@ -1,5 +1,5 @@
 # motionObj, kind, x, y, xs, ys, g, image, chara_w, chara_h, opacity, animlist, anime, visible
-class stationary extends _stationary
+class bear extends _stationary
 	#**************************
 	# character constructor
 	#**************************
@@ -17,6 +17,19 @@ class stationary extends _stationary
 	#**************************
 	behavior:->
 		super()
+		if (@sprite.y > SCREEN_HEIGHT - 32)
+			@sprite.y = SCREEN_HEIGHT - 32
+			@sprite.ys *= -1
+		if (@sprite.x > SCREEN_WIDTH - 32)
+			@sprite.x = SCREEN_WIDTH - 32
+			@sprite.xs *= -1
+		if (@sprite.x < 0)
+			@sprite.x = 0
+			@sprite.xs *= -1
+		if (@sprite.xs > 0)
+			@sprite.scaleX = 1
+		else
+			@sprite.scaleX = -1
 
 	#**************************
 	# touch event
