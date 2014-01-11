@@ -1,0 +1,83 @@
+#!/bin/bash
+
+opt=$1
+opt2=$2
+cwd=$(cd $(dirname $0);pwd)
+
+echo "Execute directory ["$(pwd)"]"
+
+##################################################
+# verify package
+##################################################
+
+# PHP
+which php > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo "PHP（cli） is not found."
+	exit
+fi
+
+# CoffeeScript
+which coffee > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo "coffee-script is not found."
+	exit
+fi
+
+##################################################
+# process codejs
+##################################################
+
+if [ -z "$opt" ]; then
+	echo "<Usage>"
+	echo "enforce function [option]"
+	echo "<function>"
+	echo "new    : create new project(require option is package name)"
+	echo "update : update system library"
+	echo "derive : create a new object class(require option is new class name)"
+	exit
+fi
+
+case ${opt} in
+new)
+	pkg=$2
+	if [ -z "$pkg" ]; then
+		echo "Please specify an option."
+		exit
+	fi
+	${cwd}/_enforce_newproj ${pkg}
+;;
+
+build)
+	if [ ! -d "./classobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	${cwd}/_enforce_build
+;;
+
+update)
+	if [ ! -d "./classobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	${cwd}/_enforce_update
+;;
+
+derive)
+	if [ ! -d "./classobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	if [ -z "$opt2" ]; then
+		echo "Please specify an option."
+		exit
+	fi
+	${cwd}/_enforce_newclass $opt2
+;;
+
+*)
+	echo "parameter error."
+;;
+
+esac

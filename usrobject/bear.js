@@ -17,22 +17,25 @@ bear = (function(_super) {
 
   bear.prototype.behavior = function() {
     bear.__super__.behavior.call(this);
-    if (this.sprite.y > SCREEN_HEIGHT - 32) {
-      this.sprite.y = SCREEN_HEIGHT - 32;
-      this.sprite.ys *= -1;
-    }
-    if (this.sprite.x > SCREEN_WIDTH - 32) {
-      this.sprite.x = SCREEN_WIDTH - 32;
-      this.sprite.xs *= -1;
-    }
-    if (this.sprite.x < 0) {
-      this.sprite.x = 0;
-      this.sprite.xs *= -1;
-    }
-    if (this.sprite.xs > 0) {
-      return this.sprite.scaleX = 1;
-    } else {
-      return this.sprite.scaleX = -1;
+    switch (this.processnumber) {
+      case 0:
+        if (this.sprite.y > SCREEN_HEIGHT - 32) {
+          this.sprite.y = SCREEN_HEIGHT - 32;
+          this.sprite.ys *= -1;
+        }
+        if (this.sprite.x > SCREEN_WIDTH - 32) {
+          this.sprite.x = SCREEN_WIDTH - 32;
+          this.sprite.xs *= -1;
+        }
+        if (this.sprite.x < 0) {
+          this.sprite.x = 0;
+          this.sprite.xs *= -1;
+        }
+        if (this.sprite.xs > 0) {
+          return this.sprite.scaleX = 1;
+        } else {
+          return this.sprite.scaleX = -1;
+        }
     }
   };
 

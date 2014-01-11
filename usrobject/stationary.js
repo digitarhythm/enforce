@@ -16,7 +16,11 @@ stationary = (function(_super) {
   };
 
   stationary.prototype.behavior = function() {
-    return stationary.__super__.behavior.call(this);
+    stationary.__super__.behavior.call(this);
+    switch (this.processnumber) {
+      case 0:
+        return this.waitjob(1);
+    }
   };
 
   return stationary;

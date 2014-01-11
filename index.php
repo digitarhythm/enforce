@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <script type="text/javascript" src="environ.js"></script>
 <?php
-	$srcdir = "./sysobject";
+	$srcdir = "./extlib";
 	$dir = opendir($srcdir);
 	$plugin = [];
 	while ($fname = readdir($dir)) {
@@ -19,6 +19,15 @@
 	sort($plugin);
 	foreach ($plugin as $f) {
 		echo "<script type='text/javascript' src='$srcdir/$f'></script>";
+	}
+
+	$srcdir = "./sysobject";
+	$dir = opendir($srcdir);
+	while ($fname = readdir($dir)) {
+		if (is_dir($srcdir."/".$fname)) {
+			continue;
+		}
+		echo "<script type='text/javascript' src='$srcdir/$fname'></script>";
 	}
 
 	$srcdir = "./usrobject";

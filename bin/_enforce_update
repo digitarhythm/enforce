@@ -1,0 +1,12 @@
+#!/bin/bash
+
+CWD=`pwd`
+ENF=$(cd $(dirname $0)/..;pwd)
+PROJ=$CWD/$1
+
+# フレームワークファイルのコピー
+cp -af $ENF/*.png $PROJ/
+cp -af $ENF/index.php $PROJ/
+cp -af $ENF/src/stationary.coffee $PROJ/src/
+cp -af $ENF/lib/* $PROJ/lib/
+cp -af $ENF/extlib/* $PROJ/extlib/

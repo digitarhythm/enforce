@@ -1,0 +1,5 @@
+#!/bin/bash
+
+CWD=`pwd`
+
+coffee -b -w  -o $CWD/usrobject -c $CWD/src/*.coffee
