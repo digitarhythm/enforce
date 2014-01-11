@@ -98,7 +98,7 @@ createObject = (motionObj = undefined, kind = 0, x = 0, y = 0, xs = 0, ys = 0, g
 		obj.sprite.x += obj.sprite.xs
 		obj.sprite.y += obj.sprite.ys
 
-		if (animlist? && obj.motionObj != undefined)
+		if (animlist?)
 			animpattern = obj.sprite.animlist[obj.sprite.animnum]
 			obj.sprite.frame = animpattern[obj.sprite.age % animpattern.length]
 
