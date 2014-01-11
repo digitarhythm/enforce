@@ -38,3 +38,5 @@ class _stationary
 
 	waitjob:(wtime)->
 		@waittime = lapsedtime + wtime
+
+	nop:->
