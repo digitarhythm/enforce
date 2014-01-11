@@ -22,8 +22,8 @@ class _stationary
 
 	behavior:->
 		if (@waittime > 0 && lapsedtime > @waittime)
-			@nextjob()
 			@waittime = 0
+			@nextjob()
 
 	touchesBegan:(e)->
 
@@ -34,10 +34,7 @@ class _stationary
 	touchesCanceled:(e)->
 
 	nextjob:->
-		@processnumber = @nextproc
-		@nextproc = -1
+		@processnumber++
 
 	waitjob:(wtime)->
 		@waittime = lapsedtime + wtime
-		@nextproc = @processnumber + 1
-		@processnumber = -1
