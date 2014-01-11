@@ -1,5 +1,5 @@
 # motionObj, kind, x, y, xs, ys, g, image, chara_w, chara_h, opacity, animlist, anime, visible
-class stationary extends _stationary
+class [__classname__] extends _stationary
 	#**************************
 	# character constructor
 	#**************************
@@ -19,7 +19,7 @@ class stationary extends _stationary
 		super()
 		switch @processnumber
 			when 0
-				@waitjob(1)
+				@nop()
 
 	#**************************
 	# touch event

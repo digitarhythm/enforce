@@ -1,0 +1,11 @@
+#!/bin/bash
+
+if [ -z $1 ]; then
+	exit
+fi
+
+CWD=`pwd`
+ENF=$(cd $(dirname $0)/..;pwd)
+CLSNAME=$1
+
+sed -e "s/\[__classname__\]/$CLSNAME/" $ENF/src/stationary.coffee > $CWD/src/$CLSNAME.coffee

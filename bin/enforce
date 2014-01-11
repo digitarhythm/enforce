@@ -73,7 +73,7 @@ derive)
 		echo "Please specify an option."
 		exit
 	fi
-	${cwd}/_enforce_newclass $opt2
+	${cwd}/_enforce_derive $opt2
 ;;
 
 *)
