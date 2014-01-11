@@ -8,4 +8,4 @@ PROJ=$CWD
 cp -af $ENF/index.php $PROJ/
 cp -af $ENF/lib/* $PROJ/lib/
 cp -af $ENF/extlib/* $PROJ/extlib/
-coffee -b -o $PROJ/systemobj -c $PROJ/lib/*.coffee
+coffee -b -o $PROJ/sysobject -c $PROJ/lib/*.coffee
