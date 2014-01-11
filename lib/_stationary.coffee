@@ -2,7 +2,6 @@ class _stationary
 	constructor:(@sprite)->
 		@processnumber = 0
 		@waittime = 0
-		@nextproc = -1
 
 		if (@sprite?)
 			@sprite.addEventListener 'touchstart', (e)=>

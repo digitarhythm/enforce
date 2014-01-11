@@ -2,9 +2,10 @@
 
 CWD=`pwd`
 ENF=$(cd $(dirname $0)/..;pwd)
-PROJ=$CWD/$1
+PROJ=$CWD
 
 # フレームワークファイルのコピー
 cp -af $ENF/index.php $PROJ/
 cp -af $ENF/lib/* $PROJ/lib/
 cp -af $ENF/extlib/* $PROJ/extlib/
+coffee -b -o $PROJ/systemobj -c $PROJ/lib/*.coffee
