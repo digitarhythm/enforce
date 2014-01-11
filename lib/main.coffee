@@ -25,7 +25,8 @@ window.onload = ->
 		main = new enchantMain()
 
 		core.rootScene.addEventListener 'enterframe', (e)->
-			lapsedtime = Math.floor(core.frame / FPS)
+			lapsedtime = core.frame / FPS
+			lapsedtime = lapsedtime.toFixed(2)
 
 	core.start()
 

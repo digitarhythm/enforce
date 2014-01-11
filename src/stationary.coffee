@@ -17,6 +17,9 @@ class stationary extends _stationary
 	#**************************
 	behavior:->
 		super()
+		switch @processnumber
+			when 0
+				@waitjob(1)
 
 	#**************************
 	# touch event
