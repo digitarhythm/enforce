@@ -11,28 +11,30 @@
 # オブジェクトの種類
 SPRITE = 0
 LABEL = 1
+PHYSICS = 2
+WEBGL = 3
 # Sceneの種類
-BGSCENE = 0
-GAMESCENE = 1
-TOPSCENE = 2
+BGSCENE			= 0
+BGSCENE_SUB1	= 1
+BGSCENE_SUB2	= 2
+GAMESCENE		= 3
+GAMESCENE_SUB1	= 4
+GAMESCENE_SUB2	= 5
+TOPSCENE		= 6
 
 # 初期化処理 ***********************************************************
 # オブジェクトが入っている配列
 _objects = []
+# Scene格納用配列
+_scenes = []
+# 起動時に生成されるスタートオブジェクト
+_main = null
 # enchantのcoreオブジェクト
 core = null
-# 起動時に生成されるスタートオブジェクト
-main = null
 # enchantのrootScene
 rootScene = null
 # ゲーム起動時からの経過時間（秒）
 lapsedtime = 0
-# バックグラウンド用Scene
-bgScene = undefined
-# ゲーム画面用Scene
-gameScene = undefined
-# 最上位のScene（主にスワイプ用）
-topScene = undefined
 # enchantのオマジナイ
 enchant()
 # ゲーム起動時の処理
@@ -43,18 +45,15 @@ window.onload = ->
 	core.fps = FPS
 	core.preload(IMAGELIST)
 
-	bgScene = new Group()
-	gameScene = new Group()
-	topScene = new Group()
-
-	core.rootScene.addChild(bgScene)
-	core.rootScene.addChild(gameScene)
-	core.rootScene.addChild(topScene)
+	for i in [0...(TOPSCENE+1)]
+		scene = new Group()
+		_scenes[i] = scene
+		core.rootScene.addChild(scene)
 
 	core.onload = ->
 		for i in [0...OBJECTNUM]
 			_objects[i] = new _originObject()
-		main = new enchantMain()
+		_main = new enchantMain()
 
 		core.rootScene.addEventListener 'enterframe', (e)->
 			lapsedtime = core.frame / FPS
@@ -116,13 +115,7 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 			obj.sprite = undefined
 
 	if (obj.sprite?)
-		switch scene
-			when BGSCENE
-				bgScene.addChild(obj.sprite)
-			when GAMESCENE
-				gameScene.addChild(obj.sprite)
-			when TOPSCENE
-				topScene.addChild(obj.sprite)
+		_scenes[scene].addChild(obj.sprite)
 
 	if (IMAGELIST[image]? && animlist?)
 		obj.sprite.image = core.assets[IMAGELIST[image]]
@@ -149,13 +142,13 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 		obj.motionObj = new motionObj(obj.sprite)
 		obj.motionObj._objnum = obj._objnum
 		obj.motionObj._scene = scene
+		obj.motionObj.self = obj.motionObj
 	else
 		obj.motionObj = undefined
 
 	return obj
 
-#########################################################################
-#########################################################################
+#**********************************************************************
 removeObject = (_obj)->
 	num = _obj._objnum
 	obj = _objects[num]
@@ -163,18 +156,13 @@ removeObject = (_obj)->
 	if (obj.motionObj? && typeof(obj.motionObj.destructor) == 'function')
 		obj.motionObj.destructor()
 	obj.sprite.removeEventListener('enterframe')
-	switch scene
-		when BGSCENE
-			bgScene.removeChild(obj.sprite)
-		when GAMESCENE
-			gameScene.removeChild(obj.sprite)
-		when TOPSCENE
-			topScene.removeChild(obj.sprite)
+	if (scene?)
+		_scenes[scene].removeChild(obj.sprite)
+	obj.sprite = 0
 	obj.active = false
 	obj.motionObj = 0
 
-#########################################################################
-#########################################################################
+#**********************************************************************
 _getNullObject = ->
 	obj = undefined
 	for i in [0..._objects.length]
@@ -184,3 +172,4 @@ _getNullObject = ->
 			obj._objnum = i
 			break
 	return obj
+

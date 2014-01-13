@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <script type="text/javascript" src="environ.js"></script>
+	<script type='text/javascript' src="environ.js"></script>
 <?php
 	$srcdir = "./extlib";
 	$dir = opendir($srcdir);

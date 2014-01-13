@@ -21,7 +21,7 @@ mkdir -p $PROJ/usrobject
 # フレームワークファイルのコピー
 cp -af $ENF/environ.js $PROJ/
 cp -af $ENF/index.php $PROJ/
-cp -af $ENF/media/chara1.png $PROJ/media/
+cp -af $ENF/media/* $PROJ/media/
 cp -af $ENF/src/enchantMain.coffee $PROJ/src/
 cp -af $ENF/src/bear.coffee $PROJ/src/
 cp -af $ENF/lib/* $PROJ/lib/
