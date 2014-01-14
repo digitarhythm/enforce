@@ -9,10 +9,10 @@
 
 # 定数定義 *************************************************************
 # オブジェクトの種類
-SPRITE = 0
-LABEL = 1
+SPRITE  = 0
+LABEL   = 1
 PHYSICS = 2
-WEBGL = 3
+WEBGL   = 3
 # Sceneの種類
 BGSCENE			= 0
 BGSCENE_SUB1	= 1
@@ -101,15 +101,13 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 			obj.sprite.y = y
 			obj.sprite.xs = xs
 			obj.sprite.ys = ys
+			obj.sprite.visible = visible
 			obj.sprite.gravity = g
 			obj.sprite.opacity = opacity
 			obj.sprite.text = ""
+			obj.sprite.textAlign = "left"
 			obj.sprite.font = "12pt 'Arial'"
 			obj.sprite.color = "black"
-			obj.sprite.rotation = 0.0
-			obj.sprite.scaleX = 1.0
-			obj.sprite.scaleY = 1.0
-			obj.sprite.visible = visible
 
 		else
 			obj.sprite = undefined
