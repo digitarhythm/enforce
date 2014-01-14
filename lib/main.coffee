@@ -74,7 +74,7 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 	# kindによってスプライトを生成する
 	switch kind
 		when CONTROL
-			obj.sprite = undefined
+			obj.sprite = new Sprite()
 
 		when SPRITE
 			# パラメータ初期化
@@ -114,7 +114,7 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 			obj.sprite.color = "black"
 
 		else
-			obj.sprite = undefined
+			obj.sprite = null
 
 	obj.kind = kind
 
@@ -129,19 +129,19 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 		obj.sprite.frame = animpattern[0]
 
 	# イベント定義
-	obj.sprite.addEventListener 'enterframe', ->
+	if (obj.sprite?)
+		obj.sprite.addEventListener 'enterframe', ->
+			if (obj.kind == SPRITE || obj.kind == LABEL)
+				obj.sprite.ys += obj.sprite.gravity
+				obj.sprite.x += obj.sprite.xs
+				obj.sprite.y += obj.sprite.ys
 
-		if (obj.kind == SPRITE || obj.kind == LABEL)
-			obj.sprite.ys += obj.sprite.gravity
-			obj.sprite.x += obj.sprite.xs
-			obj.sprite.y += obj.sprite.ys
+			if (animlist?)
+				animpattern = obj.sprite.animlist[obj.sprite.animnum]
+				obj.sprite.frame = animpattern[obj.sprite.age % animpattern.length]
 
-		if (animlist?)
-			animpattern = obj.sprite.animlist[obj.sprite.animnum]
-			obj.sprite.frame = animpattern[obj.sprite.age % animpattern.length]
-
-		if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
-			obj.motionObj.behavior()
+			if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
+				obj.motionObj.behavior()
 
 	# 動きを定義したオブジェクトを生成する
 	if (motionObj != undefined)
