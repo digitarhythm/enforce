@@ -9,10 +9,11 @@
 
 # 定数定義 *************************************************************
 # オブジェクトの種類
-SPRITE  = 0
-LABEL   = 1
-PHYSICS = 2
-WEBGL   = 3
+CONTROL = 0
+SPRITE  = 1
+LABEL   = 2
+PHYSICS = 3
+WEBGL   = 4
 # Sceneの種類
 BGSCENE			= 0
 BGSCENE_SUB1	= 1
@@ -72,6 +73,9 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 
 	# kindによってスプライトを生成する
 	switch kind
+		when CONTROL
+			obj.sprite = undefined
+
 		when SPRITE
 			# パラメータ初期化
 			obj.sprite = new Sprite()
@@ -112,6 +116,8 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 		else
 			obj.sprite = undefined
 
+	obj.kind = kind
+
 	if (obj.sprite?)
 		_scenes[scene].addChild(obj.sprite)
 
@@ -124,9 +130,11 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 
 	# イベント定義
 	obj.sprite.addEventListener 'enterframe', ->
-		obj.sprite.ys += obj.sprite.gravity
-		obj.sprite.x += obj.sprite.xs
-		obj.sprite.y += obj.sprite.ys
+
+		if (obj.kind == SPRITE || obj.kind == LABEL)
+			obj.sprite.ys += obj.sprite.gravity
+			obj.sprite.x += obj.sprite.xs
+			obj.sprite.y += obj.sprite.ys
 
 		if (animlist?)
 			animpattern = obj.sprite.animlist[obj.sprite.animnum]
