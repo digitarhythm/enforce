@@ -9,7 +9,7 @@
 <?php
 	$srcdir = "./extlib";
 	$dir = opendir($srcdir);
-	$plugin = [];
+	$plugin = array();
 	while ($fname = readdir($dir)) {
 		if (is_dir($srcdir."/".$fname) || !preg_match("/.*\.js$/", $fname)) {
 			continue;
