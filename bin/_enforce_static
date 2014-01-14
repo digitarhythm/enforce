@@ -1,0 +1,52 @@
+#!/usr/bin/php -f
+<?php
+echo '<!DOCTYPE html>\n';
+echo '<html>\n';
+echo '<head>\n';
+echo '<meta charset="UTF-8">\n';
+echo '<meta http-equiv="x-ua-compatible" content="IE=Edge">\n';
+echo '<meta name="viewport" content="width=device-width, user-scalable=no">\n';
+echo '<meta name="apple-mobile-web-app-capable" content="yes">\n';
+echo '<script type="text/javascript" src="environ.js"></script>\n';
+$srcdir = "./extlib";
+$dir = opendir($srcdir);
+$plugin = array();
+while ($fname = readdir($dir)) {
+	if (is_dir($srcdir."/".$fname) || !preg_match("/.*\.js$/", $fname)) {
+		continue;
+	}
+	$plugin[] = $fname;
+}
+sort($plugin);
+foreach ($plugin as $f) {
+	echo "<script type='text/javascript' src='$srcdir/$f'></script>";
+}
+
+$srcdir = "./sysobject";
+$dir = opendir($srcdir);
+while ($fname = readdir($dir)) {
+	if (is_dir($srcdir."/".$fname)) {
+		continue;
+	}
+	echo "<script type='text/javascript' src='$srcdir/$fname'></script>";
+}
+
+$srcdir = "./usrobject";
+$dir = opendir($srcdir);
+while ($fname = readdir($dir)) {
+	if (is_dir($srcdir."/".$fname) || preg_match("/stationary.js/", $fname)) {
+		continue;
+	}
+	echo "<script type='text/javascript' src='$srcdir/$fname'></script>";
+}
+echo '<style type="text/css">\n';
+echo 'body {\n';
+echo 'margin: 0;\n';
+echo 'padding: 0;\n';
+echo '}\n';
+echo '</style>\n';
+echo '</head>\n';
+echo '<body>\n';
+echo '</body>\n';
+echo '</html>\n';
+

@@ -35,6 +35,8 @@ if [ -z "$opt" ]; then
 	echo "new    : create new project(require option is package name)"
 	echo "update : update system library"
 	echo "derive : create a new object class(require option is new class name)"
+	echo "static : project to static mode"
+	echo "static : project to develop mode"
 	exit
 fi
 
@@ -74,6 +76,28 @@ derive)
 		exit
 	fi
 	${cwd}/_enforce_derive $opt2
+;;
+
+static)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	if [ -f "./index.php" ]; then
+		mv ./index.php ./.develop.php
+		${cwd}/_enforce_static > ./index.html
+	fi
+;;
+
+develop)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	if [ -f "./index.html" -a -f "./.develop.php" ]; then
+		rm -f ./index.html
+		mv -f ./.develop.php ./index.php
+	fi
 ;;
 
 *)

@@ -5,6 +5,11 @@ ENF=$(cd $(dirname $0)/..;pwd)
 PROJ=$CWD
 
 # フレームワークファイルのコピー
+if [ -f $PROJ/index.html ]; then
+	echo "ERROR: This project is static mode."
+	exit
+fi
+
 cp -af $ENF/index.php $PROJ/
 cp -af $ENF/lib/* $PROJ/lib/
 cp -af $ENF/extlib/* $PROJ/extlib/
