@@ -1,13 +1,13 @@
 #!/usr/bin/php -f
 <?php
-echo '<!DOCTYPE html>\n';
-echo '<html>\n';
-echo '<head>\n';
-echo '<meta charset="UTF-8">\n';
-echo '<meta http-equiv="x-ua-compatible" content="IE=Edge">\n';
-echo '<meta name="viewport" content="width=device-width, user-scalable=no">\n';
-echo '<meta name="apple-mobile-web-app-capable" content="yes">\n';
-echo '<script type="text/javascript" src="environ.js"></script>\n';
+echo "<!DOCTYPE html>\n";
+echo "<html>\n";
+echo "<head>\n";
+echo "<meta charset='UTF-8'>\n";
+echo "<meta http-equiv='x-ua-compatible' content='IE=Edge'>\n";
+echo "<meta name='viewport' content='width=device-width, user-scalable=no'>\n";
+echo "<meta name='apple-mobile-web-app-capable' content='yes'>\n";
+echo "<script type='text/javascript' src='environ.js'></script>\n";
 $srcdir = "./extlib";
 $dir = opendir($srcdir);
 $plugin = array();
@@ -39,14 +39,14 @@ while ($fname = readdir($dir)) {
 	}
 	echo "<script type='text/javascript' src='$srcdir/$fname'></script>";
 }
-echo '<style type="text/css">\n';
-echo 'body {\n';
-echo 'margin: 0;\n';
-echo 'padding: 0;\n';
-echo '}\n';
-echo '</style>\n';
-echo '</head>\n';
-echo '<body>\n';
-echo '</body>\n';
-echo '</html>\n';
+echo "<style type='text/css'>\n";
+echo "body {\n";
+echo "margin: 0;\n";
+echo "padding: 0;\n";
+echo "}\n";
+echo "</style>\n";
+echo "</head>\n";
+echo "<body>\n";
+echo "</body>\n";
+echo "</html>\n";
 
