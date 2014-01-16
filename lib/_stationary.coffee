@@ -95,7 +95,7 @@ class _stationary
 	#***************************************************************
 	# スプライト同士の衝突判定
 	#***************************************************************
-	intersect:(sprite, range = -1)->
+	isIntersect:(sprite, range = -1)->
 		if (!@sprite? || !sprite?)
 			reuturn false
 
@@ -112,7 +112,7 @@ class _stationary
 	#***************************************************************
 	# 指定されたアニメーションを再生した後オブジェクト削除
 	#***************************************************************
-	setAnimation2Delete:(animnum)->
+	setAnimationToRemove:(animnum)->
 		@sprite.animnum = animnum
 		@_dispframe = 0
 		@_endflag = true
