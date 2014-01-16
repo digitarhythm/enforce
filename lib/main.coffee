@@ -30,6 +30,8 @@ _objects = []
 _scenes = []
 # 起動時に生成されるスタートオブジェクト
 _main = null
+# デバッグ用LABEL
+_DEBUGLABEL = null
 # enchantのcoreオブジェクト
 core = null
 # enchantのrootScene
@@ -56,11 +58,23 @@ window.onload = ->
 			_objects[i] = new _originObject()
 		_main = new enchantMain()
 
+		if (DEBUG == true)
+			_DEBUGLABEL = new Label()
+			_DEBUGLABEL.x = 0
+			_DEBUGLABEL.y = 0
+			_DEBUGLABEL.color = "black"
+			_DEBUGLABEL.font = "10px 'Arial'"
+			_scenes[TOPSCENE].addChild(_DEBUGLABEL)
+
 		core.rootScene.addEventListener 'enterframe', (e)->
 			lapsedtime = core.frame / FPS
 			lapsedtime = lapsedtime.toFixed(2)
 
 	core.start()
+
+debugwrite = (str)->
+	if (DEBUG == true)
+		_DEBUGLABEL.text = str
 
 createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys = 0, g = 0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = GAMESCENE)->
 	if (motionObj == null)
@@ -116,7 +130,7 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 		else
 			obj.sprite = null
 
-	obj.kind = kind
+	#obj.kind = kind
 
 	if (obj.sprite?)
 		_scenes[scene].addChild(obj.sprite)
@@ -130,16 +144,8 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 
 	# イベント定義
 	if (obj.sprite?)
+		obj.sprite.kind = kind
 		obj.sprite.addEventListener 'enterframe', ->
-			if (obj.kind == SPRITE || obj.kind == LABEL)
-				obj.sprite.ys += obj.sprite.gravity
-				obj.sprite.x += obj.sprite.xs
-				obj.sprite.y += obj.sprite.ys
-
-			if (animlist?)
-				animpattern = obj.sprite.animlist[obj.sprite.animnum]
-				obj.sprite.frame = animpattern[obj.sprite.age % animpattern.length]
-
 			if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
 				obj.motionObj.behavior()
 

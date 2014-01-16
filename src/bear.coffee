@@ -17,7 +17,7 @@ class bear extends _stationary
 	#**************************
 	behavior:->
 		super()
-		switch @processnumber
+		switch @_processnumber
 			when 0
 				if (@sprite.y > SCREEN_HEIGHT - 32)
 					@sprite.y = SCREEN_HEIGHT - 32

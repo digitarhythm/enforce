@@ -5,7 +5,7 @@
     <meta http-equiv="x-ua-compatible" content="IE=Edge">
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
-	<script type="text/javascript" src="environ.js"></script>
+	<script type="text/javascript" src="./usrobject/environ.js"></script>
 <?php
 	$srcdir = "./extlib";
 	$dir = opendir($srcdir);
@@ -33,7 +33,7 @@
 	$srcdir = "./usrobject";
 	$dir = opendir($srcdir);
 	while ($fname = readdir($dir)) {
-		if (is_dir($srcdir."/".$fname) || preg_match("/stationary.js/", $fname)) {
+		if (is_dir($srcdir."/".$fname) || preg_match("/environ.js/", $fname)) {
 			continue;
 		}
 		echo "<script type='text/javascript' src='$srcdir/$fname'></script>";

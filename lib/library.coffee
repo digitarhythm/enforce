@@ -8,3 +8,9 @@ JSLog = (a, b...) ->
 		a = a.replace('%@', data)
 	console.log(a)
 	return a
+
+# format strings
+sprintf = (a, b...) -> 
+	for data in b
+		a = a.replace('%@', data)
+	return a

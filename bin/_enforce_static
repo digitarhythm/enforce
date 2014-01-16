@@ -7,7 +7,7 @@ echo "<meta charset='UTF-8'>\n";
 echo "<meta http-equiv='x-ua-compatible' content='IE=Edge'>\n";
 echo "<meta name='viewport' content='width=device-width, user-scalable=no'>\n";
 echo "<meta name='apple-mobile-web-app-capable' content='yes'>\n";
-echo "<script type='text/javascript' src='environ.js'></script>\n";
+echo "<script type='text/javascript' src='./usrobject/environ.js'></script>\n";
 $srcdir = "./extlib";
 $dir = opendir($srcdir);
 $plugin = array();
@@ -19,7 +19,7 @@ while ($fname = readdir($dir)) {
 }
 sort($plugin);
 foreach ($plugin as $f) {
-	echo "<script type='text/javascript' src='$srcdir/$f'></script>";
+	echo "<script type='text/javascript' src='$srcdir/$f'></script>\n";
 }
 
 $srcdir = "./sysobject";
@@ -28,7 +28,7 @@ while ($fname = readdir($dir)) {
 	if (is_dir($srcdir."/".$fname)) {
 		continue;
 	}
-	echo "<script type='text/javascript' src='$srcdir/$fname'></script>";
+	echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
 }
 
 $srcdir = "./usrobject";
@@ -37,7 +37,7 @@ while ($fname = readdir($dir)) {
 	if (is_dir($srcdir."/".$fname) || preg_match("/stationary.js/", $fname)) {
 		continue;
 	}
-	echo "<script type='text/javascript' src='$srcdir/$fname'></script>";
+	echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
 }
 echo "<style type='text/css'>\n";
 echo "body {\n";

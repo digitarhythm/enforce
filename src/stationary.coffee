@@ -17,7 +17,7 @@ class [__classname__] extends _stationary
 	#**************************
 	behavior:->
 		super()
-		switch @processnumber
+		switch @_processnumber
 			when 0
 				@nop()
 

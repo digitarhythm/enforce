@@ -10,22 +10,23 @@ PROJ=$CWD/$1
 
 # 必要なディレクトリの作成
 echo "Project Dcirectory:"$PROJ
-mkdir -p $PROJ
 mkdir -p $PROJ/lib
 mkdir -p $PROJ/media
 mkdir -p $PROJ/src
 mkdir -p $PROJ/sysobject
-mkdir -p $PROJ/extlib
 mkdir -p $PROJ/usrobject
+mkdir -p $PROJ/extlib
 
 # フレームワークファイルのコピー
-cp -af $ENF/environ.js $PROJ/
 cp -af $ENF/index.php $PROJ/
 cp -af $ENF/media/* $PROJ/media/
 cp -af $ENF/src/enchantMain.coffee $PROJ/src/
-cp -af $ENF/src/bear.coffee $PROJ/src/
+cp -af $ENF/src/environ.coffee $PROJ/src/
 cp -af $ENF/lib/* $PROJ/lib/
 cp -af $ENF/extlib/* $PROJ/extlib/
+
+# サンプルソースをコピー
+cp -af $ENF/src/bear.coffee $PROJ/src/
 
 coffee -b -o $PROJ/sysobject -c $PROJ/lib/*.coffee
 coffee -b -o $PROJ/usrobject -c $PROJ/src/*.coffee
