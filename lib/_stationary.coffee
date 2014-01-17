@@ -93,9 +93,9 @@ class _stationary
 		@_processnumber = num
 
 	#***************************************************************
-	# スプライト同士の衝突判定
+	# スプライト同士の衝突判定(withIn)
 	#***************************************************************
-	isIntersect:(sprite, range = -1)->
+	isWithIn:(sprite, range = -1)->
 		if (!@sprite? || !sprite?)
 			reuturn false
 
@@ -105,6 +105,19 @@ class _stationary
 		if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
 			#ret = @sprite.intersect(sprite)
 			ret = @sprite.within(sprite, range)
+		else
+			ret = false
+		return ret
+
+	#***************************************************************
+	# スプライト同士の衝突判定(withIn)
+	#***************************************************************
+	isIntersect:(sprite)->
+		if (!@sprite? || !sprite?)
+			reuturn false
+
+		if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
+			ret = @sprite.intersect(sprite)
 		else
 			ret = false
 		return ret

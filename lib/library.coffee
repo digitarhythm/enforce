@@ -4,10 +4,10 @@ rand = (n)->
 
 # debug write
 JSLog = (a, b...) -> 
-	for data in b
-		a = a.replace('%@', data)
-	console.log(a)
-	return a
+	if (DEBUG == true)
+		for data in b
+			a = a.replace('%@', data)
+		console.log(a)
 
 # format strings
 sprintf = (a, b...) -> 
