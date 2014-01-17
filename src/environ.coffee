@@ -10,7 +10,7 @@
 DEBUG = true						# デバッグモード
 SCREEN_WIDTH = 240					# 画面の幅
 SCREEN_HEIGHT = 320					# 画面の高さ
-FPS = 30							# フレームレート
+FPS = 24							# フレームレート
 BGCOLOR = "black"					# 背景色
 OBJECTNUM = 100						# キャラの最大数
 
