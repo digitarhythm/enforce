@@ -10,7 +10,6 @@ class _stationary
 
 		if (@sprite?)
 			@sprite.intersectFlag = true
-
 			@sprite.addEventListener 'touchstart', (e)=>
 				if (typeof @touchesBegan == 'function')
 					@touchesBegan(e)
@@ -33,7 +32,7 @@ class _stationary
 	# ビヘイビアー
 	#***************************************************************
 	behavior:->
-		if (@sprite.kind == SPRITE || @sprite.kind == LABEL)
+		if (@_type_ == SPRITE)
 			@sprite.ys += @sprite.gravity
 			@sprite.x += @sprite.xs
 			@sprite.y += @sprite.ys
@@ -116,10 +115,11 @@ class _stationary
 		if (!@sprite? || !sprite?)
 			reuturn false
 
-		if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
-			ret = @sprite.intersect(sprite)
-		else
-			ret = false
+		#if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
+		#if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
+		ret = @sprite.intersect(sprite)
+		#else
+		#	ret = false
 		return ret
 
 	#***************************************************************

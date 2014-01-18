@@ -9,11 +9,11 @@
 
 # 定数定義 *************************************************************
 # オブジェクトの種類
-CONTROL = 0
-SPRITE  = 1
-LABEL   = 2
-PHYSICS = 3
-WEBGL   = 4
+CONTROL			= 0
+SPRITE			= 1
+LABEL			= 2
+PHYSICS			= 3
+WEBGL			= 4
 # Sceneの種類
 BGSCENE			= 0
 BGSCENE_SUB1	= 1
@@ -76,7 +76,7 @@ debugwrite = (str)->
 	if (DEBUG == true)
 		_DEBUGLABEL.text = str
 
-createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys = 0, g = 0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = GAMESCENE)->
+createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0, ys = 0, g = 0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = GAMESCENE)->
 	if (motionObj == null)
 		motionObj = undefined
 
@@ -85,103 +85,101 @@ createObject = (motionObj = undefined, kind = SPRITE, x = 0, y = 0, xs = 0, ys =
 		JSLog("object undefined")
 		return undefined
 
-	# kindによってスプライトを生成する
-	switch kind
-		when CONTROL
-			obj.sprite = new Sprite()
+	obj.active = true
 
+	# スプライトを生成
+	switch (_type_)
+		when CONTROL, SPRITE
+			motionsprite = new Sprite()
+		when LABEL
+			motionsprite = new Label()
+		else
+			motionsprite = new Sprite()
+
+	# スプライトを表示
+	_scenes[scene].addChild(motionsprite)
+
+	# _type_によってスプライトを初期化する
+	switch _type_
 		when SPRITE
 			# パラメータ初期化
-			obj.sprite = new Sprite()
-			obj.sprite.animlist = animlist
-			obj.sprite.animnum = animnum
-			obj.sprite.frame = 0
-			obj.sprite.backgroundColor = "transparent"
-			obj.sprite.x = x
-			obj.sprite.y = y
-			obj.sprite.xs = xs
-			obj.sprite.ys = ys
-			obj.sprite.gravity = g
-			obj.sprite.width = cellx
-			obj.sprite.height = celly
-			obj.sprite.originX = cellx / 2
-			obj.sprite.originY = celly / 2
-			obj.sprite.opacity = opacity
-			obj.sprite.rotation = 0.0
-			obj.sprite.scaleX = 1.0
-			obj.sprite.scaleY = 1.0
-			obj.sprite.visible = visible
-
+			motionsprite.frame = 0
+			motionsprite.backgroundColor = "transparent"
+			motionsprite.x = x
+			motionsprite.y = y
+			motionsprite.width = cellx
+			motionsprite.height = celly
+			motionsprite.originX = cellx / 2
+			motionsprite.originY = celly / 2
+			motionsprite.opacity = opacity
+			motionsprite.rotation = 0.0
+			motionsprite.scaleX = 1.0
+			motionsprite.scaleY = 1.0
+			motionsprite.visible = visible
+			motionsprite.intersectFlag = true
+			motionsprite.animlist = animlist
+			motionsprite.animnum = animnum
+			motionsprite.xs = xs
+			motionsprite.ys = ys
+			motionsprite.gravity = g
 		when LABEL
 			# パラメータ初期化
-			obj.sprite = new Label()
-			obj.sprite.x = x
-			obj.sprite.y = y
-			obj.sprite.xs = xs
-			obj.sprite.ys = ys
-			obj.sprite.visible = visible
-			obj.sprite.gravity = g
-			obj.sprite.opacity = opacity
-			obj.sprite.text = ""
-			obj.sprite.textAlign = "left"
-			obj.sprite.font = "12pt 'Arial'"
-			obj.sprite.color = "black"
-
-		else
-			obj.sprite = null
-
-	#obj.kind = kind
-
-	if (obj.sprite?)
-		_scenes[scene].addChild(obj.sprite)
-
-	if (IMAGELIST[image]? && animlist?)
-		obj.sprite.image = core.assets[IMAGELIST[image]]
-
-	if (animlist?)
-		animpattern = obj.sprite.animlist[obj.sprite.animnum]
-		obj.sprite.frame = animpattern[0]
-
-	# イベント定義
-	if (obj.sprite?)
-		obj.sprite.kind = kind
-		obj.sprite.addEventListener 'enterframe', ->
-			if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
-				obj.motionObj.behavior()
+			motionsprite.x = x
+			motionsprite.y = y
+			motionsprite.textAlign = "left"
+			motionsprite.font = "12pt 'Arial'"
+			motionsprite.color = "black"
 
 	# 動きを定義したオブジェクトを生成する
 	if (motionObj != undefined)
-		obj.motionObj = new motionObj(obj.sprite)
-		obj.motionObj._objnum = obj._objnum
-		obj.motionObj._scene = scene
-		obj.motionObj.self = obj.motionObj
+		obj.motionObj = new motionObj(motionsprite)
 	else
-		obj.motionObj = undefined
+		obj.motionObj = new _stationary(motionsprite)
 
-	return obj
+	obj.motionObj._objnum = obj._objnum
+	obj.motionObj._scene = scene
+
+	if (motionsprite != undefined)
+		# イベント定義
+		motionsprite.addEventListener 'enterframe', ->
+			if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
+				obj.motionObj.behavior()
+
+	# 画像割り当て
+	if (IMAGELIST[image]? && animlist?)
+		motionsprite.image = core.assets[IMAGELIST[image]]
+
+	# 初期画像
+	if (animlist?)
+		animpattern = animlist[animnum]
+		motionsprite.frame = animpattern[0]
+
+	obj.motionObj._type_ = _type_
+	return obj.motionObj
 
 #**********************************************************************
-removeObject = (_obj)->
-	num = _obj._objnum
-	obj = _objects[num]
-	scene = obj.motionObj._scene
-	if (obj.motionObj? && typeof(obj.motionObj.destructor) == 'function')
-		obj.motionObj.destructor()
-	obj.sprite.removeEventListener('enterframe')
-	if (scene?)
+removeObject = (obj)->
+	if (obj == undefined)
+		return
+	num = obj._objnum
+	parent = _objects[num]
+	scene = obj._scene
+	if (typeof(obj.destructor) == 'function')
+		obj.destructor()
+	if (scene != undefined)
 		_scenes[scene].removeChild(obj.sprite)
 	obj.sprite = 0
-	obj.active = false
-	obj.motionObj = 0
+	parent.active = false
+	parent.motionObj = undefined
 
 #**********************************************************************
 _getNullObject = ->
-	obj = undefined
+	retobj = undefined
 	for i in [0..._objects.length]
-		if (_objects[i].active == false)
-			obj = _objects[i]
-			obj.active = true
-			obj._objnum = i
+		obj = _objects[i]
+		if (obj.active == false)
+			retobj = obj
+			retobj._objnum = i
 			break
-	return obj
+	return retobj
 

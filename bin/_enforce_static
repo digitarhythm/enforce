@@ -7,22 +7,12 @@ echo "<meta charset='UTF-8'>\n";
 echo "<meta http-equiv='x-ua-compatible' content='IE=Edge'>\n";
 echo "<meta name='viewport' content='width=device-width, user-scalable=no'>\n";
 echo "<meta name='apple-mobile-web-app-capable' content='yes'>\n";
+echo "<script type='text/javascript' src='./extlib/enchant.min.js'></script>\n";
+echo "<script type='text/javascript' src='./extlib/Box2dWeb-2.1.a.3.min.js'></script>\n";
+echo "<script type='text/javascript' src='./extlib/box2d.enchant.js'></script>\n";
 echo "<script type='text/javascript' src='./usrobject/environ.js'></script>\n";
-$srcdir = "./extlib";
-$dir = opendir($srcdir);
-$plugin = array();
-while ($fname = readdir($dir)) {
-	if (is_dir($srcdir."/".$fname) || !preg_match("/.*\.js$/", $fname)) {
-		continue;
-	}
-	$plugin[] = $fname;
-}
-sort($plugin);
-foreach ($plugin as $f) {
-	echo "<script type='text/javascript' src='$srcdir/$f'></script>\n";
-}
-
-$srcdir = "./sysobject";
+echo "<script type='text/javascript' src='./sysobject/enforce.core.js'></script>\n";
+$srcdir = "./plugins";
 $dir = opendir($srcdir);
 while ($fname = readdir($dir)) {
 	if (is_dir($srcdir."/".$fname)) {
