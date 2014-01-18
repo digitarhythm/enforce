@@ -8,7 +8,8 @@ bear = (function(_super) {
   __extends(bear, _super);
 
   function bear(sprite) {
-    bear.__super__.constructor.call(this, sprite);
+    this.sprite = sprite;
+    bear.__super__.constructor.call(this, this.sprite);
   }
 
   bear.prototype.destructor = function() {
@@ -17,7 +18,7 @@ bear = (function(_super) {
 
   bear.prototype.behavior = function() {
     bear.__super__.behavior.call(this);
-    switch (this.processnumber) {
+    switch (this._processnumber) {
       case 0:
         if (this.sprite.y > SCREEN_HEIGHT - 32) {
           this.sprite.y = SCREEN_HEIGHT - 32;
