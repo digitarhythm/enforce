@@ -81,7 +81,7 @@ class _stationary
 	# 指定した秒数だけ待って次のプロセスへ
 	#***************************************************************
 	waitjob:(wtime)->
-		@_waittime = parseInt(lapsedtime) + parseInt(wtime)
+		@_waittime = parseFloat(lapsedtime) + parseFloat(wtime)
 		@_nextprocessnum = @_processnumber + 1
 		@_processnumber = -1
 	

@@ -86,7 +86,7 @@ _stationary = (function() {
   };
 
   _stationary.prototype.waitjob = function(wtime) {
-    this._waittime = parseInt(lapsedtime) + parseInt(wtime);
+    this._waittime = parseFloat(lapsedtime) + parseFloat(wtime);
     this._nextprocessnum = this._processnumber + 1;
     return this._processnumber = -1;
   };
