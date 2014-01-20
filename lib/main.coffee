@@ -107,6 +107,8 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 			motionsprite.backgroundColor = "transparent"
 			motionsprite.x = x
 			motionsprite.y = y
+			motionsprite.x2 = x
+			motionsprite.y2 = y
 			motionsprite.width = cellx
 			motionsprite.height = celly
 			motionsprite.originX = cellx / 2
@@ -126,6 +128,8 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 			# パラメータ初期化
 			motionsprite.x = x
 			motionsprite.y = y
+			motionsprite.x2 = x
+			motionsprite.y2 = y
 			motionsprite.textAlign = "left"
 			motionsprite.font = "12pt 'Arial'"
 			motionsprite.color = "black"

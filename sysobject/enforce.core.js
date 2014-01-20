@@ -18,7 +18,7 @@ _stationary = (function() {
     var _this = this;
     this.sprite = sprite;
     this._processnumber = 0;
-    this._waittime = 0;
+    this._waittime = 0.0;
     this._dispframe = 0;
     this._endflag = false;
     if ((this.sprite != null)) {
@@ -49,13 +49,21 @@ _stationary = (function() {
   _stationary.prototype.destructor = function() {};
 
   _stationary.prototype.behavior = function() {
-    var animpattern, x, y;
+    var animpattern;
     if (this._type_ === SPRITE) {
+      if (this.sprite.x !== this.sprite.xback) {
+        this.sprite.x2 = this.sprite.x;
+      }
+      if (this.sprite.y !== this.sprite.yback) {
+        this.sprite.y2 = this.sprite.y;
+      }
       this.sprite.ys += this.sprite.gravity;
-      x = this.sprite.x + this.sprite.xs;
-      y = this.sprite.y + this.sprite.ys;
-      this.sprite.x = Math.round(x);
-      this.sprite.y = Math.round(y);
+      this.sprite.x2 += this.sprite.xs;
+      this.sprite.y2 += this.sprite.ys;
+      this.sprite.x = Math.round(this.sprite.x2);
+      this.sprite.y = Math.round(this.sprite.y2);
+      this.sprite.xback = this.sprite.x;
+      this.sprite.yback = this.sprite.y;
     }
     if ((this.sprite.animlist != null)) {
       animpattern = this.sprite.animlist[this.sprite.animnum];
@@ -88,7 +96,7 @@ _stationary = (function() {
   };
 
   _stationary.prototype.waitjob = function(wtime) {
-    this._waittime = lapsedtime + parseFloat(wtime);
+    this._waittime = lapsedtime + wtime;
     this._nextprocessnum = this._processnumber + 1;
     return this._processnumber = -1;
   };
@@ -321,6 +329,8 @@ createObject = function(motionObj, _type_, x, y, xs, ys, g, image, cellx, celly,
       motionsprite.backgroundColor = "transparent";
       motionsprite.x = x;
       motionsprite.y = y;
+      motionsprite.x2 = x;
+      motionsprite.y2 = y;
       motionsprite.width = cellx;
       motionsprite.height = celly;
       motionsprite.originX = cellx / 2;
@@ -340,6 +350,8 @@ createObject = function(motionObj, _type_, x, y, xs, ys, g, image, cellx, celly,
     case LABEL:
       motionsprite.x = x;
       motionsprite.y = y;
+      motionsprite.x2 = x;
+      motionsprite.y2 = y;
       motionsprite.textAlign = "left";
       motionsprite.font = "12pt 'Arial'";
       motionsprite.color = "black";

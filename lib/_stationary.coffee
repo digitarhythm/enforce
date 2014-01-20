@@ -4,7 +4,7 @@ class _stationary
 	#***************************************************************
 	constructor:(@sprite)->
 		@_processnumber = 0
-		@_waittime = 0
+		@_waittime = 0.0
 		@_dispframe = 0
 		@_endflag = false
 
@@ -34,11 +34,17 @@ class _stationary
 	behavior:->
 		if (@_type_ == SPRITE)
 
+			if (@sprite.x != @sprite.xback)
+				@sprite.x2 = @sprite.x
+			if (@sprite.y != @sprite.yback)
+				@sprite.y2 = @sprite.y
 			@sprite.ys += @sprite.gravity
-			x = @sprite.x + @sprite.xs
-			y = @sprite.y + @sprite.ys
-			@sprite.x = Math.round(x)
-			@sprite.y = Math.round(y)
+			@sprite.x2 += @sprite.xs
+			@sprite.y2 += @sprite.ys
+			@sprite.x = Math.round(@sprite.x2)
+			@sprite.y = Math.round(@sprite.y2)
+			@sprite.xback = @sprite.x
+			@sprite.yback = @sprite.y
 
 		if (@sprite.animlist?)
 			animpattern = @sprite.animlist[@sprite.animnum]
