@@ -33,9 +33,12 @@ class _stationary
 	#***************************************************************
 	behavior:->
 		if (@_type_ == SPRITE)
+
 			@sprite.ys += @sprite.gravity
-			@sprite.x += @sprite.xs
-			@sprite.y += @sprite.ys
+			x = @sprite.x + @sprite.xs
+			y = @sprite.y + @sprite.ys
+			@sprite.x = Math.round(x)
+			@sprite.y = Math.round(y)
 
 		if (@sprite.animlist?)
 			animpattern = @sprite.animlist[@sprite.animnum]
@@ -81,7 +84,7 @@ class _stationary
 	# 指定した秒数だけ待って次のプロセスへ
 	#***************************************************************
 	waitjob:(wtime)->
-		@_waittime = parseFloat(lapsedtime) + parseFloat(wtime)
+		@_waittime = lapsedtime + wtime
 		@_nextprocessnum = @_processnumber + 1
 		@_processnumber = -1
 	

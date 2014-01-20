@@ -49,11 +49,13 @@ _stationary = (function() {
   _stationary.prototype.destructor = function() {};
 
   _stationary.prototype.behavior = function() {
-    var animpattern;
+    var animpattern, x, y;
     if (this._type_ === SPRITE) {
       this.sprite.ys += this.sprite.gravity;
-      this.sprite.x += this.sprite.xs;
-      this.sprite.y += this.sprite.ys;
+      x = this.sprite.x + this.sprite.xs;
+      y = this.sprite.y + this.sprite.ys;
+      this.sprite.x = Math.round(x);
+      this.sprite.y = Math.round(y);
     }
     if ((this.sprite.animlist != null)) {
       animpattern = this.sprite.animlist[this.sprite.animnum];
@@ -86,7 +88,7 @@ _stationary = (function() {
   };
 
   _stationary.prototype.waitjob = function(wtime) {
-    this._waittime = parseFloat(lapsedtime) + parseFloat(wtime);
+    this._waittime = lapsedtime + parseFloat(wtime);
     this._nextprocessnum = this._processnumber + 1;
     return this._processnumber = -1;
   };
@@ -233,7 +235,7 @@ window.onload = function() {
     }
     return core.rootScene.addEventListener('enterframe', function(e) {
       lapsedtime = core.frame / FPS;
-      return lapsedtime = lapsedtime.toFixed(2);
+      return lapsedtime = parseFloat(lapsedtime.toFixed(2));
     });
   };
   return core.start();
@@ -260,13 +262,13 @@ createObject = function(motionObj, _type_, x, y, xs, ys, g, image, cellx, celly,
     y = 0;
   }
   if (xs == null) {
-    xs = 0;
+    xs = 0.0;
   }
   if (ys == null) {
-    ys = 0;
+    ys = 0.0;
   }
   if (g == null) {
-    g = 0;
+    g = 0.0;
   }
   if (image == null) {
     image = 0;

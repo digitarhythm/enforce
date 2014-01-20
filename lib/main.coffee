@@ -68,7 +68,7 @@ window.onload = ->
 
 		core.rootScene.addEventListener 'enterframe', (e)->
 			lapsedtime = core.frame / FPS
-			lapsedtime = lapsedtime.toFixed(2)
+			lapsedtime = parseFloat(lapsedtime.toFixed(2))
 
 	core.start()
 
@@ -76,7 +76,7 @@ debugwrite = (str)->
 	if (DEBUG == true)
 		_DEBUGLABEL.text = str
 
-createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0, ys = 0, g = 0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = GAMESCENE)->
+createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, g = 0.0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = GAMESCENE)->
 	if (motionObj == null)
 		motionObj = undefined
 
