@@ -104,7 +104,7 @@ _stationary = (function() {
       reuturn(false);
     }
     if (range < 0) {
-      range = this.sprite.width / 2;
+      range = sprite.width / 2;
     }
     if (this.sprite.intersectFlag === true && sprite.intersectFlag === true) {
       ret = this.sprite.within(sprite, range);
@@ -119,7 +119,11 @@ _stationary = (function() {
     if (!(this.sprite != null) || !(sprite != null)) {
       reuturn(false);
     }
-    ret = this.sprite.intersect(sprite);
+    if (this.sprite.intersectFlag === true && sprite.intersectFlag === true) {
+      ret = this.sprite.intersect(sprite);
+    } else {
+      ret = false;
+    }
     return ret;
   };
 

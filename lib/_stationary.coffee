@@ -99,10 +99,9 @@ class _stationary
 			reuturn false
 
 		if (range < 0)
-			range = @sprite.width / 2
+			range = sprite.width / 2
 
 		if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
-			#ret = @sprite.intersect(sprite)
 			ret = @sprite.within(sprite, range)
 		else
 			ret = false
@@ -115,11 +114,10 @@ class _stationary
 		if (!@sprite? || !sprite?)
 			reuturn false
 
-		#if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
-		#if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
-		ret = @sprite.intersect(sprite)
-		#else
-		#	ret = false
+		if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
+			ret = @sprite.intersect(sprite)
+		else
+			ret = false
 		return ret
 
 	#***************************************************************
