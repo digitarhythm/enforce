@@ -14,3 +14,6 @@ sprintf = (a, b...) ->
 	for data in b
 		a = a.replace('%@', data)
 	return a
+
+# do noting
+nop = ->

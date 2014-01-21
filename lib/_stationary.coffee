@@ -7,6 +7,7 @@ class _stationary
 		@_waittime = 0.0
 		@_dispframe = 0
 		@_endflag = false
+		@_returnflag = false
 
 		if (@sprite?)
 			@sprite.intersectFlag = true
@@ -50,11 +51,16 @@ class _stationary
 			animpattern = @sprite.animlist[@sprite.animnum]
 			@sprite.frame = animpattern[@_dispframe++]
 			if (@_dispframe >= animpattern.length)
-				if (@_endflag == false)
-					@_dispframe = 0
-				else
+				if (@_endflag == true)
+					@_endflag = false
 					removeObject(@)
 					return
+				else if (@_returnflag == true)
+					@_returnflag = false
+					@sprite.animnum = @_beforeAnimnum
+					@_dispframe = 0
+				else
+					@_dispframe = 0
 
 		if (@_waittime > 0 && lapsedtime > @_waittime)
 			@_waittime = 0
@@ -138,6 +144,11 @@ class _stationary
 		@_endflag = true
 
 	#***************************************************************
-	# なにもしない
+	# 指定したアニメーションを一回だけ再生し元のアニメーションに戻す
 	#***************************************************************
-	nop:->
+	setAnimationToOnce:(animnum)->
+		@_beforeAnimnum = @sprite.animnum
+		@sprite.animnum = animnum
+		@_dispframe = 0
+		@_returnflag = true
+

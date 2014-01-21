@@ -19,7 +19,7 @@ class [__classname__] extends _stationary
 		super()
 		switch @_processnumber
 			when 0
-				@nop()
+				nop()
 
 	#**************************
 	# touch event

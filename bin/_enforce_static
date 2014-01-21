@@ -29,14 +29,10 @@ while ($fname = readdir($dir)) {
 	}
 	echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
 }
-echo "<style type='text/css'>\n";
-echo "body {\n";
-echo "margin: 0;\n";
-echo "padding: 0;\n";
-echo "}\n";
-echo "</style>\n";
 echo "</head>\n";
 echo "<body>\n";
-echo "</body>\n";
+echo "<div id='game'>";
+echo "<div id='enchant-stage'></div>";
+echo "</div>";
+echo "</body>";
 echo "</html>\n";
-
