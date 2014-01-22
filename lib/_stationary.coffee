@@ -33,8 +33,7 @@ class _stationary
 	# ビヘイビアー
 	#***************************************************************
 	behavior:->
-		if (@_type_ == SPRITE)
-
+		if (@_type_ == SPRITE && @sprite?)
 			if (@sprite.x != @sprite.xback)
 				@sprite.x2 = @sprite.x
 			if (@sprite.y != @sprite.yback)
@@ -123,7 +122,7 @@ class _stationary
 		return ret
 
 	#***************************************************************
-	# スプライト同士の衝突判定(withIn)
+	# スプライト同士の衝突判定(intersect)
 	#***************************************************************
 	isIntersect:(sprite)->
 		if (!@sprite? || !sprite?)
@@ -144,10 +143,10 @@ class _stationary
 		@_endflag = true
 
 	#***************************************************************
-	# 指定したアニメーションを一回だけ再生し元のアニメーションに戻す
+	# 指定したアニメーションを一回だけ再生し指定したアニメーションに戻す
 	#***************************************************************
-	setAnimationToOnce:(animnum)->
-		@_beforeAnimnum = @sprite.animnum
+	setAnimationToOnce:(animnum, animnum2)->
+		@_beforeAnimnum = animnum2
 		@sprite.animnum = animnum
 		@_dispframe = 0
 		@_returnflag = true

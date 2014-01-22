@@ -80,11 +80,12 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 	if (motionObj == null)
 		motionObj = undefined
 
-	obj = _getNullObject()
-	if (obj == undefined)
+	objnum = _getNullObject()
+	if (objnum < 0)
 		JSLog("object undefined")
 		return undefined
 
+	obj = _objects[objnum]
 	obj.active = true
 
 	# スプライトを生成
@@ -94,7 +95,7 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 		when LABEL
 			motionsprite = new Label()
 		else
-			motionsprite = new Sprite()
+			motionsprite = undefined
 
 	# スプライトを表示
 	_scenes[scene].addChild(motionsprite)
@@ -107,12 +108,12 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 			motionsprite.backgroundColor = "transparent"
 			motionsprite.x = x
 			motionsprite.y = y
-			motionsprite.x2 = x
-			motionsprite.y2 = y
+			motionsprite._x_ = x
+			motionsprite._y_ = y
 			motionsprite.width = cellx
 			motionsprite.height = celly
-			motionsprite.originX = cellx / 2
-			motionsprite.originY = celly / 2
+			motionsprite.originX = parseInt(cellx / 2)
+			motionsprite.originY = parseInt(celly / 2)
 			motionsprite.opacity = opacity
 			motionsprite.rotation = 0.0
 			motionsprite.scaleX = 1.0
@@ -128,8 +129,8 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 			# パラメータ初期化
 			motionsprite.x = x
 			motionsprite.y = y
-			motionsprite.x2 = x
-			motionsprite.y2 = y
+			motionsprite._x_ = x
+			motionsprite._y_ = y
 			motionsprite.textAlign = "left"
 			motionsprite.font = "12pt 'Arial'"
 			motionsprite.color = "black"
@@ -140,7 +141,8 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 	else
 		obj.motionObj = new _stationary(motionsprite)
 
-	obj.motionObj._objnum = obj._objnum
+	uid = uniqueID()
+	obj.motionObj._uniqueID = uid
 	obj.motionObj._scene = scene
 
 	if (motionsprite != undefined)
@@ -159,31 +161,58 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 		motionsprite.frame = animpattern[0]
 
 	obj.motionObj._type_ = _type_
+
 	return obj.motionObj
 
 #**********************************************************************
-removeObject = (obj)->
-	if (obj == undefined)
+#**********************************************************************
+removeObject = (motionObj)->
+	if (!motionObj?)
+		JSLog("remove return 1")
 		return
-	num = obj._objnum
-	parent = _objects[num]
-	scene = obj._scene
-	if (typeof(obj.destructor) == 'function')
-		obj.destructor()
-	if (scene != undefined)
-		_scenes[scene].removeChild(obj.sprite)
-	obj.sprite = 0
+	ret = false
+	for parent in _objects
+		if (!parent.motionObj?)
+			continue
+		if (parent.motionObj._uniqueID == motionObj._uniqueID)
+			ret = true
+			break
+	if (ret == false)
+		JSLog("remove return 2")
+		return
+
+	if (typeof(motionObj.destructor) == 'function')
+		motionObj.destructor()
+	JSLog("sprite remove")
+	_scenes[parent.motionObj._scene].removeChild(parent.motionObj.sprite)
+
+	parent.motionObj.sprite = 0
+
 	parent.active = false
-	parent.motionObj = undefined
+	parent.motionObj = 0
+	JSLog("remove done")
 
 #**********************************************************************
+#**********************************************************************
 _getNullObject = ->
-	retobj = undefined
+	ret = -1
 	for i in [0..._objects.length]
-		obj = _objects[i]
-		if (obj.active == false)
-			retobj = obj
-			retobj._objnum = i
+		if (_objects[i].active == false)
+			ret = i
 			break
-	return retobj
+	return ret
 
+#**********************************************************************
+#**********************************************************************
+getObject:(id)->
+	ret = undefined
+	for i in [0..._objects.length]
+		if (!_objects[i].motionObj?)
+			continue
+		if (_objects[i].motionObj._uniqueID == id)
+			ret = _objects[i].motionObj
+			break
+	return ret
+
+#**********************************************************************
+#**********************************************************************
