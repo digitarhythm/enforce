@@ -62,7 +62,6 @@ window.onload = ->
 		for i in [0...OBJECTNUM]
 			_objects[i] = new _originObject()
 		_main = new enchantMain()
-
 		if (DEBUG == true)
 			_DEBUGLABEL = new Label()
 			_DEBUGLABEL.x = 0
@@ -70,11 +69,9 @@ window.onload = ->
 			_DEBUGLABEL.color = "black"
 			_DEBUGLABEL.font = "10px 'Arial'"
 			_scenes[TOPSCENE].addChild(_DEBUGLABEL)
-
 		core.rootScene.addEventListener 'enterframe', (e)->
 			lapsedtime = core.frame / FPS
 			lapsedtime = parseFloat(lapsedtime.toFixed(2))
-
 	core.start()
 
 debugwrite = (str)->
@@ -173,7 +170,6 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 #**********************************************************************
 removeObject = (motionObj)->
 	if (!motionObj?)
-		JSLog("remove return 1")
 		return
 	ret = false
 	for parent in _objects
@@ -183,7 +179,6 @@ removeObject = (motionObj)->
 			ret = true
 			break
 	if (ret == false)
-		JSLog("remove return 2")
 		return
 
 	if (typeof(motionObj.destructor) == 'function')

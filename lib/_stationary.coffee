@@ -109,7 +109,7 @@ class _stationary
 	# スプライト同士の衝突判定(withIn)
 	#***************************************************************
 	isWithIn:(motionObj, range = -1)->
-		if (!@motionObj?)
+		if (!motionObj?)
 			return false
 		if (range < 0)
 			range = motionObj.sprite.width / 2

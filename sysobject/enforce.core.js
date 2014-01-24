@@ -116,7 +116,7 @@ _stationary = (function() {
     if (range == null) {
       range = -1;
     }
-    if (!(this.motionObj != null)) {
+    if (!(motionObj != null)) {
       return false;
     }
     if (range < 0) {
