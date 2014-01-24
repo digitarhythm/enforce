@@ -53,16 +53,16 @@ _stationary = (function() {
     var animpattern;
     if (this._type_ === SPRITE && (this.sprite != null)) {
       if (this.sprite.x !== this.sprite.xback) {
-        this.sprite.x2 = this.sprite.x;
+        this.sprite._x_ = this.sprite.x;
       }
       if (this.sprite.y !== this.sprite.yback) {
-        this.sprite.y2 = this.sprite.y;
+        this.sprite._y_ = this.sprite.y;
       }
       this.sprite.ys += this.sprite.gravity;
-      this.sprite.x2 += this.sprite.xs;
-      this.sprite.y2 += this.sprite.ys;
-      this.sprite.x = Math.round(this.sprite.x2);
-      this.sprite.y = Math.round(this.sprite.y2);
+      this.sprite._x_ += this.sprite.xs;
+      this.sprite._y_ += this.sprite.ys;
+      this.sprite.x = Math.round(this.sprite._x_);
+      this.sprite.y = Math.round(this.sprite._y_);
       this.sprite.xback = this.sprite.x;
       this.sprite.yback = this.sprite.y;
     }
@@ -111,32 +111,32 @@ _stationary = (function() {
     return this._processnumber = num;
   };
 
-  _stationary.prototype.isWithIn = function(sprite, range) {
+  _stationary.prototype.isWithIn = function(motionObj, range) {
     var ret;
     if (range == null) {
       range = -1;
     }
-    if (!(this.sprite != null) || !(sprite != null)) {
-      reuturn(false);
+    if (!(this.motionObj != null)) {
+      return false;
     }
     if (range < 0) {
-      range = sprite.width / 2;
+      range = motionObj.sprite.width / 2;
     }
-    if (this.sprite.intersectFlag === true && sprite.intersectFlag === true) {
-      ret = this.sprite.within(sprite, range);
+    if (this.sprite.intersectFlag === true && motionObj.sprite.intersectFlag === true) {
+      ret = this.sprite.within(motionObj.sprite, range);
     } else {
       ret = false;
     }
     return ret;
   };
 
-  _stationary.prototype.isIntersect = function(sprite) {
+  _stationary.prototype.isIntersect = function(motionObj) {
     var ret;
-    if (!(this.sprite != null) || !(sprite != null)) {
-      reuturn(false);
+    if (!(motionObj.sprite != null)) {
+      return false;
     }
-    if (this.sprite.intersectFlag === true && sprite.intersectFlag === true) {
-      ret = this.sprite.intersect(sprite);
+    if (this.sprite.intersectFlag === true && motionObj.sprite.intersectFlag === true) {
+      ret = this.sprite.intersect(motionObj.sprite);
     } else {
       ret = false;
     }
@@ -243,6 +243,9 @@ window.onload = function() {
   core.rootScene.backgroundColor = BGCOLOR;
   core.fps = FPS;
   core.preload(IMAGELIST);
+  core.keybind('Z'.charCodeAt(0), 'a');
+  core.keybind('X'.charCodeAt(0), 'b');
+  core.keybind(32, "space");
   for (i = _i = 0, _ref = TOPSCENE + 1; 0 <= _ref ? _i < _ref : _i > _ref; i = 0 <= _ref ? ++_i : --_i) {
     scene = new Group();
     _scenes[i] = scene;
@@ -428,12 +431,10 @@ removeObject = function(motionObj) {
   if (typeof motionObj.destructor === 'function') {
     motionObj.destructor();
   }
-  JSLog("sprite remove");
   _scenes[parent.motionObj._scene].removeChild(parent.motionObj.sprite);
   parent.motionObj.sprite = 0;
-  parent.active = false;
   parent.motionObj = 0;
-  return JSLog("remove done");
+  return parent.active = false;
 };
 
 _getNullObject = function() {

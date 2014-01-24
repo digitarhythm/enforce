@@ -48,6 +48,11 @@ window.onload = ->
 	core.fps = FPS
 	core.preload(IMAGELIST)
 
+	# キーバインド
+	core.keybind('Z'.charCodeAt(0), 'a')
+	core.keybind('X'.charCodeAt(0), 'b')
+	core.keybind(32, "space")
+
 	for i in [0...(TOPSCENE+1)]
 		scene = new Group()
 		_scenes[i] = scene
@@ -183,14 +188,12 @@ removeObject = (motionObj)->
 
 	if (typeof(motionObj.destructor) == 'function')
 		motionObj.destructor()
-	JSLog("sprite remove")
-	_scenes[parent.motionObj._scene].removeChild(parent.motionObj.sprite)
 
+	_scenes[parent.motionObj._scene].removeChild(parent.motionObj.sprite)
 	parent.motionObj.sprite = 0
 
-	parent.active = false
 	parent.motionObj = 0
-	JSLog("remove done")
+	parent.active = false
 
 #**********************************************************************
 #**********************************************************************

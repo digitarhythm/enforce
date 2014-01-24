@@ -35,14 +35,14 @@ class _stationary
 	behavior:->
 		if (@_type_ == SPRITE && @sprite?)
 			if (@sprite.x != @sprite.xback)
-				@sprite.x2 = @sprite.x
+				@sprite._x_ = @sprite.x
 			if (@sprite.y != @sprite.yback)
-				@sprite.y2 = @sprite.y
+				@sprite._y_ = @sprite.y
 			@sprite.ys += @sprite.gravity
-			@sprite.x2 += @sprite.xs
-			@sprite.y2 += @sprite.ys
-			@sprite.x = Math.round(@sprite.x2)
-			@sprite.y = Math.round(@sprite.y2)
+			@sprite._x_ += @sprite.xs
+			@sprite._y_ += @sprite.ys
+			@sprite.x = Math.round(@sprite._x_)
+			@sprite.y = Math.round(@sprite._y_)
 			@sprite.xback = @sprite.x
 			@sprite.yback = @sprite.y
 
@@ -108,15 +108,13 @@ class _stationary
 	#***************************************************************
 	# スプライト同士の衝突判定(withIn)
 	#***************************************************************
-	isWithIn:(sprite, range = -1)->
-		if (!@sprite? || !sprite?)
-			reuturn false
-
+	isWithIn:(motionObj, range = -1)->
+		if (!@motionObj?)
+			return false
 		if (range < 0)
-			range = sprite.width / 2
-
-		if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
-			ret = @sprite.within(sprite, range)
+			range = motionObj.sprite.width / 2
+		if (@sprite.intersectFlag == true && motionObj.sprite.intersectFlag == true)
+			ret = @sprite.within(motionObj.sprite, range)
 		else
 			ret = false
 		return ret
@@ -124,12 +122,11 @@ class _stationary
 	#***************************************************************
 	# スプライト同士の衝突判定(intersect)
 	#***************************************************************
-	isIntersect:(sprite)->
-		if (!@sprite? || !sprite?)
-			reuturn false
-
-		if (@sprite.intersectFlag == true && sprite.intersectFlag == true)
-			ret = @sprite.intersect(sprite)
+	isIntersect:(motionObj)->
+		if (!motionObj.sprite?)
+			return false
+		if (@sprite.intersectFlag == true && motionObj.sprite.intersectFlag == true)
+			ret = @sprite.intersect(motionObj.sprite)
 		else
 			ret = false
 		return ret
