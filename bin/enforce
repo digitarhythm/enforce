@@ -2,6 +2,7 @@
 
 opt=$1
 opt2=$2
+ENF=$(cd $(dirname $0)/..;pwd)
 cwd=$(cd $(dirname $0);pwd)
 
 echo "Execute directory ["$(pwd)"]"
@@ -84,7 +85,7 @@ static)
 		exit
 	fi
 	if [ -f "./index.php" ]; then
-		mv ./index.php ./.develop.php
+		rm -rf ./index.php
 		${cwd}/_enforce_static > ./index.html
 	fi
 ;;
@@ -94,9 +95,9 @@ develop)
 		echo "Please perform in a package directory."
 		exit
 	fi
-	if [ -f "./index.html" -a -f "./.develop.php" ]; then
+	if [ -f "./index.html" ]; then
 		rm -f ./index.html
-		mv -f ./.develop.php ./index.php
+		cp -a ${ENF}/index.php $(pwd)
 	fi
 ;;
 

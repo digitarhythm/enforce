@@ -8,6 +8,7 @@ class _stationary
 		@_dispframe = 0
 		@_endflag = false
 		@_returnflag = false
+		@_autoRemove = false
 
 		if (@sprite?)
 			@sprite.intersectFlag = true
@@ -45,6 +46,12 @@ class _stationary
 			@sprite.y = Math.round(@sprite._y_)
 			@sprite.xback = @sprite.x
 			@sprite.yback = @sprite.y
+
+		# 画面外に出たら自動的に消滅する
+		if (@sprite.x < -@sprite.width || @sprite.x > SCREEN_WIDTH || @sprite.y < -@sprite.height || @sprite.y > SCREEN_HEIGHT)
+			if (typeof(@autoRemove) == 'function')
+				@autoRemove()
+				removeObject(@)
 
 		if (@sprite.animlist?)
 			animpattern = @sprite.animlist[@sprite.animnum]
