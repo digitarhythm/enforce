@@ -1,4 +1,4 @@
-var BGSCENE, BGSCENE_SUB1, BGSCENE_SUB2, CONTROL, GAMESCENE, GAMESCENE_SUB1, GAMESCENE_SUB2, JSLog, LABEL, PHYSICS, SPRITE, TOPSCENE, WEBGL, core, createObject, debugwrite, lapsedtime, nop, rand, removeObject, rootScene, sprintf, uniqueID, _DEBUGLABEL, _getNullObject, _main, _objects, _originObject, _scenes, _stationary,
+var BGSCENE, BGSCENE_SUB1, BGSCENE_SUB2, CONTROL, GAMESCENE, GAMESCENE_SUB1, GAMESCENE_SUB2, JSLog, LABEL, PHYSICS, SPRITE, TOPSCENE, WEBGL, core, createObject, debugwrite, getBounds, lapsedtime, nop, rand, removeObject, rootScene, sprintf, uniqueID, _DEBUGLABEL, _getNullObject, _main, _objects, _originObject, _scenes, _stationary,
   __slice = Array.prototype.slice;
 
 _originObject = (function() {
@@ -180,6 +180,12 @@ uniqueID = function() {
     return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
   };
   return S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
+};
+
+getBounds = function() {
+  var frame;
+  frame = [parseInt(document.documentElement.clientWidth - 1), parseInt(document.documentElement.clientHeight - 1)];
+  return frame;
 };
 
 nop = function() {};
