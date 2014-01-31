@@ -67,7 +67,15 @@ class SideView extends JSView
 				ext = ["coffee"]
 				@filemanager.fileList @documentpath+"/src", ext, (data)=>
 					jdata = JSON.parse(data)
-					@sourceview.setListData(jdata['file'])
+					dispdata = jdata['file']
+					dispdata.sort (a, b)=>
+						if (a < b)
+							return -1
+						else if (a > b)
+							return 1
+						else
+							return 0
+					@sourceview.setListData(dispdata)
 					@sourceview.reload()
 				@addButton.addTarget =>
 					alert = new JSAlertView("Create New Class File", "Input new class file name.", [""])
@@ -103,7 +111,15 @@ class SideView extends JSView
 				ext = ["png", "jpg", "gif", "mp3", "ogg"]
 				@filemanager.fileList @documentpath+"/media", ext, (data)=>
 					jdata = JSON.parse(data)
-					@mediaview.setListData(jdata['file'])
+					dispdata = jdata['file']
+					dispdata.sort (a, b)=>
+						if (a < b)
+							return -1
+						else if (a > b)
+							return 1
+						else
+							return 0
+					@mediaview.setListData(dispdata)
 					@mediaview.reload()
 
 	didImageUpload:(res)->

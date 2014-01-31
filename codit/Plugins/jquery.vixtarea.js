@@ -64,7 +64,7 @@
 				case "view":
 					permit = permitKeyCode.indexOf(e.keyCode);
 					if (permit == -1 && modifyCode != 109 && modifyCode != 222) {
-						console.log("preventDefault="+e.keyCode+", modifyCode="+modifyCode);
+						//console.log("preventDefault="+e.keyCode+", modifyCode="+modifyCode);
 						e.preventDefault();
 					}
 
@@ -603,7 +603,6 @@
 							break;
 
 						case 117: // u
-							console.log("undopoint="+undopoint+", undotop="+undotop);
 							if (undopoint != undotop) {
 								if (--undopoint < 0) {
 									undopoint = MAXUNDO - 1;

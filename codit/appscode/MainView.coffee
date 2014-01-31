@@ -8,6 +8,7 @@ class MainView extends JSView
 		@editfile = undefined
 		@filemanager = new JSFileManager()
 		@documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory")
+		@keyarray = []
 		
 	viewDidAppear:->
 		super()
@@ -26,20 +27,7 @@ class MainView extends JSView
 		@savebutton.setButtonTitle("◯")
 		@addSubview(@savebutton)
 		@savebutton.addTarget =>
-			if (@editfile?)
-				str = @editorview.getText()
-				savepath = @documentpath+"/src/"+@editfile
-				@filemanager.writeToFile savepath, str, (err)=>
-					if (err == 1)
-						$.post "syslibs/enforce.php",
-							mode: "compile"
-						, (err)=>
-							@infoview.setText(err)
-			else
-				$.post "syslibs/enforce.php",
-					mode: "compile"
-				, (err)=>
-					@infoview.setText(err)
+			@compileSource()
 
 		@editorview = new JSTextView(JSRectMake(4, 24, @_frame.size.width - 4, @_frame.size.height - 28 - 24))
 		@editorview.setBackgroundColor(JSColor("#000020"))
@@ -63,16 +51,44 @@ class MainView extends JSView
 		@infoview.dispflag = false
 		@addSubview(@infoview)
 		@infoview.addTapGesture =>
-			if (@infoview.dispflag == false)
-				@infoview.dispflag = true
-				@infoview._frame.size.height = parseInt(@_frame.size.height / 3)
-				@infoview._frame.origin.y = @_frame.size.height - parseInt(@_frame.size.height / 3)
-				@infoview.setFrame(@infoview._frame)
-			else
-				@infoview.dispflag = false
-				@infoview._frame.size.height = 24
-				@infoview._frame.origin.y = @_frame.size.height - 24
-				@infoview.setFrame(@infoview._frame)
+			@dispInfoview()
+	
+	dispInfoview:(flagtmp = undefined)->
+		if (!flagtmp?)
+			flag = @infoview.dispflag
+		else
+			flag = (if (flagtmp == true) then false else true)
+		if (flag == false)
+			@infoview.dispflag = true
+			@infoview._frame.size.height = parseInt(@_frame.size.height / 3)
+			@infoview._frame.origin.y = @_frame.size.height - parseInt(@_frame.size.height / 3)
+			@infoview.setFrame(@infoview._frame)
+		else
+			@infoview.dispflag = false
+			@infoview._frame.size.height = 24
+			@infoview._frame.origin.y = @_frame.size.height - 24
+			@infoview.setFrame(@infoview._frame)
+
+	compileSource:->
+		if (@editfile?)
+			str = @editorview.getText()
+			savepath = @documentpath+"/src/"+@editfile
+			@filemanager.writeToFile savepath, str, (err)=>
+				if (err == 1)
+					$.post "syslibs/enforce.php",
+						mode: "compile"
+					, (err)=>
+						if (err != "")
+							@infoview.setText(err)
+							@dispInfoview(true)
+						else
+							@infoview.setText(err)
+							@dispInfoview(false)
+		else
+			$.post "syslibs/enforce.php",
+				mode: "compile"
+			, (err)=>
+				@infoview.setText(err)
 
 	loadSourceFile:(fpath)->
 		if (@editorview?)
@@ -93,6 +109,12 @@ class MainView extends JSView
 			@editorview.setEditable(true)
 			@editorview.setHidden(false)
 			$(@editorview._viewSelector+"_textarea").vixtarea({backgroundColor:"#000020",color:"white"})
+			$(@editorview._viewSelector+"_textarea").keyup (e)=>
+				@keyarray[e.keyCode] = false
+			$(@editorview._viewSelector+"_textarea").keydown (e)=>
+				@keyarray[e.keyCode] = true
+				if (@keyarray[16] && @keyarray[91] && @keyarray[83])
+					@compileSource()
 
 	dispImage:(fpath)->
 		if (@editorview?)

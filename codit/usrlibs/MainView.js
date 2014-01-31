@@ -14,6 +14,7 @@ MainView = (function(_super) {
     this.editfile = void 0;
     this.filemanager = new JSFileManager();
     this.documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory");
+    this.keyarray = [];
   }
 
   MainView.prototype.viewDidAppear = function() {
@@ -33,26 +34,7 @@ MainView = (function(_super) {
     this.savebutton.setButtonTitle("◯");
     this.addSubview(this.savebutton);
     this.savebutton.addTarget(function() {
-      var savepath, str;
-      if ((_this.editfile != null)) {
-        str = _this.editorview.getText();
-        savepath = _this.documentpath + "/src/" + _this.editfile;
-        return _this.filemanager.writeToFile(savepath, str, function(err) {
-          if (err === 1) {
-            return $.post("syslibs/enforce.php", {
-              mode: "compile"
-            }, function(err) {
-              return _this.infoview.setText(err);
-            });
-          }
-        });
-      } else {
-        return $.post("syslibs/enforce.php", {
-          mode: "compile"
-        }, function(err) {
-          return _this.infoview.setText(err);
-        });
-      }
+      return _this.compileSource();
     });
     this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4, this._frame.size.height - 28 - 24));
     this.editorview.setBackgroundColor(JSColor("#000020"));
@@ -74,18 +56,59 @@ MainView = (function(_super) {
     this.infoview.dispflag = false;
     this.addSubview(this.infoview);
     return this.infoview.addTapGesture(function() {
-      if (_this.infoview.dispflag === false) {
-        _this.infoview.dispflag = true;
-        _this.infoview._frame.size.height = parseInt(_this._frame.size.height / 3);
-        _this.infoview._frame.origin.y = _this._frame.size.height - parseInt(_this._frame.size.height / 3);
-        return _this.infoview.setFrame(_this.infoview._frame);
-      } else {
-        _this.infoview.dispflag = false;
-        _this.infoview._frame.size.height = 24;
-        _this.infoview._frame.origin.y = _this._frame.size.height - 24;
-        return _this.infoview.setFrame(_this.infoview._frame);
-      }
+      return _this.dispInfoview();
     });
+  };
+
+  MainView.prototype.dispInfoview = function(flagtmp) {
+    var flag;
+    if (flagtmp == null) flagtmp = void 0;
+    if (!(flagtmp != null)) {
+      flag = this.infoview.dispflag;
+    } else {
+      flag = (flagtmp === true ? false : true);
+    }
+    if (flag === false) {
+      this.infoview.dispflag = true;
+      this.infoview._frame.size.height = parseInt(this._frame.size.height / 3);
+      this.infoview._frame.origin.y = this._frame.size.height - parseInt(this._frame.size.height / 3);
+      return this.infoview.setFrame(this.infoview._frame);
+    } else {
+      this.infoview.dispflag = false;
+      this.infoview._frame.size.height = 24;
+      this.infoview._frame.origin.y = this._frame.size.height - 24;
+      return this.infoview.setFrame(this.infoview._frame);
+    }
+  };
+
+  MainView.prototype.compileSource = function() {
+    var savepath, str,
+      _this = this;
+    if ((this.editfile != null)) {
+      str = this.editorview.getText();
+      savepath = this.documentpath + "/src/" + this.editfile;
+      return this.filemanager.writeToFile(savepath, str, function(err) {
+        if (err === 1) {
+          return $.post("syslibs/enforce.php", {
+            mode: "compile"
+          }, function(err) {
+            if (err !== "") {
+              _this.infoview.setText(err);
+              return _this.dispInfoview(true);
+            } else {
+              _this.infoview.setText(err);
+              return _this.dispInfoview(false);
+            }
+          });
+        }
+      });
+    } else {
+      return $.post("syslibs/enforce.php", {
+        mode: "compile"
+      }, function(err) {
+        return _this.infoview.setText(err);
+      });
+    }
   };
 
   MainView.prototype.loadSourceFile = function(fpath) {
@@ -107,9 +130,18 @@ MainView = (function(_super) {
       _this.editorview.setText(string);
       _this.editorview.setEditable(true);
       _this.editorview.setHidden(false);
-      return $(_this.editorview._viewSelector + "_textarea").vixtarea({
+      $(_this.editorview._viewSelector + "_textarea").vixtarea({
         backgroundColor: "#000020",
         color: "white"
+      });
+      $(_this.editorview._viewSelector + "_textarea").keyup(function(e) {
+        return _this.keyarray[e.keyCode] = false;
+      });
+      return $(_this.editorview._viewSelector + "_textarea").keydown(function(e) {
+        _this.keyarray[e.keyCode] = true;
+        if (_this.keyarray[16] && _this.keyarray[91] && _this.keyarray[83]) {
+          return _this.compileSource();
+        }
       });
     });
   };

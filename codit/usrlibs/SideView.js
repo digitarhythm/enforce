@@ -80,9 +80,19 @@ SideView = (function(_super) {
         this.addSubview(this.addButton);
         ext = ["coffee"];
         this.filemanager.fileList(this.documentpath + "/src", ext, function(data) {
-          var jdata;
+          var dispdata, jdata;
           jdata = JSON.parse(data);
-          _this.sourceview.setListData(jdata['file']);
+          dispdata = jdata['file'];
+          dispdata.sort(function(a, b) {
+            if (a < b) {
+              return -1;
+            } else if (a > b) {
+              return 1;
+            } else {
+              return 0;
+            }
+          });
+          _this.sourceview.setListData(dispdata);
           return _this.sourceview.reload();
         });
         this.addButton.addTarget(function() {
@@ -123,9 +133,19 @@ SideView = (function(_super) {
         this.addSubview(this.addButton);
         ext = ["png", "jpg", "gif", "mp3", "ogg"];
         return this.filemanager.fileList(this.documentpath + "/media", ext, function(data) {
-          var jdata;
+          var dispdata, jdata;
           jdata = JSON.parse(data);
-          _this.mediaview.setListData(jdata['file']);
+          dispdata = jdata['file'];
+          dispdata.sort(function(a, b) {
+            if (a < b) {
+              return -1;
+            } else if (a > b) {
+              return 1;
+            } else {
+              return 0;
+            }
+          });
+          _this.mediaview.setListData(dispdata);
           return _this.mediaview.reload();
         });
     }
