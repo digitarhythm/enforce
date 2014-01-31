@@ -98,6 +98,7 @@ MainView = (function(_super) {
     this.editorview.setTextSize(10);
     this.editorview.setEditable(false);
     this.addSubview(this.editorview);
+    this.bringSubviewToFront(this.infoview);
     tmp = fpath.match(/.*\/(.*)/);
     this.editfile = tmp[1];
     this.imageview.setHidden(true);

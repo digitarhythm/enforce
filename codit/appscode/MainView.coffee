@@ -83,6 +83,7 @@ class MainView extends JSView
 		@editorview.setTextSize(10)
 		@editorview.setEditable(false)
 		@addSubview(@editorview)
+		@bringSubviewToFront(@infoview);
 		tmp = fpath.match(/.*\/(.*)/)
 		@editfile = tmp[1]
 		@imageview.setHidden(true)
