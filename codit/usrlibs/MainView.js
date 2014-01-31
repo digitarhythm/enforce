@@ -61,17 +61,6 @@ MainView = (function(_super) {
     this.editorview.setHidden(true);
     this.editorview.setEditable(false);
     this.addSubview(this.editorview);
-    $(this.editorview._viewSelector).keydown(function(e) {
-      var elem, pos, val;
-      if (e.keyCode === 9) {
-        e.preventDefault();
-        elem = e.target;
-        val = elem.value;
-        pos = elem.selectionStart;
-        elem.value = val.substr(0, pos) + '\t' + val.substr(pos, val.length);
-        return elem.setSelectionRange(pos + 1, pos + 1);
-      }
-    });
     size = JSSizeMake(parseInt(this._frame.size.width / 2), parseInt(this._frame.size.height / 2));
     this.imageview = new JSImageView(JSRectMake((this._frame.size.width - size.width) / 2, (this._frame.size.height - size.height) / 2, size.width, size.height));
     this.imageview.setContentMode("JSViewContentModeScaleAspectFit");
@@ -102,25 +91,34 @@ MainView = (function(_super) {
   MainView.prototype.loadSourceFile = function(fpath) {
     var tmp,
       _this = this;
+    if ((this.editorview != null)) this.editorview.removeFromSuperview();
+    this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4, this._frame.size.height - 28 - 24));
+    this.editorview.setBackgroundColor(JSColor("#000020"));
+    this.editorview.setTextColor(JSColor("white"));
+    this.editorview.setTextSize(10);
+    this.editorview.setEditable(false);
+    this.addSubview(this.editorview);
     tmp = fpath.match(/.*\/(.*)/);
     this.editfile = tmp[1];
-    this.editorview.setHidden(false);
     this.imageview.setHidden(true);
     this.sourceinfo.setText(this.editfile);
-    this.filemanager.stringWithContentsOfFile(fpath, function(string) {
+    return this.filemanager.stringWithContentsOfFile(fpath, function(string) {
       _this.editorview.setText(string);
-      return _this.editorview.setEditable(true);
+      _this.editorview.setEditable(true);
+      _this.editorview.setHidden(false);
+      return $(_this.editorview._viewSelector + "_textarea").vixtarea({
+        backgroundColor: "#000020",
+        color: "white"
+      });
     });
-    return this.editorview.setHidden(false);
   };
 
   MainView.prototype.dispImage = function(fpath) {
     var img;
-    this.editorview.setHidden(true);
-    this.imageview.setHidden(false);
+    if ((this.editorview != null)) this.editorview.setHidden(true);
+    if ((this.imageview != null)) this.imageview.setHidden(false);
     img = new JSImage(fpath);
-    this.imageview.setImage(img);
-    return this.editorview.setHidden(true);
+    return this.imageview.setImage(img);
   };
 
   return MainView;

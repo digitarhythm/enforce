@@ -69,7 +69,9 @@ SideView = (function(_super) {
     if ((this.addButton != null)) this.addButton.removeFromSuperview();
     switch (tab) {
       case 0:
-        this.mainview.editorview.setHidden(false);
+        if ((this.mainview.editorview != null)) {
+          this.mainview.editorview.setHidden(false);
+        }
         this.mainview.imageview.setHidden(true);
         this.sourceview.setHidden(false);
         this.mediaview.setHidden(true);
@@ -109,7 +111,9 @@ SideView = (function(_super) {
           }
         });
       case 1:
-        this.mainview.editorview.setHidden(true);
+        if ((this.mainview.editorview != null)) {
+          this.mainview.editorview.setHidden(true);
+        }
         this.mainview.imageview.setHidden(false);
         this.sourceview.setHidden(true);
         this.mediaview.setHidden(false);

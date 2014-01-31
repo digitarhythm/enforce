@@ -56,7 +56,8 @@ class SideView extends JSView
 			@addButton.removeFromSuperview()
 		switch tab
 			when 0 # ソースモード
-				@mainview.editorview.setHidden(false)
+				if (@mainview.editorview?)
+					@mainview.editorview.setHidden(false)
 				@mainview.imageview.setHidden(true)
 				@sourceview.setHidden(false)
 				@mediaview.setHidden(true)
@@ -90,7 +91,8 @@ class SideView extends JSView
 						alert.show()
 
 			when 1 # 画像モード
-				@mainview.editorview.setHidden(true)
+				if (@mainview.editorview?)
+					@mainview.editorview.setHidden(true)
 				@mainview.imageview.setHidden(false)
 				@sourceview.setHidden(true)
 				@mediaview.setHidden(false)

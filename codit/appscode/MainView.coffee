@@ -48,14 +48,6 @@ class MainView extends JSView
 		@editorview.setHidden(true)
 		@editorview.setEditable(false)
 		@addSubview(@editorview)
-		$(@editorview._viewSelector).keydown (e)=>
-			if (e.keyCode == 9)
-				e.preventDefault()
-				elem = e.target
-				val = elem.value
-				pos = elem.selectionStart
-				elem.value = val.substr(0, pos) + '\t' + val.substr(pos, val.length)
-				elem.setSelectionRange(pos + 1, pos + 1)
 
 		size = JSSizeMake(parseInt(@_frame.size.width / 2), parseInt(@_frame.size.height / 2))
 		@imageview = new JSImageView(JSRectMake((@_frame.size.width - size.width) / 2, (@_frame.size.height - size.height) / 2, size.width, size.height))
@@ -83,20 +75,29 @@ class MainView extends JSView
 				@infoview.setFrame(@infoview._frame)
 
 	loadSourceFile:(fpath)->
+		if (@editorview?)
+			@editorview.removeFromSuperview()
+		@editorview = new JSTextView(JSRectMake(4, 24, @_frame.size.width - 4, @_frame.size.height - 28 - 24))
+		@editorview.setBackgroundColor(JSColor("#000020"))
+		@editorview.setTextColor(JSColor("white"))
+		@editorview.setTextSize(10)
+		@editorview.setEditable(false)
+		@addSubview(@editorview)
 		tmp = fpath.match(/.*\/(.*)/)
 		@editfile = tmp[1]
-		@editorview.setHidden(false)
 		@imageview.setHidden(true)
 		@sourceinfo.setText(@editfile)
 		@filemanager.stringWithContentsOfFile fpath, (string)=>
 			@editorview.setText(string)
 			@editorview.setEditable(true)
-		@editorview.setHidden(false)
+			@editorview.setHidden(false)
+			$(@editorview._viewSelector+"_textarea").vixtarea({backgroundColor:"#000020",color:"white"})
 
 	dispImage:(fpath)->
-		@editorview.setHidden(true)
-		@imageview.setHidden(false)
+		if (@editorview?)
+			@editorview.setHidden(true)
+		if (@imageview?)
+			@imageview.setHidden(false)
 		img = new JSImage(fpath)
 		@imageview.setImage(img)
-		@editorview.setHidden(true)
 
