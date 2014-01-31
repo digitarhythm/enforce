@@ -49,6 +49,9 @@ SideView = (function(_super) {
       fname = _this.sourceview.objectAtIndex(_this.sourceview.getSelect());
       return _this.mainview.loadSourceFile(_this.documentpath + "/src/" + fname);
     });
+    $(this.sourceview._viewSelector + "_select").bind("change", function(e) {
+      return JSLog("select=%@", _this.sourceview.getSelect());
+    });
     this.mediaview = new JSListView(JSRectMake(0, this.tabview._frame.size.height, this._frame.size.width, this._frame.size.height - this.tabview._frame.size.height - 24));
     this.mediaview.setTextSize(14);
     this.mediaview.setBackgroundColor(JSColor("white"));
@@ -93,7 +96,9 @@ SideView = (function(_super) {
             }
           });
           _this.sourceview.setListData(dispdata);
-          return _this.sourceview.reload();
+          _this.sourceview.reload();
+          _this.sourceview.setSelect(0);
+          return $(_this.sourceview._viewSelector + "_select").focus();
         });
         this.addButton.addTarget(function() {
           var alert;

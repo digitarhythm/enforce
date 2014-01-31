@@ -294,10 +294,10 @@ JSUserDefaults = (function(_super) {
       "forKey": forKey
     }, function(data) {
       var data2;
-      if (typeof data === "object") {
+      if (data !== "") {
         data2 = JSON.parse(data);
       } else {
-        data2 = data;
+        data2 = "";
       }
       return action(data2);
     });

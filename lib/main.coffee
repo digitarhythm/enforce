@@ -66,7 +66,7 @@ window.onload = ->
 			_DEBUGLABEL = new Label()
 			_DEBUGLABEL.x = 0
 			_DEBUGLABEL.y = 0
-			_DEBUGLABEL.color = "black"
+			_DEBUGLABEL.color = "white"
 			_DEBUGLABEL.font = "10px 'Arial'"
 			_scenes[TOPSCENE].addChild(_DEBUGLABEL)
 		core.rootScene.addEventListener 'enterframe', (e)->

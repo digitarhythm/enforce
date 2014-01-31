@@ -5,6 +5,8 @@ class MainView extends JSView
 		Please describe initialization processing of a class below from here. 
 		###
 
+		@userDefaults = new JSUserDefaults()
+
 		@editfile = undefined
 		@filemanager = new JSFileManager()
 		@documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory")
@@ -36,6 +38,24 @@ class MainView extends JSView
 		@editorview.setHidden(true)
 		@editorview.setEditable(false)
 		@addSubview(@editorview)
+
+		@memoview = new JSTextView(JSRectMake(parseInt(@_frame.size.width / 3) * 2, 24, parseInt(@_frame.size.width / 3), @_frame.size.height - 28))
+		@memoview.setBackgroundColor(JSColor("#f0f0f0"))
+		@memoview.setHidden(true)
+		@addSubview(@memoview)
+		@userDefaults.stringForKey "memo", (string)=>
+			@memoview.setText(string)
+		$(@memoview._viewSelector+"_textarea").vixtarea()
+		$(@memoview._viewSelector+"_textarea").keyup (e)=>
+			@keyarray[e.keyCode] = false
+		$(@memoview._viewSelector+"_textarea").keydown (e)=>
+			@keyarray[e.keyCode] = true
+			if (@keyarray[17] && @keyarray[91] && e.keyCode == 77)
+				@memoview.animateWithDuration 0.2, {alpha: 0.0}, =>
+					string = @memoview.getText()
+					@userDefaults.setObject(string, "memo")
+					@memoview.setHidden(true)
+					@focusEditorview()
 
 		size = JSSizeMake(parseInt(@_frame.size.width / 2), parseInt(@_frame.size.height / 2))
 		@imageview = new JSImageView(JSRectMake((@_frame.size.width - size.width) / 2, (@_frame.size.height - size.height) / 2, size.width, size.height))
@@ -69,6 +89,12 @@ class MainView extends JSView
 			@infoview._frame.origin.y = @_frame.size.height - 24
 			@infoview.setFrame(@infoview._frame)
 
+	focusEditorview:->
+		$(@editorview._viewSelector+"_textarea").focus()
+
+	focusMemoview:->
+		$(@memoview._viewSelector+"_textarea").focus()
+
 	compileSource:->
 		if (@editfile?)
 			str = @editorview.getText()
@@ -82,13 +108,18 @@ class MainView extends JSView
 							@infoview.setText(err)
 							@dispInfoview(true)
 						else
-							@infoview.setText(err)
+							@infoview.setText("no error.")
 							@dispInfoview(false)
 		else
 			$.post "syslibs/enforce.php",
 				mode: "compile"
 			, (err)=>
-				@infoview.setText(err)
+				if (err != "")
+					@infoview.setText(err)
+					@dispInfoview(true)
+				else
+					@infoview.setText("no error.")
+					@dispInfoview(false)
 
 	loadSourceFile:(fpath)->
 		if (@editorview?)
@@ -97,15 +128,15 @@ class MainView extends JSView
 		@editorview.setBackgroundColor(JSColor("#000020"))
 		@editorview.setTextColor(JSColor("white"))
 		@editorview.setTextSize(10)
-		@editorview.setEditable(false)
 		@addSubview(@editorview)
-		@bringSubviewToFront(@infoview);
+		@bringSubviewToFront(@infoview)
 		tmp = fpath.match(/.*\/(.*)/)
 		@editfile = tmp[1]
 		@imageview.setHidden(true)
 		@sourceinfo.setText(@editfile)
 		@filemanager.stringWithContentsOfFile fpath, (string)=>
 			@editorview.setText(string)
+			@focusEditorview()
 			@editorview.setEditable(true)
 			@editorview.setHidden(false)
 			$(@editorview._viewSelector+"_textarea").vixtarea({backgroundColor:"#000020",color:"white"})
@@ -117,6 +148,15 @@ class MainView extends JSView
 					@compileSource()
 				if (@keyarray[17] && @keyarray[91] && e.keyCode == 89)
 					@dispInfoview()
+				if (@keyarray[17] && @keyarray[91] && e.keyCode == 77)
+					if (@memoview._hidden == true)
+						@bringSubviewToFront(@memoview);
+						@memoview.setHidden(false)
+						@memoview.animateWithDuration 0.2, {alpha: 1.0}, =>
+							@focusMemoview()
+					else
+						@memoview.animateWithDuration 0.2, {alpha: 0.0}, =>
+							@memoview.setHidden(true)
 
 	dispImage:(fpath)->
 		if (@editorview?)

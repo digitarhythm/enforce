@@ -11,6 +11,7 @@ MainView = (function(_super) {
     /*
     		Please describe initialization processing of a class below from here.
     */
+    this.userDefaults = new JSUserDefaults();
     this.editfile = void 0;
     this.filemanager = new JSFileManager();
     this.documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory");
@@ -43,6 +44,31 @@ MainView = (function(_super) {
     this.editorview.setHidden(true);
     this.editorview.setEditable(false);
     this.addSubview(this.editorview);
+    this.memoview = new JSTextView(JSRectMake(parseInt(this._frame.size.width / 3) * 2, 24, parseInt(this._frame.size.width / 3), this._frame.size.height - 28));
+    this.memoview.setBackgroundColor(JSColor("#f0f0f0"));
+    this.memoview.setHidden(true);
+    this.addSubview(this.memoview);
+    this.userDefaults.stringForKey("memo", function(string) {
+      return _this.memoview.setText(string);
+    });
+    $(this.memoview._viewSelector + "_textarea").vixtarea();
+    $(this.memoview._viewSelector + "_textarea").keyup(function(e) {
+      return _this.keyarray[e.keyCode] = false;
+    });
+    $(this.memoview._viewSelector + "_textarea").keydown(function(e) {
+      _this.keyarray[e.keyCode] = true;
+      if (_this.keyarray[17] && _this.keyarray[91] && e.keyCode === 77) {
+        return _this.memoview.animateWithDuration(0.2, {
+          alpha: 0.0
+        }, function() {
+          var string;
+          string = _this.memoview.getText();
+          _this.userDefaults.setObject(string, "memo");
+          _this.memoview.setHidden(true);
+          return _this.focusEditorview();
+        });
+      }
+    });
     size = JSSizeMake(parseInt(this._frame.size.width / 2), parseInt(this._frame.size.height / 2));
     this.imageview = new JSImageView(JSRectMake((this._frame.size.width - size.width) / 2, (this._frame.size.height - size.height) / 2, size.width, size.height));
     this.imageview.setContentMode("JSViewContentModeScaleAspectFit");
@@ -81,6 +107,14 @@ MainView = (function(_super) {
     }
   };
 
+  MainView.prototype.focusEditorview = function() {
+    return $(this.editorview._viewSelector + "_textarea").focus();
+  };
+
+  MainView.prototype.focusMemoview = function() {
+    return $(this.memoview._viewSelector + "_textarea").focus();
+  };
+
   MainView.prototype.compileSource = function() {
     var savepath, str,
       _this = this;
@@ -96,7 +130,7 @@ MainView = (function(_super) {
               _this.infoview.setText(err);
               return _this.dispInfoview(true);
             } else {
-              _this.infoview.setText(err);
+              _this.infoview.setText("no error.");
               return _this.dispInfoview(false);
             }
           });
@@ -106,7 +140,13 @@ MainView = (function(_super) {
       return $.post("syslibs/enforce.php", {
         mode: "compile"
       }, function(err) {
-        return _this.infoview.setText(err);
+        if (err !== "") {
+          _this.infoview.setText(err);
+          return _this.dispInfoview(true);
+        } else {
+          _this.infoview.setText("no error.");
+          return _this.dispInfoview(false);
+        }
       });
     }
   };
@@ -119,7 +159,6 @@ MainView = (function(_super) {
     this.editorview.setBackgroundColor(JSColor("#000020"));
     this.editorview.setTextColor(JSColor("white"));
     this.editorview.setTextSize(10);
-    this.editorview.setEditable(false);
     this.addSubview(this.editorview);
     this.bringSubviewToFront(this.infoview);
     tmp = fpath.match(/.*\/(.*)/);
@@ -128,6 +167,7 @@ MainView = (function(_super) {
     this.sourceinfo.setText(this.editfile);
     return this.filemanager.stringWithContentsOfFile(fpath, function(string) {
       _this.editorview.setText(string);
+      _this.focusEditorview();
       _this.editorview.setEditable(true);
       _this.editorview.setHidden(false);
       $(_this.editorview._viewSelector + "_textarea").vixtarea({
@@ -143,7 +183,24 @@ MainView = (function(_super) {
           _this.compileSource();
         }
         if (_this.keyarray[17] && _this.keyarray[91] && e.keyCode === 89) {
-          return _this.dispInfoview();
+          _this.dispInfoview();
+        }
+        if (_this.keyarray[17] && _this.keyarray[91] && e.keyCode === 77) {
+          if (_this.memoview._hidden === true) {
+            _this.bringSubviewToFront(_this.memoview);
+            _this.memoview.setHidden(false);
+            return _this.memoview.animateWithDuration(0.2, {
+              alpha: 1.0
+            }, function() {
+              return _this.focusMemoview();
+            });
+          } else {
+            return _this.memoview.animateWithDuration(0.2, {
+              alpha: 0.0
+            }, function() {
+              return _this.memoview.setHidden(true);
+            });
+          }
         }
       });
     });
