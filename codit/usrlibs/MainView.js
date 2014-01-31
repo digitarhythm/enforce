@@ -139,8 +139,11 @@ MainView = (function(_super) {
       });
       return $(_this.editorview._viewSelector + "_textarea").keydown(function(e) {
         _this.keyarray[e.keyCode] = true;
-        if (_this.keyarray[16] && _this.keyarray[91] && _this.keyarray[83]) {
-          return _this.compileSource();
+        if (_this.keyarray[17] && _this.keyarray[91] && e.keyCode === 83) {
+          _this.compileSource();
+        }
+        if (_this.keyarray[17] && _this.keyarray[91] && e.keyCode === 89) {
+          return _this.dispInfoview();
         }
       });
     });

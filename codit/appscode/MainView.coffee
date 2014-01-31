@@ -113,8 +113,10 @@ class MainView extends JSView
 				@keyarray[e.keyCode] = false
 			$(@editorview._viewSelector+"_textarea").keydown (e)=>
 				@keyarray[e.keyCode] = true
-				if (@keyarray[16] && @keyarray[91] && @keyarray[83])
+				if (@keyarray[17] && @keyarray[91] && e.keyCode == 83)
 					@compileSource()
+				if (@keyarray[17] && @keyarray[91] && e.keyCode == 89)
+					@dispInfoview()
 
 	dispImage:(fpath)->
 		if (@editorview?)
