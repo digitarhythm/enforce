@@ -7,14 +7,14 @@
 #**********************************************************************************************************
 
 # static values setting ***********************************************************************************
-DEBUG			= true						# デバッグモード
-SCREEN_WIDTH	= 240						# 画面の幅
-SCREEN_HEIGHT	= 320						# 画面の高さ
-FPS				= 24						# フレームレート
-BGCOLOR			= "black"					# 背景色
-OBJECTNUM		= 100						# キャラの最大数
+DEBUG           = true                        # デバッグモード
+SCREEN_WIDTH    = 240                        # 画面の幅
+SCREEN_HEIGHT   = 320                        # 画面の高さ
+FPS             = 24                        # フレームレート
+BGCOLOR         = "black"                    # 背景色
+OBJECTNUM       = 100                        # キャラの最大数
 
 # preloading image list ***********************************************************************************
-IMAGELIST		= [
-	'media/chara1.png'
+IMAGELIST       = [
+    'media/chara1.png'
 ]

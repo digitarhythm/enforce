@@ -41,6 +41,7 @@ class MainView extends JSView
 
 		@memoview = new JSTextView(JSRectMake(parseInt(@_frame.size.width / 3) * 2, 24, parseInt(@_frame.size.width / 3), @_frame.size.height - 28))
 		@memoview.setBackgroundColor(JSColor("#f0f0f0"))
+		@memoview.setTextSize(10)
 		@memoview.setHidden(true)
 		@addSubview(@memoview)
 		@userDefaults.stringForKey "memo", (string)=>
@@ -135,11 +136,11 @@ class MainView extends JSView
 		@imageview.setHidden(true)
 		@sourceinfo.setText(@editfile)
 		@filemanager.stringWithContentsOfFile fpath, (string)=>
-			@editorview.setText(string)
-			@focusEditorview()
 			@editorview.setEditable(true)
 			@editorview.setHidden(false)
+			@editorview.setText(string)
 			$(@editorview._viewSelector+"_textarea").vixtarea({backgroundColor:"#000020",color:"white"})
+			@focusEditorview()
 			$(@editorview._viewSelector+"_textarea").keyup (e)=>
 				@keyarray[e.keyCode] = false
 			$(@editorview._viewSelector+"_textarea").keydown (e)=>

@@ -39,8 +39,6 @@ class SideView extends JSView
 		@sourceview.addTarget =>
 			fname = @sourceview.objectAtIndex(@sourceview.getSelect())
 			@mainview.loadSourceFile(@documentpath+"/src/"+fname)
-		$(@sourceview._viewSelector+"_select").bind "change", (e)=>
-			JSLog("select=%@", @sourceview.getSelect())
 
 		@mediaview = new JSListView(JSRectMake(0, @tabview._frame.size.height, @_frame.size.width, @_frame.size.height - @tabview._frame.size.height - 24))
 		@mediaview.setTextSize(14)

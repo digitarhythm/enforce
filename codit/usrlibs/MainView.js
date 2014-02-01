@@ -46,6 +46,7 @@ MainView = (function(_super) {
     this.addSubview(this.editorview);
     this.memoview = new JSTextView(JSRectMake(parseInt(this._frame.size.width / 3) * 2, 24, parseInt(this._frame.size.width / 3), this._frame.size.height - 28));
     this.memoview.setBackgroundColor(JSColor("#f0f0f0"));
+    this.memoview.setTextSize(10);
     this.memoview.setHidden(true);
     this.addSubview(this.memoview);
     this.userDefaults.stringForKey("memo", function(string) {
@@ -166,14 +167,14 @@ MainView = (function(_super) {
     this.imageview.setHidden(true);
     this.sourceinfo.setText(this.editfile);
     return this.filemanager.stringWithContentsOfFile(fpath, function(string) {
-      _this.editorview.setText(string);
-      _this.focusEditorview();
       _this.editorview.setEditable(true);
       _this.editorview.setHidden(false);
+      _this.editorview.setText(string);
       $(_this.editorview._viewSelector + "_textarea").vixtarea({
         backgroundColor: "#000020",
         color: "white"
       });
+      _this.focusEditorview();
       $(_this.editorview._viewSelector + "_textarea").keyup(function(e) {
         return _this.keyarray[e.keyCode] = false;
       });
