@@ -9,9 +9,10 @@ MainView = (function(_super) {
   function MainView(frame) {
     MainView.__super__.constructor.call(this, frame);
     /*
-    		Please describe initialization processing of a class below from here.
+            Please describe initialization processing of a class below from here.
     */
     this.userDefaults = new JSUserDefaults();
+    this.setClipToBounds(true);
     this.editfile = void 0;
     this.filemanager = new JSFileManager();
     this.documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory");
@@ -23,7 +24,7 @@ MainView = (function(_super) {
       _this = this;
     MainView.__super__.viewDidAppear.call(this);
     /*
-    		Please describe the processing about a view below from here.
+            Please describe the processing about a view below from here.
     */
     this.sourceinfo = new JSTextField(JSRectMake(4, 0, parseInt(this._frame.size.width / 2), 24));
     this.sourceinfo.setEditable(false);
@@ -37,17 +38,18 @@ MainView = (function(_super) {
     this.savebutton.addTarget(function() {
       return _this.compileSource();
     });
-    this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4, this._frame.size.height - 28 - 24));
+    this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4 - 24, this._frame.size.height - 28 - 24));
     this.editorview.setBackgroundColor(JSColor("#000020"));
     this.editorview.setTextColor(JSColor("white"));
     this.editorview.setTextSize(10);
     this.editorview.setHidden(true);
     this.editorview.setEditable(false);
     this.addSubview(this.editorview);
-    this.memoview = new JSTextView(JSRectMake(parseInt(this._frame.size.width / 3) * 2, 24, parseInt(this._frame.size.width / 3), this._frame.size.height - 28));
+    this.memoview = new JSTextView(JSRectMake(this._frame.size.width - 24, 24, Math.floor(this._frame.size.width / 3), this._frame.size.height - 28));
     this.memoview.setBackgroundColor(JSColor("#f0f0f0"));
     this.memoview.setTextSize(10);
-    this.memoview.setHidden(true);
+    this.memoview.setHidden(false);
+    this.memoview.dispflag = false;
     this.addSubview(this.memoview);
     this.userDefaults.stringForKey("memo", function(string) {
       return _this.memoview.setText(string);
@@ -58,16 +60,8 @@ MainView = (function(_super) {
     });
     $(this.memoview._viewSelector + "_textarea").keydown(function(e) {
       _this.keyarray[e.keyCode] = true;
-      if (_this.keyarray[17] && _this.keyarray[91] && e.keyCode === 77) {
-        return _this.memoview.animateWithDuration(0.2, {
-          alpha: 0.0
-        }, function() {
-          var string;
-          string = _this.memoview.getText();
-          _this.userDefaults.setObject(string, "memo");
-          _this.memoview.setHidden(true);
-          return _this.focusEditorview();
-        });
+      if (_this.keyarray[16] && _this.keyarray[91] && e.keyCode === 77) {
+        return _this.dispMemoview();
       }
     });
     size = JSSizeMake(parseInt(this._frame.size.width / 2), parseInt(this._frame.size.height / 2));
@@ -152,11 +146,31 @@ MainView = (function(_super) {
     }
   };
 
+  MainView.prototype.dispMemoview = function() {
+    var _this = this;
+    if (this.memoview.dispflag === false) {
+      this.memoview.dispflag = true;
+      this.bringSubviewToFront(this.memoview);
+      return this.memoview.animateWithDuration(0.2, {
+        left: Math.floor(this._frame.size.width / 3) * 2
+      }, function() {
+        return _this.focusMemoview();
+      });
+    } else {
+      this.memoview.dispflag = false;
+      return this.memoview.animateWithDuration(0.2, {
+        left: this._frame.size.width - 24
+      }, function() {
+        return _this.focusEditorview();
+      });
+    }
+  };
+
   MainView.prototype.loadSourceFile = function(fpath) {
     var tmp,
       _this = this;
     if ((this.editorview != null)) this.editorview.removeFromSuperview();
-    this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4, this._frame.size.height - 28 - 24));
+    this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4 - 24, this._frame.size.height - 28 - 24));
     this.editorview.setBackgroundColor(JSColor("#000020"));
     this.editorview.setTextColor(JSColor("white"));
     this.editorview.setTextSize(10);
@@ -180,28 +194,17 @@ MainView = (function(_super) {
       });
       return $(_this.editorview._viewSelector + "_textarea").keydown(function(e) {
         _this.keyarray[e.keyCode] = true;
-        if (_this.keyarray[17] && _this.keyarray[91] && e.keyCode === 83) {
+        if (_this.keyarray[16] && _this.keyarray[91] && e.keyCode === 83) {
+          e.preventDefault();
           _this.compileSource();
         }
-        if (_this.keyarray[17] && _this.keyarray[91] && e.keyCode === 89) {
+        if (_this.keyarray[16] && _this.keyarray[91] && e.keyCode === 89) {
+          e.preventDefault();
           _this.dispInfoview();
         }
-        if (_this.keyarray[17] && _this.keyarray[91] && e.keyCode === 77) {
-          if (_this.memoview._hidden === true) {
-            _this.bringSubviewToFront(_this.memoview);
-            _this.memoview.setHidden(false);
-            return _this.memoview.animateWithDuration(0.2, {
-              alpha: 1.0
-            }, function() {
-              return _this.focusMemoview();
-            });
-          } else {
-            return _this.memoview.animateWithDuration(0.2, {
-              alpha: 0.0
-            }, function() {
-              return _this.memoview.setHidden(true);
-            });
-          }
+        if (_this.keyarray[16] && _this.keyarray[91] && e.keyCode === 77) {
+          e.preventDefault();
+          return _this.dispMemoview();
         }
       });
     });

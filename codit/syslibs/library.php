@@ -349,10 +349,8 @@ function moveFile($file, $toPath)
 {
 	global $_HOMEDIR_;
 	
-	$finfo = pathinfo($file);
-	$fname = $finfo['filename'].".".$finfo['extension'];
 	$orgFullPath = $_HOMEDIR_."/".$file;
-	$toFullPath = $_HOMEDIR_."/".$toPath."/".$fname;
+	$toFullPath = $_HOMEDIR_."/".$toPath;
 	if (is_file($orgFullPath)) {
 		$err = rename($orgFullPath, $toFullPath);
 		if ($err == false) {

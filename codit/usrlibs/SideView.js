@@ -9,7 +9,7 @@ SideView = (function(_super) {
   function SideView(frame) {
     SideView.__super__.constructor.call(this, frame);
     /*
-    		Please describe initialization processing of a class below from here.
+            Please describe initialization processing of a class below from here.
     */
     this.selecttab = 0;
     this.tabheight = 24;
@@ -27,7 +27,7 @@ SideView = (function(_super) {
       _this = this;
     SideView.__super__.viewDidAppear.call(this);
     /*
-    		Please describe the processing about a view below from here.
+            Please describe the processing about a view below from here.
     */
     select = ["code", "media"];
     this.tabview = new JSSegmentedControl(select);
@@ -67,6 +67,8 @@ SideView = (function(_super) {
       _this = this;
     if (tab == null) tab = parseInt(this.selecttab);
     if ((this.addButton != null)) this.addButton.removeFromSuperview();
+    if ((this.delButton != null)) this.delButton.removeFromSuperview();
+    if ((this.renameButton != null)) this.renameButton.removeFromSuperview();
     switch (tab) {
       case 0:
         if ((this.mainview.editorview != null)) {
@@ -102,21 +104,22 @@ SideView = (function(_super) {
           alert = new JSAlertView("Create New Class File", "Input new class file name.", [""]);
           alert.delegate = _this._self;
           alert.setAlertViewStyle("JSAlertViewStylePlainTextInput");
-          alert.mode = "NEW CLASS";
+          alert.delegate = _this;
+          alert.mode = "NEW_CLASS";
           _this.addSubview(alert);
           return alert.show();
         });
-        this.delbutton = new JSButton(JSRectMake(34, this._frame.size.height - 24, 32, 24));
-        this.delbutton.setButtonTitle("-");
-        this.addSubview(this.delbutton);
-        return this.delbutton.addTarget(function() {
+        this.delButton = new JSButton(JSRectMake(this._frame.size.width - 32, this._frame.size.height - 24, 32, 24));
+        this.delButton.setButtonTitle("-");
+        this.addSubview(this.delButton);
+        return this.delButton.addTarget(function() {
           var alert, fname;
           fname = _this.sourceview.objectAtIndex(_this.sourceview.getSelect());
           if ((fname != null)) {
             alert = new JSAlertView("Caution", "Delete '" + fname + "' OK?");
             alert.delegate = _this._self;
             alert.cancel = true;
-            alert.mode = "DELETE FILE";
+            alert.mode = "DELETE_FILE";
             alert.fname = fname;
             _this.addSubview(alert);
             return alert.show();
@@ -131,8 +134,41 @@ SideView = (function(_super) {
         this.mediaview.setHidden(false);
         this.addButton = new JSButton(JSRectMake(0, this._frame.size.height - 24, 64, 24));
         this.addButton.setStyle("JSFormButtonStyleImageUpload");
-        this.addButton.delegate = this;
+        this.addButton.delegate = this._self;
         this.addSubview(this.addButton);
+        this.renameButton = new JSButton(JSRectMake(this.addButton._frame.size.width + 4, this._frame.size.height - 24, 64, 24));
+        this.renameButton.setButtonTitle("リネーム");
+        this.renameButton.addTarget(function() {
+          var alert, fname, num;
+          num = _this.mediaview.getSelect();
+          fname = _this.mediaview.objectAtIndex(num);
+          alert = new JSAlertView("ファイル名変更", "新しいファイル名を入力してください。", ["新ファイル名"]);
+          alert.oldfname = fname;
+          alert.setData([fname]);
+          alert.cancel = true;
+          alert.setAlertViewStyle("JSAlertViewStylePlainTextInput");
+          alert.delegate = _this._self;
+          alert.mode = "IMAGE_RENAME";
+          _this.addSubview(alert);
+          return alert.show();
+        });
+        this.addSubview(this.renameButton);
+        this.delButton = new JSButton(JSRectMake(this._frame.size.width - 32, this._frame.size.height - 24, 32, 24));
+        this.delButton.setButtonTitle("-");
+        this.delButton.addTarget(function() {
+          var alert, fname;
+          fname = _this.mediaview.objectAtIndex(_this.mediaview.getSelect());
+          if ((fname != null)) {
+            alert = new JSAlertView("Caution", "Delete '" + fname + "' OK?");
+            alert.delegate = _this._self;
+            alert.cancel = true;
+            alert.mode = "DELETE_IMAGE";
+            alert.fname = fname;
+            _this.addSubview(alert);
+            return alert.show();
+          }
+        });
+        this.addSubview(this.delButton);
         ext = ["png", "jpg", "gif", "mp3", "ogg"];
         return this.filemanager.fileList(this.documentpath + "/media", ext, function(data) {
           var dispdata, jdata;
@@ -157,7 +193,7 @@ SideView = (function(_super) {
     var imgpath, savefile,
       _this = this;
     imgpath = this.picturepath + "/" + res.path;
-    savefile = this.documentpath + "/media/";
+    savefile = this.documentpath + "/media/" + res.path;
     return this.filemanager.moveItemAtPath(imgpath, savefile, function(err) {
       var ext, path, thumb;
       if (err === 1) {
@@ -176,11 +212,11 @@ SideView = (function(_super) {
   };
 
   SideView.prototype.clickedButtonAtIndex = function(ret, alert) {
-    var fname, jret,
+    var ext, fname, jret, newfpath, oldfpath,
       _this = this;
     jret = JSON.parse(ret);
     switch (alert.mode) {
-      case "NEW CLASS":
+      case "NEW_CLASS":
         return $.post("syslibs/enforce.php", {
           mode: "derive",
           name: jret[0]
@@ -194,22 +230,65 @@ SideView = (function(_super) {
             return _this.sourceview.reload();
           });
         });
-      case "DELETE FILE":
+      case "DELETE_FILE":
         if (ret === 1) {
           fname = alert.fname;
-          JSLog("fname=%@", fname);
           return this.filemanager.removeItemAtPath(this.documentpath + "/src/" + alert.fname, function(err) {
             var ext;
-            _this.mainview.editorview.setText("");
-            _this.mainview.editorview.setEditable(false);
-            _this.mainview.sourceinfo.setText("");
-            _this.mainview.editfile = void 0;
-            ext = ["coffee"];
-            return _this.filemanager.fileList(_this.documentpath + "/src", ext, function(data) {
+            if (err === 1) {
+              _this.mainview.editorview.setText("");
+              _this.mainview.editorview.setEditable(false);
+              _this.mainview.sourceinfo.setText("");
+              _this.mainview.editfile = void 0;
+              ext = ["coffee"];
+              return _this.filemanager.fileList(_this.documentpath + "/src", ext, function(data) {
+                var jdata;
+                jdata = JSON.parse(data);
+                _this.sourceview.setListData(jdata['file']);
+                return _this.sourceview.reload();
+              });
+            }
+          });
+        }
+        break;
+      case "DELETE_IMAGE":
+        if (ret === 1) {
+          fname = alert.fname;
+          return this.filemanager.removeItemAtPath(this.documentpath + "/media/" + alert.fname, function(err) {
+            var ext;
+            if (err === 1) {
+              _this.mainview.editorview.setText("");
+              _this.mainview.editorview.setEditable(false);
+              _this.mainview.sourceinfo.setText("");
+              _this.mainview.editfile = void 0;
+              ext = ["png", "jpg", "gif", "mp3", "ogg"];
+              return _this.filemanager.fileList(_this.documentpath + "/media", ext, function(data) {
+                var jdata;
+                jdata = JSON.parse(data);
+                _this.mediaview.setListData(jdata['file']);
+                return _this.mediaview.reload();
+              });
+            }
+          });
+        }
+        break;
+      case "IMAGE_RENAME":
+        fname = jret[0];
+        ext = fname.match(/.*\.(.*)/);
+        if (ext === null) {
+          alert = new JSAlertView("Caution", "拡張子を指定してください。");
+          this.addSubview(alert);
+          return alert.show();
+        } else {
+          oldfpath = this.documentpath + "/media/" + alert.oldfname;
+          newfpath = this.documentpath + "/media/" + fname;
+          return this.filemanager.moveItemAtPath(oldfpath, newfpath, function(err) {
+            ext = ["png", "jpg", "gif", "mp3", "ogg"];
+            return _this.filemanager.fileList(_this.documentpath + "/media", ext, function(data) {
               var jdata;
               jdata = JSON.parse(data);
-              _this.sourceview.setListData(jdata['file']);
-              return _this.sourceview.reload();
+              _this.mediaview.setListData(jdata['file']);
+              return _this.mediaview.reload();
             });
           });
         }

@@ -1293,7 +1293,7 @@ JSScrollView = (function(_super) {
   __extends(JSScrollView, _super);
 
   function JSScrollView(frame) {
-    JSScrollView.__super__.constructor.call(this, frame);
+    this.animateWithDuration = __bind(this.animateWithDuration, this);    JSScrollView.__super__.constructor.call(this, frame);
     this._scroll = false;
   }
 
@@ -1310,6 +1310,11 @@ JSScrollView = (function(_super) {
   JSScrollView.prototype.viewDidAppear = function() {
     JSScrollView.__super__.viewDidAppear.call(this);
     return this.setScroll(this._scroll);
+  };
+
+  JSScrollView.prototype.animateWithDuration = function(duration, animations, completion) {
+    if (completion == null) completion = null;
+    return JSScrollView.__super__.animateWithDuration.call(this, duration, animations, completion);
   };
 
   return JSScrollView;
@@ -2114,8 +2119,9 @@ JSSegmentedControl = (function(_super) {
     $(this._viewSelector).off();
     return $(this._viewSelector).on('click', function() {
       var select;
-      _this.__select = _this._selectedSegmentIndex;
-      select = $("input:radio[name='" + _this._objectID + "_radio']:checked").val();
+      _this.__select = parseInt(_this._selectedSegmentIndex);
+      $(_this._viewSelector + "_radio").buttonset('refresh');
+      select = parseInt($("input:radio[name='" + _this._objectID + "_radio']:checked").val());
       if ((select != null) && _this.__select !== select) {
         _this._selectedSegmentIndex = select;
         if ((_this.action != null)) return _this.action(_this._self);
@@ -2460,7 +2466,7 @@ JSTextView = (function(_super) {
   __extends(JSTextView, _super);
 
   function JSTextView(frame) {
-    JSTextView.__super__.constructor.call(this, frame);
+    this.animateWithDuration = __bind(this.animateWithDuration, this);    JSTextView.__super__.constructor.call(this, frame);
     this._editable = true;
     this._textSize = 8;
     this._textColor = JSColor("black");
@@ -2531,6 +2537,25 @@ JSTextView = (function(_super) {
       $(this._viewSelector + "_textarea").width(frame.size.width);
       return $(this._viewSelector + "_textarea").height(frame.size.height);
     }
+  };
+
+  JSTextView.prototype.animateWithDuration = function(duration, animations, completion) {
+    var animobj, key, value, _results;
+    if (completion == null) completion = null;
+    JSTextView.__super__.animateWithDuration.call(this, duration, animations, completion);
+    animobj = {};
+    _results = [];
+    for (key in animations) {
+      value = animations[key];
+      if (key === "width") {
+        _results.push($(this._viewSelector + "_textarea").css('width', value));
+      } else if (key === "height") {
+        _results.push($(this._viewSelector + "_textarea").css('height', value));
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
   };
 
   JSTextView.prototype.setPlaceholder = function(_placeholder) {
