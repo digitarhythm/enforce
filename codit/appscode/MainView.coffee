@@ -144,6 +144,8 @@ class MainView extends JSView
             @memoview.animateWithDuration 0.2, {left: Math.floor(@_frame.size.width / 3) * 2, width: Math.floor(@_frame.size.width / 3)}, =>
                 @focusMemoview()
         else
+            memostr = @memoview.getText()
+            @userDefaults.setObject memostr, "memo"
             @memoview.dispflag = false
             @memoview.animateWithDuration 0.2, {left: @_frame.size.width, width:0}, =>
                 @focusEditorview()

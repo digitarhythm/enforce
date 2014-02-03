@@ -172,7 +172,8 @@ MainView = (function(_super) {
   };
 
   MainView.prototype.dispMemoview = function() {
-    var _this = this;
+    var memostr,
+      _this = this;
     if (this.memoview.dispflag === false) {
       this.memoview.dispflag = true;
       this.bringSubviewToFront(this.memoview);
@@ -183,6 +184,8 @@ MainView = (function(_super) {
         return _this.focusMemoview();
       });
     } else {
+      memostr = this.memoview.getText();
+      this.userDefaults.setObject(memostr, "memo");
       this.memoview.dispflag = false;
       return this.memoview.animateWithDuration(0.2, {
         left: this._frame.size.width,
