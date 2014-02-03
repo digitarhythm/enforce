@@ -14,6 +14,6 @@ cp -af $ENF/index.php $PROJ/
 cp -af $ENF/extlib/* $PROJ/extlib/
 coffee -b -j $ENF/sysobject/enforce.core.js -c $ENF/lib/*.coffee
 cp -af $ENF/sysobject/* $PROJ/sysobject/
-cp -af $PROJ/codit/Library/sqlite3.db /tmp/
+mv -f $PROJ/codit/Library/sqlite3.db /tmp/
 cp -af $ENF/codit $PROJ/
 mv -f /tmp/sqlite3.db $PROJ/codit/Library/

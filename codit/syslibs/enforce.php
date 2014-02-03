@@ -53,5 +53,11 @@ switch ($mode) {
 			$fp = fopen($_HOMEDIR_."/Documents/src/".$classname.".coffee", "w");
 			fputs($fp, $str);
 		}
+        break;
+
+    case "website":
+        $uri = $_SERVER['SERVER_NAME'].$_SERVER['REQUEST_URI'];
+        echo $uri;
+        break;
 }
 ?>

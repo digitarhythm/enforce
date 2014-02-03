@@ -25,6 +25,6 @@ class applicationMain extends JSObject
 
 		picturepath = JSSearchPathForDirectoriesInDomains("JSPictureDirectory")
 		img = new JSImage(picturepath+"/enforce_logo.png")
-		logo = new JSImageView(JSRectMake(16, 2, 120, 44))
+		logo = new JSImageView(JSRectMake(2, 2, 120, 44))
 		logo.setImage(img)
 		@toolview.addSubview(logo)

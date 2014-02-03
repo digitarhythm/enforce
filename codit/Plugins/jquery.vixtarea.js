@@ -16,7 +16,7 @@
             return;
         }
 
-        var permitKeyCode = [16, 186, 191, 65, 67, 87, 68, 79, 73, 88, 85, 90, 72, 74, 75, 76, 89, 71, 82, 52, 54, 80, 77, 222, 192, 69, 219];
+        var permitKeyCode = [188, 27, 46, 16, 186, 191, 60, 62, 65, 67, 87, 68, 79, 73, 88, 85, 90, 72, 74, 75, 76, 89, 71, 82, 52, 54, 80, 77, 222, 192, 69, 219, 190];
 
         var MAXUNDO = 256 + 1;
 
@@ -53,8 +53,6 @@
         this.keyup(function(e) {
             if (prevKey == 17 && e.keyCode == 17) {
                 prevKey = 0;
-            } else if (prevKey == 17) {
-                prevKey = 17;
             }
             //console.log("prevKey="+prevKey+", keyup:"+e.keyCode);
         });
@@ -68,8 +66,9 @@
                 case "view":
                     var tl = getLineText(this);
                     permit = permitKeyCode.indexOf(e.keyCode);
-                    //console.log("keyCode="+e.keyCode+", modifyCode="+modifyCode+", prevKey="+prevKey);
-                    if (permit == -1 && modifyCode != 109 && modifyCode != 222) {
+                    //if (permit == -1 && modifyCode != 109 && modifyCode != 222 && lastcommand == "") {
+                    if (permit == -1) {
+                        //console.log("preventDefault:"+e.keyCode);
                         e.preventDefault();
                     }
 
@@ -78,183 +77,9 @@
                         e.preventDefault();
                     }
 
-                    // period operation
-                    if (e.keyCode == 190) {
-                        switch (lastcommand) {
-                            case "delete_line":
-                                modifyCode = 100;
-                                jQuery(this).trigger(
-                                    jQuery.Event( 'keypress', { keyCode: 100, which: 100 } )
-                                );
-                                break;
-
-                            case "insert_string":
-                                if (++undopoint == MAXUNDO) {
-                                    undopoint = 0;
-                                }
-                                undonew = undopoint;
-                                if (undopoint == undotop) {
-                                    if (++undotop == MAXUNDO) {
-                                        undotop = 0;
-                                    }
-                                }
-                                var val = elm.value;
-                                setElementValue(this, val.substr(0, pos) + keybuffer + val.substr(pos, val.length));
-                                elm.setSelectionRange(pos + keybuffer.length, pos + keybuffer.length);
-                                undobuffer[undopoint] = elm.value;
-                                break;
-
-                            case "append_string":
-                                if (++undopoint == MAXUNDO) {
-                                    undopoint = 0;
-                                }
-                                undonew = undopoint;
-                                if (undopoint == undotop) {
-                                    if (++undotop == MAXUNDO) {
-                                        undotop = 0;
-                                    }
-                                }
-                                var val = elm.value;
-                                setElementValue(this, val.substr(0, pos + 1) + keybuffer + val.substr(pos + 1, val.length));
-                                elm.setSelectionRange(pos + keybuffer.length, pos + keybuffer.length);
-                                undobuffer[undopoint] = elm.value;
-                                break;
-
-                            case "append_string_top":
-                                var addpos = pos - tl.currLineText.length;
-                                var val = elm.value;
-                                setElementValue(this, val.substr(0, addpos) + keybuffer + val.substr(addpos, val.length));
-                                elm.setSelectionRange(addpos, addpos);
-                                break;
-
-                            case "append_line":
-                                if (++undopoint == MAXUNDO) {
-                                    undopoint = 0;
-                                }
-                                undonew = undopoint;
-                                if (undopoint == undotop) {
-                                    if (++undotop == MAXUNDO) {
-                                        undotop = 0;
-                                    }
-                                }
-                                var nl = pos - tl.currLineText.length + tl.currLineTextAll.length + 1;
-                                var val = elm.value;
-                                if (val.charCodeAt(nl - 1) != 10) {
-                                    var addstr = val.substr(0, nl) + '\n' + keybuffer + '\n' + val.substr(nl, val.length)
-                                } else {
-                                    var addstr = val.substr(0, nl) + keybuffer + '\n' + val.substr(nl, val.length)
-                                }
-                                setElementValue(this, addstr);
-                                elm.setSelectionRange(nl, nl);
-                                undobuffer[undopoint] = elm.value;
-                                break;
-
-                            case "insert_line":
-                                var nl = pos - tl.currLineText.length;
-                                var val = elm.value;
-                                setElementValue(this, val.substr(0, nl) + keybuffer + '\n' + val.substr(nl, val.length));
-                                elm.setSelectionRange(nl, nl);
-                                break;
-
-                            case "append_buffer":
-                                jQuery(this).trigger(
-                                    jQuery.Event( 'keypress', { keyCode: 112, which: 112 } )
-                                );
-                                break;
-
-                            case "insert_buffer":
-                                jQuery(this).trigger(
-                                    jQuery.Event( 'keypress', { keyCode: 80, which: 80 } )
-                                );
-                                break;
-
-                            case "delete_character":
-                                jQuery(this).trigger(
-                                    jQuery.Event( 'keypress', { keyCode: 120, which: 120 } )
-                                );
-                                break;
-
-                            case "joinline":
-                                jQuery(this).trigger(
-                                    jQuery.Event( 'keypress', { keyCode: 74, which: 74 } )
-                                );
-                                break;
-
-                            case "change_word":
-                                var val = elm.value;
-                                if (++undopoint == MAXUNDO) {
-                                    undopoint = 0;
-                                }
-                                undonew = undopoint;
-                                if (undopoint == undotop) {
-                                    if (++undotop == MAXUNDO) {
-                                        undotop = 0;
-                                    }
-                                }
-                                var after = tl.currLineTextAll.substr(tl.currLineText.length);
-                                if ((mtc = after.match(/(\ {2,}).+/)) != null) {
-                                    var pos2 = pos + mtc[1].length;
-                                    yankbuffer = val.substr(pos, mtc[1].length);
-                                } else if ((mtc = after.match(/(.*?)[\b\.,\/:;\'\"@\(\)\[\]\{\}|\<\>\-\n\=\ ]/)) != null) {
-                                    var pos2 = pos + mtc[1].length;
-                                    yankbuffer = val.substr(pos, mtc[1].length);
-                                } else {
-                                    var pos2 = pos + tl.currLineTextAll.length - tl.currLineText.length;
-                                    yankbuffer = val.substr(pos, tl.currLineTextAll.length - tl.currLineText.length);
-                                }
-                                yankbuffermode = 1;
-                                setElementValue(this, val.substr(0, pos) + keybuffer + val.substr(pos2));
-                                elm.setSelectionRange(pos, pos);
-                                undobuffer[undopoint] = elm.value
-                                break;
-
-                            case "delete_lineend":
-                                if (++undopoint == MAXUNDO) {
-                                    undopoint = 0;
-                                }
-                                undonew = undopoint;
-                                if (undopoint == undotop) {
-                                    if (++undotop == MAXUNDO) {
-                                        undotop = 0;
-                                    }
-                                }
-                                var val = elm.value;
-                                var pos2 = pos - tl.currLineText.length + tl.currLineTextAll.length;
-                                yankbuffer = val.substr(pos, tl.currLineTextAll.length - tl.currLineText.length);
-                                yankbuffermode = 1;
-                                setElementValue(this, val.substr(0, pos) + val.substr(pos2, val.length));
-                                elm.setSelectionRange(pos-1, pos-1);
-                                undobuffer[undopoint] = elm.value
-                                break;
-
-                            case "delete_edit_lineend":
-                                if (++undopoint == MAXUNDO) {
-                                    undopoint = 0;
-                                }
-                                undonew = undopoint;
-                                if (undopoint == undotop) {
-                                    if (++undotop == MAXUNDO) {
-                                        undotop = 0;
-                                    }
-                                }
-                                var val = elm.value;
-                                var pos2 = pos - tl.currLineText.length + tl.currLineTextAll.length;
-                                yankbuffer = val.substr(pos, tl.currLineTextAll.length - tl.currLineText.length);
-                                yankbuffermode = 1;
-                                setElementValue(this, val.substr(0, pos) + keybuffer + val.substr(pos2, val.length));
-                                elm.setSelectionRange(pos + keybuffer.length, pos + keybuffer.length);
-                                undobuffer[undopoint] = elm.value
-                                break;
-                        }
-                    }
-                    
-
-                    //if (prevKey == 16 && e.keyCode == 86) {
-                    //    visualmode = 1;
-                    //    selectstart = pos;
-                    //}
-
+                    //console.log("keyCode="+e.keyCode+", modifyCode="+modifyCode+", prevKey="+prevKey);
                     if (prevKey == 17 && e.keyCode != 82) { // ctrl+!r
+                        //console.log("keyCode="+e.keyCode);
                         e.preventDefault();
                         switch (e.keyCode) {
                             case 68: // ctrl+d
@@ -315,18 +140,18 @@
                                 jQuery(this).scrollTop(startPos);
                                 modifyCode = 0;
                                 break;
-
                         }
-                        prevKey = 17;
                     } else {
-                        prevKey = e.keyCode;
+                        if (prevKey != 16) {
+                            prevKey = e.keyCode;
+                        }
                     }
 
                     break;
 
                 // 編集モード ##############################################################
                 case "edit":
-                    prevKey = e.keyCode;
+                    //prevKey = e.keyCode;
                     if (e.keyCode === 9) { // TAB
                         e.preventDefault();
                         var tl = getLineText(this);
@@ -345,7 +170,8 @@
 
             //console.log("keyCode="+e.keyCode+", modifyCode="+modifyCode+", prevKey="+prevKey);
             // エスケープを押した
-            if ((e.keyCode == 27 && prevKey != 16) || (prevKey == 219 && e.keyCode == 219) || (prevKey == 192 && prevKey != 16 && e.keyCode == 192) && (mode == "edit" || mode == "command")) {
+            if (((e.keyCode == 219 || e.keyCode == 27) && prevKey != 16) || (prevKey == 17 && e.keyCode == 219) || (prevKey == 192 && prevKey != 16 && e.keyCode == 192) && (mode == "edit" || mode == "command")) {
+                //console.log("ESC");
                 modifyCode = 0;
                 switch (mode) {
                     case "edit":
@@ -376,13 +202,16 @@
                         break;
                 }
                 mode = "view";
-            //} else {
-            //    prevKey = e.keyCode;
+            } else {
+                if (prevKey != 17 && prevKey != 190) {
+                    prevKey = e.keyCode;
+                }
             }
         });
     
         // keypress ######################################################################################################
         this.keypress(function(e) {
+            //console.log("keyCode="+e.keyCode+", modifyCode="+modifyCode+", prevKey="+prevKey);
             //console.log("keypress="+e.keyCode);
             var elm = e.target;
             var pos = elm.selectionStart;
@@ -439,6 +268,46 @@
                             e.keyCode = 0;
                         } else {
                             switch (e.keyCode) {
+                                case 62: // >
+                                    lastcommand = "indent_increment";
+                                    keybuffer = "";
+                                    if (++undopoint == MAXUNDO) {
+                                        undopoint = 0;
+                                    }
+                                    undonew = undopoint;
+                                    if (undopoint == undotop) {
+                                        if (++undotop == MAXUNDO) {
+                                            undotop = 0;
+                                        }
+                                    }
+                                    var pos2 = pos - tl.currLineText.length;
+                                    var val = elm.value;
+                                    setElementValue(this, val.substr(0, pos2) + '    ' + val.substr(pos2, val.length));
+                                    elm.setSelectionRange(pos2, pos2);
+                                    undobuffer[undopoint] = elm.value
+                                    break;
+
+                                case 60: // <
+                                    lastcommand = "indent_decrement";
+                                    keybuffer = "";
+                                    if (++undopoint == MAXUNDO) {
+                                        undopoint = 0;
+                                    }
+                                    undonew = undopoint;
+                                    if (undopoint == undotop) {
+                                        if (++undotop == MAXUNDO) {
+                                            undotop = 0;
+                                        }
+                                    }
+                                    var val = elm.value;
+                                    var str = tl.currLineTextAll.replace(/^    /, "");
+                                    var start = pos - tl.currLineText.length;
+                                    var end = start + tl.currLineTextAll.length;
+                                    setElementValue(this, val.substr(0, start) + str + val.substr(end))
+                                    elm.setSelectionRange(start, start);
+                                    undobuffer[undopoint] = elm.value
+                                    break;
+
                                 case 103: // gg
                                     if (modifyCode == 103) {
                                         elm.setSelectionRange(0, 0);
@@ -517,8 +386,212 @@
                         }
                         modifyCode = 0;
                     } else {
-
                         switch (e.keyCode) {
+                            case 46: // .
+                                switch (lastcommand) {
+                                    case "delete_line":
+                                        modifyCode = 100;
+                                        jQuery(this).trigger(
+                                            jQuery.Event( 'keypress', { keyCode: 100, which: 100 } )
+                                        );
+                                        break;
+
+                                    case "insert_string":
+                                        if (++undopoint == MAXUNDO) {
+                                            undopoint = 0;
+                                        }
+                                        undonew = undopoint;
+                                        if (undopoint == undotop) {
+                                            if (++undotop == MAXUNDO) {
+                                                undotop = 0;
+                                            }
+                                        }
+                                        var val = elm.value;
+                                        setElementValue(this, val.substr(0, pos) + keybuffer + val.substr(pos, val.length));
+                                        elm.setSelectionRange(pos + keybuffer.length, pos + keybuffer.length);
+                                        undobuffer[undopoint] = elm.value;
+                                        break;
+
+                                    case "append_string":
+                                        if (++undopoint == MAXUNDO) {
+                                            undopoint = 0;
+                                        }
+                                        undonew = undopoint;
+                                        if (undopoint == undotop) {
+                                            if (++undotop == MAXUNDO) {
+                                                undotop = 0;
+                                            }
+                                        }
+                                        var val = elm.value;
+                                        setElementValue(this, val.substr(0, pos + 1) + keybuffer + val.substr(pos + 1, val.length));
+                                        elm.setSelectionRange(pos + keybuffer.length, pos + keybuffer.length);
+                                        undobuffer[undopoint] = elm.value;
+                                        break;
+
+                                    case "append_string_top":
+                                        var addpos = pos - tl.currLineText.length;
+                                        var val = elm.value;
+                                        setElementValue(this, val.substr(0, addpos) + keybuffer + val.substr(addpos, val.length));
+                                        elm.setSelectionRange(addpos, addpos);
+                                        break;
+
+                                    case "append_line":
+                                        if (++undopoint == MAXUNDO) {
+                                            undopoint = 0;
+                                        }
+                                        undonew = undopoint;
+                                        if (undopoint == undotop) {
+                                            if (++undotop == MAXUNDO) {
+                                                undotop = 0;
+                                            }
+                                        }
+                                        var nl = pos - tl.currLineText.length + tl.currLineTextAll.length + 1;
+                                        var val = elm.value;
+                                        if (val.charCodeAt(nl - 1) != 10) {
+                                            var addstr = val.substr(0, nl) + '\n' + keybuffer + '\n' + val.substr(nl, val.length)
+                                        } else {
+                                            var addstr = val.substr(0, nl) + keybuffer + '\n' + val.substr(nl, val.length)
+                                        }
+                                        setElementValue(this, addstr);
+                                        elm.setSelectionRange(nl, nl);
+                                        undobuffer[undopoint] = elm.value;
+                                        break;
+
+                                    case "insert_line":
+                                        var nl = pos - tl.currLineText.length;
+                                        var val = elm.value;
+                                        setElementValue(this, val.substr(0, nl) + keybuffer + '\n' + val.substr(nl, val.length));
+                                        elm.setSelectionRange(nl, nl);
+                                        break;
+
+                                    case "append_buffer":
+                                        jQuery(this).trigger(
+                                            jQuery.Event( 'keypress', { keyCode: 112, which: 112 } )
+                                        );
+                                        break;
+
+                                    case "insert_buffer":
+                                        jQuery(this).trigger(
+                                            jQuery.Event( 'keypress', { keyCode: 80, which: 80 } )
+                                        );
+                                        break;
+
+                                    case "delete_character":
+                                        jQuery(this).trigger(
+                                            jQuery.Event( 'keypress', { keyCode: 120, which: 120 } )
+                                        );
+                                        break;
+
+                                    case "joinline":
+                                        jQuery(this).trigger(
+                                            jQuery.Event( 'keypress', { keyCode: 74, which: 74 } )
+                                        );
+                                        break;
+
+                                    case "indent_increment":
+                                        if (++undopoint == MAXUNDO) {
+                                            undopoint = 0;
+                                        }
+                                        undonew = undopoint;
+                                        if (undopoint == undotop) {
+                                            if (++undotop == MAXUNDO) {
+                                                undotop = 0;
+                                            }
+                                        }
+                                        var pos2 = pos - tl.currLineText.length;
+                                        var val = elm.value;
+                                        setElementValue(this, val.substr(0, pos2) + '    ' + val.substr(pos2, val.length));
+                                        elm.setSelectionRange(pos2, pos2);
+                                        undobuffer[undopoint] = elm.value
+                                        break;
+
+                                    case "indent_decrement":
+                                        if (++undopoint == MAXUNDO) {
+                                            undopoint = 0;
+                                        }
+                                        undonew = undopoint;
+                                        if (undopoint == undotop) {
+                                            if (++undotop == MAXUNDO) {
+                                                undotop = 0;
+                                            }
+                                        }
+                                        var val = elm.value;
+                                        var str = tl.currLineTextAll.replace(/^    /, "");
+                                        var start = pos - tl.currLineText.length;
+                                        var end = start + tl.currLineTextAll.length;
+                                        setElementValue(this, val.substr(0, start) + str + val.substr(end))
+                                        elm.setSelectionRange(start, start);
+                                        undobuffer[undopoint] = elm.value
+                                        break;
+
+                                    case "change_word":
+                                        var val = elm.value;
+                                        if (++undopoint == MAXUNDO) {
+                                            undopoint = 0;
+                                        }
+                                        undonew = undopoint;
+                                        if (undopoint == undotop) {
+                                            if (++undotop == MAXUNDO) {
+                                                undotop = 0;
+                                            }
+                                        }
+                                        var after = tl.currLineTextAll.substr(tl.currLineText.length);
+                                        if ((mtc = after.match(/(\ {2,}).+/)) != null) {
+                                            var pos2 = pos + mtc[1].length;
+                                            yankbuffer = val.substr(pos, mtc[1].length);
+                                        } else if ((mtc = after.match(/(.*?)[\b\.,\/:;\'\"@\(\)\[\]\{\}|\<\>\-\n\=\ ]/)) != null) {
+                                            var pos2 = pos + mtc[1].length;
+                                            yankbuffer = val.substr(pos, mtc[1].length);
+                                        } else {
+                                            var pos2 = pos + tl.currLineTextAll.length - tl.currLineText.length;
+                                            yankbuffer = val.substr(pos, tl.currLineTextAll.length - tl.currLineText.length);
+                                        }
+                                        yankbuffermode = 1;
+                                        setElementValue(this, val.substr(0, pos) + keybuffer + val.substr(pos2));
+                                        elm.setSelectionRange(pos, pos);
+                                        undobuffer[undopoint] = elm.value
+                                        break;
+
+                                    case "delete_lineend":
+                                        if (++undopoint == MAXUNDO) {
+                                            undopoint = 0;
+                                        }
+                                        undonew = undopoint;
+                                        if (undopoint == undotop) {
+                                            if (++undotop == MAXUNDO) {
+                                                undotop = 0;
+                                            }
+                                        }
+                                        var val = elm.value;
+                                        var pos2 = pos - tl.currLineText.length + tl.currLineTextAll.length;
+                                        yankbuffer = val.substr(pos, tl.currLineTextAll.length - tl.currLineText.length);
+                                        yankbuffermode = 1;
+                                        setElementValue(this, val.substr(0, pos) + val.substr(pos2, val.length));
+                                        elm.setSelectionRange(pos-1, pos-1);
+                                        undobuffer[undopoint] = elm.value
+                                        break;
+
+                                    case "delete_edit_lineend":
+                                        if (++undopoint == MAXUNDO) {
+                                            undopoint = 0;
+                                        }
+                                        undonew = undopoint;
+                                        if (undopoint == undotop) {
+                                            if (++undotop == MAXUNDO) {
+                                                undotop = 0;
+                                            }
+                                        }
+                                        var val = elm.value;
+                                        var pos2 = pos - tl.currLineText.length + tl.currLineTextAll.length;
+                                        yankbuffer = val.substr(pos, tl.currLineTextAll.length - tl.currLineText.length);
+                                        yankbuffermode = 1;
+                                        setElementValue(this, val.substr(0, pos) + keybuffer + val.substr(pos2, val.length));
+                                        elm.setSelectionRange(pos + keybuffer.length, pos + keybuffer.length);
+                                        undobuffer[undopoint] = elm.value
+                                        break;
+                                }
+                                break;
+
                             // エディター操作 ##################################################
                             case 103: // g
                                 modifyCode = e.keyCode;
@@ -536,6 +609,12 @@
                                 modifyCode = e.keyCode;
                                 break;
                             case 109: // m
+                                modifyCode = e.keyCode;
+                                break;
+                            case 60: // <
+                                modifyCode = e.keyCode;
+                                break;
+                            case 62: // >
                                 modifyCode = e.keyCode;
                                 break;
 
@@ -844,19 +923,23 @@
                             case 120: // x
                                 lastcommand = "delete_character";
                                 keybuffer = "";
-                                if (++undopoint == MAXUNDO) {
-                                    undopoint = 0;
-                                }
-                                undonew = undopoint;
-                                if (undopoint == undotop) {
-                                    if (++undotop == MAXUNDO) {
-                                        undotop = 0;
-                                    }
-                                }
                                 var val = elm.value;
-                                setElementValue(this, val.substr(0, pos) + val.substr(pos + 1, val.length));
-                                elm.setSelectionRange(pos, pos);
-                                undobuffer[undopoint] = elm.value;
+                                ch = val.substr(pos, 1);
+                                code = ch.charCodeAt(0);
+                                if (code != 10) {
+                                    if (++undopoint == MAXUNDO) {
+                                        undopoint = 0;
+                                    }
+                                    undonew = undopoint;
+                                    if (undopoint == undotop) {
+                                        if (++undotop == MAXUNDO) {
+                                            undotop = 0;
+                                        }
+                                    }
+                                    setElementValue(this, val.substr(0, pos) + val.substr(pos + 1, val.length));
+                                    elm.setSelectionRange(pos, pos);
+                                    undobuffer[undopoint] = elm.value;
+                                }
                                 modifyCode = 0;
                                 break;
 

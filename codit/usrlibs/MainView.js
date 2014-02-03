@@ -35,17 +35,39 @@ MainView = (function(_super) {
     this.savebutton = new JSButton(JSRectMake(this._frame.size.width - 32, 0, 32, 24));
     this.savebutton.setButtonTitle("◯");
     this.addSubview(this.savebutton);
-    this.savebutton.addTarget(function() {
+    this.savebutton.addTarget(function(e) {
+      e.preventDefault();
       return _this.compileSource();
     });
-    this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4 - 24, this._frame.size.height - 28 - 24));
+    this.memobutton = new JSButton(JSRectMake(this._frame.size.width - (32 + 2) * 2, 0, 32, 24));
+    this.memobutton.setButtonTitle("M");
+    this.addSubview(this.memobutton);
+    this.memobutton.addTarget(function() {
+      return _this.dispMemoview();
+    });
+    this.infobutton = new JSButton(JSRectMake(this._frame.size.width - (32 + 2) * 3, 0, 32, 24));
+    this.infobutton.setButtonTitle("I");
+    this.addSubview(this.infobutton);
+    this.infobutton.addTarget(function() {
+      return _this.dispInfoview();
+    });
+    this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4, this._frame.size.height - 28 - 24));
     this.editorview.setBackgroundColor(JSColor("#000020"));
     this.editorview.setTextColor(JSColor("white"));
     this.editorview.setTextSize(10);
     this.editorview.setHidden(true);
-    this.editorview.setEditable(false);
     this.addSubview(this.editorview);
-    this.memoview = new JSTextView(JSRectMake(this._frame.size.width - 24, 24, Math.floor(this._frame.size.width / 3), this._frame.size.height - 28));
+    $(this.editorview._viewSelector + "_textarea").keyup(function(e) {
+      return _this.keyarray[e.keyCode] = false;
+    });
+    $(this.editorview._viewSelector + "_textarea").keydown(function(e) {
+      _this.keyarray[e.keyCode] = true;
+      if (_this.keyarray[16] && _this.keyarray[91] && e.keyCode === 77) {
+        e.preventDefault();
+        return _this.dispMemoview();
+      }
+    });
+    this.memoview = new JSTextView(JSRectMake(this._frame.size.width, 24, 0, this._frame.size.height - 28));
     this.memoview.setBackgroundColor(JSColor("#f0f0f0"));
     this.memoview.setTextSize(10);
     this.memoview.setHidden(false);
@@ -61,6 +83,7 @@ MainView = (function(_super) {
     $(this.memoview._viewSelector + "_textarea").keydown(function(e) {
       _this.keyarray[e.keyCode] = true;
       if (_this.keyarray[16] && _this.keyarray[91] && e.keyCode === 77) {
+        e.preventDefault();
         return _this.dispMemoview();
       }
     });
@@ -91,14 +114,16 @@ MainView = (function(_super) {
     }
     if (flag === false) {
       this.infoview.dispflag = true;
-      this.infoview._frame.size.height = parseInt(this._frame.size.height / 3);
-      this.infoview._frame.origin.y = this._frame.size.height - parseInt(this._frame.size.height / 3);
-      return this.infoview.setFrame(this.infoview._frame);
+      return this.infoview.animateWithDuration(0.2, {
+        top: this._frame.size.height - parseInt(this._frame.size.height / 3),
+        height: parseInt(this._frame.size.height / 3)
+      });
     } else {
       this.infoview.dispflag = false;
-      this.infoview._frame.size.height = 24;
-      this.infoview._frame.origin.y = this._frame.size.height - 24;
-      return this.infoview.setFrame(this.infoview._frame);
+      return this.infoview.animateWithDuration(0.2, {
+        top: this._frame.size.height - 24,
+        height: 24
+      });
     }
   };
 
@@ -152,14 +177,16 @@ MainView = (function(_super) {
       this.memoview.dispflag = true;
       this.bringSubviewToFront(this.memoview);
       return this.memoview.animateWithDuration(0.2, {
-        left: Math.floor(this._frame.size.width / 3) * 2
+        left: Math.floor(this._frame.size.width / 3) * 2,
+        width: Math.floor(this._frame.size.width / 3)
       }, function() {
         return _this.focusMemoview();
       });
     } else {
       this.memoview.dispflag = false;
       return this.memoview.animateWithDuration(0.2, {
-        left: this._frame.size.width - 24
+        left: this._frame.size.width,
+        width: 0
       }, function() {
         return _this.focusEditorview();
       });
@@ -170,7 +197,7 @@ MainView = (function(_super) {
     var tmp,
       _this = this;
     if ((this.editorview != null)) this.editorview.removeFromSuperview();
-    this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4 - 24, this._frame.size.height - 28 - 24));
+    this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4, this._frame.size.height - 28 - 24));
     this.editorview.setBackgroundColor(JSColor("#000020"));
     this.editorview.setTextColor(JSColor("white"));
     this.editorview.setTextSize(10);
@@ -194,7 +221,7 @@ MainView = (function(_super) {
       });
       return $(_this.editorview._viewSelector + "_textarea").keydown(function(e) {
         _this.keyarray[e.keyCode] = true;
-        if (_this.keyarray[16] && _this.keyarray[91] && e.keyCode === 83) {
+        if (_this.keyarray[16] && _this.keyarray[91] && e.keyCode === 82) {
           e.preventDefault();
           _this.compileSource();
         }

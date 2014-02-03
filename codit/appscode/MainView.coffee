@@ -29,18 +29,38 @@ class MainView extends JSView
         @savebutton = new JSButton(JSRectMake(@_frame.size.width - 32, 0, 32, 24))
         @savebutton.setButtonTitle("◯")
         @addSubview(@savebutton)
-        @savebutton.addTarget =>
+        @savebutton.addTarget (e)=>
+            e.preventDefault()
             @compileSource()
 
-        @editorview = new JSTextView(JSRectMake(4, 24, @_frame.size.width - 4 - 24, @_frame.size.height - 28 - 24))
+        @memobutton = new JSButton(JSRectMake(@_frame.size.width - (32 + 2) * 2, 0, 32, 24))
+        @memobutton.setButtonTitle("M")
+        @addSubview(@memobutton)
+        @memobutton.addTarget =>
+            @dispMemoview()
+
+        @infobutton = new JSButton(JSRectMake(@_frame.size.width - (32 + 2) * 3, 0, 32, 24))
+        @infobutton.setButtonTitle("I")
+        @addSubview(@infobutton)
+        @infobutton.addTarget =>
+            @dispInfoview()
+
+        @editorview = new JSTextView(JSRectMake(4, 24, @_frame.size.width - 4, @_frame.size.height - 28 - 24))
         @editorview.setBackgroundColor(JSColor("#000020"))
         @editorview.setTextColor(JSColor("white"))
         @editorview.setTextSize(10)
         @editorview.setHidden(true)
-        @editorview.setEditable(false)
+        #@editorview.setEditable(false)
         @addSubview(@editorview)
+        $(@editorview._viewSelector+"_textarea").keyup (e)=>
+            @keyarray[e.keyCode] = false
+        $(@editorview._viewSelector+"_textarea").keydown (e)=>
+            @keyarray[e.keyCode] = true
+            if (@keyarray[16] && @keyarray[91] && e.keyCode == 77)
+                e.preventDefault()
+                @dispMemoview()
 
-        @memoview = new JSTextView(JSRectMake(@_frame.size.width - 24, 24, Math.floor(@_frame.size.width / 3), @_frame.size.height - 28))
+        @memoview = new JSTextView(JSRectMake(@_frame.size.width, 24, 0, @_frame.size.height - 28))
         @memoview.setBackgroundColor(JSColor("#f0f0f0"))
         @memoview.setTextSize(10)
         @memoview.setHidden(false)
@@ -54,6 +74,7 @@ class MainView extends JSView
         $(@memoview._viewSelector+"_textarea").keydown (e)=>
             @keyarray[e.keyCode] = true
             if (@keyarray[16] && @keyarray[91] && e.keyCode == 77)
+                e.preventDefault()
                 @dispMemoview()
 
         size = JSSizeMake(parseInt(@_frame.size.width / 2), parseInt(@_frame.size.height / 2))
@@ -79,16 +100,10 @@ class MainView extends JSView
             flag = (if (flagtmp == true) then false else true)
         if (flag == false)
             @infoview.dispflag = true
-            @infoview._frame.size.height = parseInt(@_frame.size.height / 3)
-            @infoview._frame.origin.y = @_frame.size.height - parseInt(@_frame.size.height / 3)
-            @infoview.setFrame(@infoview._frame)
-            #@infoview.animateWithDuration 0.2, {top: @_frame.size.height - parseInt(@_frame.size.height / 3), height: parseInt(@_frame.size.height / 3)}
+            @infoview.animateWithDuration 0.2, {top: @_frame.size.height - parseInt(@_frame.size.height / 3), height: parseInt(@_frame.size.height / 3)}
         else
             @infoview.dispflag = false
-            @infoview._frame.size.height = 24
-            @infoview._frame.origin.y = @_frame.size.height - 24
-            @infoview.setFrame(@infoview._frame)
-            #@infoview.animateWithDuration 0.2, {top: @_frame.size.height - 24, height: 24}
+            @infoview.animateWithDuration 0.2, {top: @_frame.size.height - 24, height: 24}
 
     focusEditorview:->
         $(@editorview._viewSelector+"_textarea").focus()
@@ -126,17 +141,17 @@ class MainView extends JSView
         if (@memoview.dispflag == false)
             @memoview.dispflag = true
             @bringSubviewToFront(@memoview)
-            @memoview.animateWithDuration 0.2, {left: Math.floor(@_frame.size.width / 3) * 2}, =>
+            @memoview.animateWithDuration 0.2, {left: Math.floor(@_frame.size.width / 3) * 2, width: Math.floor(@_frame.size.width / 3)}, =>
                 @focusMemoview()
         else
             @memoview.dispflag = false
-            @memoview.animateWithDuration 0.2, {left: @_frame.size.width - 24}, =>
+            @memoview.animateWithDuration 0.2, {left: @_frame.size.width, width:0}, =>
                 @focusEditorview()
 
     loadSourceFile:(fpath)->
         if (@editorview?)
             @editorview.removeFromSuperview()
-        @editorview = new JSTextView(JSRectMake(4, 24, @_frame.size.width - 4 - 24, @_frame.size.height - 28 - 24))
+        @editorview = new JSTextView(JSRectMake(4, 24, @_frame.size.width - 4, @_frame.size.height - 28 - 24))
         @editorview.setBackgroundColor(JSColor("#000020"))
         @editorview.setTextColor(JSColor("white"))
         @editorview.setTextSize(10)
@@ -156,7 +171,7 @@ class MainView extends JSView
                 @keyarray[e.keyCode] = false
             $(@editorview._viewSelector+"_textarea").keydown (e)=>
                 @keyarray[e.keyCode] = true
-                if (@keyarray[16] && @keyarray[91] && e.keyCode == 83)
+                if (@keyarray[16] && @keyarray[91] && e.keyCode == 82)
                     e.preventDefault()
                     @compileSource()
                 if (@keyarray[16] && @keyarray[91] && e.keyCode == 89)
