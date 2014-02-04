@@ -9,19 +9,25 @@
 
 # 定数定義 *************************************************************
 # オブジェクトの種類
-CONTROL			= 0
-SPRITE			= 1
-LABEL			= 2
-PHYSICS			= 3
-WEBGL			= 4
+CONTROL         = 0
+SPRITE          = 1
+LABEL           = 2
+PHYSICS         = 3
+WEBGL           = 4
 # Sceneの種類
-BGSCENE			= 0
-BGSCENE_SUB1	= 1
-BGSCENE_SUB2	= 2
-GAMESCENE		= 3
-GAMESCENE_SUB1	= 4
-GAMESCENE_SUB2	= 5
-TOPSCENE		= 6
+BGSCENE         = 0
+BGSCENE_SUB1    = 1
+BGSCENE_SUB2    = 2
+GAMESCENE       = 3
+GAMESCENE_SUB1  = 4
+GAMESCENE_SUB2  = 5
+TOPSCENE        = 6
+# センサー系
+MOTION_ACCEL    = undefined
+MOTION_GRAVITY  = undefined
+MOTION_ROTATE   = undefined
+# ゲーム起動時からの経過時間（秒）
+LAPSEDTIME      = 0
 
 # 初期化処理 ***********************************************************
 # オブジェクトが入っている配列
@@ -36,181 +42,184 @@ _DEBUGLABEL = null
 core = null
 # enchantのrootScene
 rootScene = null
-# ゲーム起動時からの経過時間（秒）
-lapsedtime = 0
 # enchantのオマジナイ
 enchant()
 # ゲーム起動時の処理
 window.onload = ->
-	core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
-	rootScene = core.rootScene
-	core.rootScene.backgroundColor = BGCOLOR
-	core.fps = FPS
-	core.preload(IMAGELIST)
+    core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
+    core.rootScene.backgroundColor = BGCOLOR
+    core.fps = FPS
+    core.preload(IMAGELIST)
 
-	# キーバインド
-	core.keybind('Z'.charCodeAt(0), 'a')
-	core.keybind('X'.charCodeAt(0), 'b')
-	core.keybind(32, "space")
+    rootScene = core.rootScene
+    window.addEventListener 'devicemotion', (e)=>
+        MOTION_ACCEL = e.acceleration
+        MOTION_GRAVITY = e.accelerationIncludingGravity
+        MOTION_ROTATE = e.rotationRate
 
-	for i in [0...(TOPSCENE+1)]
-		scene = new Group()
-		_scenes[i] = scene
-		core.rootScene.addChild(scene)
+    # キーバインド
+    core.keybind('Z'.charCodeAt(0), 'a')
+    core.keybind('X'.charCodeAt(0), 'b')
+    core.keybind(32, "space")
 
-	core.onload = ->
-		for i in [0...OBJECTNUM]
-			_objects[i] = new _originObject()
-		_main = new enchantMain()
-		if (DEBUG == true)
-			_DEBUGLABEL = new Label()
-			_DEBUGLABEL.x = 0
-			_DEBUGLABEL.y = 0
-			_DEBUGLABEL.color = "white"
-			_DEBUGLABEL.font = "10px 'Arial'"
-			_scenes[TOPSCENE].addChild(_DEBUGLABEL)
-		core.rootScene.addEventListener 'enterframe', (e)->
-			lapsedtime = core.frame / FPS
-			lapsedtime = parseFloat(lapsedtime.toFixed(2))
-	core.start()
+    for i in [0...(TOPSCENE+1)]
+        scene = new Group()
+        _scenes[i] = scene
+        core.rootScene.addChild(scene)
+
+    core.onload = ->
+        for i in [0...OBJECTNUM]
+            _objects[i] = new _originObject()
+        _main = new enchantMain()
+        if (DEBUG == true)
+            _DEBUGLABEL = new Label()
+            _DEBUGLABEL.x = 0
+            _DEBUGLABEL.y = 0
+            _DEBUGLABEL.color = "white"
+            _DEBUGLABEL.font = "10px 'Arial'"
+            _scenes[TOPSCENE].addChild(_DEBUGLABEL)
+        core.rootScene.addEventListener 'enterframe', (e)->
+            LAPSEDTIME = core.frame / FPS
+            LAPSEDTIME = parseFloat(LAPSEDTIME.toFixed(2))
+    core.start()
 
 debugwrite = (str)->
-	if (DEBUG == true)
-		_DEBUGLABEL.text = str
+    if (DEBUG == true)
+        _DEBUGLABEL.text = str
 
 createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, g = 0.0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = GAMESCENE)->
-	if (motionObj == null)
-		motionObj = undefined
+    if (motionObj == null)
+        motionObj = undefined
 
-	objnum = _getNullObject()
-	if (objnum < 0)
-		JSLog("object undefined")
-		return undefined
+    objnum = _getNullObject()
+    if (objnum < 0)
+        JSLog("object undefined")
+        return undefined
 
-	obj = _objects[objnum]
-	obj.active = true
+    obj = _objects[objnum]
+    obj.active = true
 
-	# スプライトを生成
-	switch (_type_)
-		when CONTROL, SPRITE
-			motionsprite = new Sprite()
-		when LABEL
-			motionsprite = new Label()
-		else
-			motionsprite = undefined
+    # スプライトを生成
+    switch (_type_)
+        when CONTROL, SPRITE
+            motionsprite = new Sprite()
+        when LABEL
+            motionsprite = new Label()
+        else
+            motionsprite = undefined
 
-	# スプライトを表示
-	_scenes[scene].addChild(motionsprite)
+    # スプライトを表示
+    _scenes[scene].addChild(motionsprite)
 
-	# _type_によってスプライトを初期化する
-	switch _type_
-		when SPRITE
-			# パラメータ初期化
-			motionsprite.frame = 0
-			motionsprite.backgroundColor = "transparent"
-			motionsprite.x = x
-			motionsprite.y = y
-			motionsprite._x_ = x
-			motionsprite._y_ = y
-			motionsprite.width = cellx
-			motionsprite.height = celly
-			motionsprite.originX = parseInt(cellx / 2)
-			motionsprite.originY = parseInt(celly / 2)
-			motionsprite.opacity = opacity
-			motionsprite.rotation = 0.0
-			motionsprite.scaleX = 1.0
-			motionsprite.scaleY = 1.0
-			motionsprite.visible = visible
-			motionsprite.intersectFlag = true
-			motionsprite.animlist = animlist
-			motionsprite.animnum = animnum
-			motionsprite.xs = xs
-			motionsprite.ys = ys
-			motionsprite.gravity = g
-		when LABEL
-			# パラメータ初期化
-			motionsprite.x = x
-			motionsprite.y = y
-			motionsprite._x_ = x
-			motionsprite._y_ = y
-			motionsprite.textAlign = "left"
-			motionsprite.font = "12pt 'Arial'"
-			motionsprite.color = "black"
+    # _type_によってスプライトを初期化する
+    switch _type_
+        when SPRITE
+            # パラメータ初期化
+            motionsprite.frame = 0
+            motionsprite.backgroundColor = "transparent"
+            motionsprite.x = x
+            motionsprite.y = y
+            motionsprite._x_ = x
+            motionsprite._y_ = y
+            motionsprite.width = cellx
+            motionsprite.height = celly
+            motionsprite.originX = parseInt(cellx / 2)
+            motionsprite.originY = parseInt(celly / 2)
+            motionsprite.opacity = opacity
+            motionsprite.rotation = 0.0
+            motionsprite.scaleX = 1.0
+            motionsprite.scaleY = 1.0
+            motionsprite.visible = visible
+            motionsprite.intersectFlag = true
+            motionsprite.animlist = animlist
+            motionsprite.animnum = animnum
+            motionsprite.xs = xs
+            motionsprite.ys = ys
+            motionsprite.gravity = g
+        when LABEL
+            # パラメータ初期化
+            motionsprite.x = x
+            motionsprite.y = y
+            motionsprite._x_ = x
+            motionsprite._y_ = y
+            motionsprite.textAlign = "left"
+            motionsprite.font = "12pt 'Arial'"
+            motionsprite.color = "black"
 
-	# 動きを定義したオブジェクトを生成する
-	if (motionObj != undefined)
-		obj.motionObj = new motionObj(motionsprite)
-	else
-		obj.motionObj = new _stationary(motionsprite)
+    # 動きを定義したオブジェクトを生成する
+    if (motionObj != undefined)
+        obj.motionObj = new motionObj(motionsprite)
+    else
+        obj.motionObj = new _stationary(motionsprite)
 
-	uid = uniqueID()
-	obj.motionObj._uniqueID = uid
-	obj.motionObj._scene = scene
+    uid = uniqueID()
+    obj.motionObj._uniqueID = uid
+    obj.motionObj._scene = scene
 
-	if (motionsprite != undefined)
-		# イベント定義
-		motionsprite.addEventListener 'enterframe', ->
-			if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
-				obj.motionObj.behavior()
+    if (motionsprite != undefined)
+        # イベント定義
+        motionsprite.addEventListener 'enterframe', ->
+            if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
+                obj.motionObj.behavior()
 
-	# 画像割り当て
-	if (IMAGELIST[image]? && animlist?)
-		motionsprite.image = core.assets[IMAGELIST[image]]
+    # 画像割り当て
+    if (IMAGELIST[image]? && animlist?)
+        motionsprite.image = core.assets[IMAGELIST[image]]
 
-	# 初期画像
-	if (animlist?)
-		animpattern = animlist[animnum]
-		motionsprite.frame = animpattern[0]
+    # 初期画像
+    if (animlist?)
+        animpattern = animlist[animnum]
+        motionsprite.frame = animpattern[0]
 
-	obj.motionObj._type_ = _type_
+    obj.motionObj._type_ = _type_
 
-	return obj.motionObj
+    return obj.motionObj
 
 #**********************************************************************
 #**********************************************************************
 removeObject = (motionObj)->
-	if (!motionObj?)
-		return
-	ret = false
-	for parent in _objects
-		if (!parent.motionObj?)
-			continue
-		if (parent.motionObj._uniqueID == motionObj._uniqueID)
-			ret = true
-			break
-	if (ret == false)
-		return
+    if (!motionObj?)
+        return
+    ret = false
+    for parent in _objects
+        if (!parent.motionObj?)
+            continue
+        if (parent.motionObj._uniqueID == motionObj._uniqueID)
+            ret = true
+            break
+    if (ret == false)
+        return
 
-	if (typeof(motionObj.destructor) == 'function')
-		motionObj.destructor()
+    if (typeof(motionObj.destructor) == 'function')
+        motionObj.destructor()
 
-	_scenes[parent.motionObj._scene].removeChild(parent.motionObj.sprite)
-	parent.motionObj.sprite = 0
+    _scenes[parent.motionObj._scene].removeChild(parent.motionObj.sprite)
+    parent.motionObj.sprite = 0
 
-	parent.motionObj = 0
-	parent.active = false
+    parent.motionObj = 0
+    parent.active = false
 
 #**********************************************************************
 #**********************************************************************
 _getNullObject = ->
-	ret = -1
-	for i in [0..._objects.length]
-		if (_objects[i].active == false)
-			ret = i
-			break
-	return ret
+    ret = -1
+    for i in [0..._objects.length]
+        if (_objects[i].active == false)
+            ret = i
+            break
+    return ret
 
 #**********************************************************************
 #**********************************************************************
 getObject:(id)->
-	ret = undefined
-	for i in [0..._objects.length]
-		if (!_objects[i].motionObj?)
-			continue
-		if (_objects[i].motionObj._uniqueID == id)
-			ret = _objects[i].motionObj
-			break
-	return ret
+    ret = undefined
+    for i in [0..._objects.length]
+        if (!_objects[i].motionObj?)
+            continue
+        if (_objects[i].motionObj._uniqueID == id)
+            ret = _objects[i].motionObj
+            break
+    return ret
 
 #**********************************************************************
 #**********************************************************************

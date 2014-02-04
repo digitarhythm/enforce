@@ -1,3 +1,3 @@
 class _originObject
-	constructor:->
-		@active = false
+    constructor:->
+        @active = false

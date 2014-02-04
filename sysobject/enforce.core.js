@@ -1,4 +1,4 @@
-var BGSCENE, BGSCENE_SUB1, BGSCENE_SUB2, CONTROL, GAMESCENE, GAMESCENE_SUB1, GAMESCENE_SUB2, JSLog, LABEL, PHYSICS, SPRITE, TOPSCENE, WEBGL, core, createObject, debugwrite, getBounds, lapsedtime, nop, rand, removeObject, rootScene, sprintf, uniqueID, _DEBUGLABEL, _getNullObject, _main, _objects, _originObject, _scenes, _stationary,
+var BGSCENE, BGSCENE_SUB1, BGSCENE_SUB2, CONTROL, GAMESCENE, GAMESCENE_SUB1, GAMESCENE_SUB2, JSLog, LABEL, LAPSEDTIME, MOTION_ACCEL, MOTION_GRAVITY, MOTION_ROTATE, PHYSICS, SPRITE, TOPSCENE, WEBGL, core, createObject, debugwrite, getBounds, nop, rand, removeObject, rootScene, sprintf, uniqueID, _DEBUGLABEL, _getNullObject, _main, _objects, _originObject, _scenes, _stationary,
   __slice = Array.prototype.slice;
 
 _originObject = (function() {
@@ -79,7 +79,7 @@ _stationary = (function() {
         }
       }
     }
-    if (this._waittime > 0 && lapsedtime > this._waittime) {
+    if (this._waittime > 0 && LAPSEDTIME > this._waittime) {
       this._waittime = 0;
       return this._processnumber = this._nextprocessnum;
     }
@@ -98,7 +98,7 @@ _stationary = (function() {
   };
 
   _stationary.prototype.waitjob = function(wtime) {
-    this._waittime = lapsedtime + wtime;
+    this._waittime = LAPSEDTIME + wtime;
     this._nextprocessnum = this._processnumber + 1;
     return this._processnumber = -1;
   };
@@ -214,6 +214,14 @@ GAMESCENE_SUB2 = 5;
 
 TOPSCENE = 6;
 
+MOTION_ACCEL = void 0;
+
+MOTION_GRAVITY = void 0;
+
+MOTION_ROTATE = void 0;
+
+LAPSEDTIME = 0;
+
 _objects = [];
 
 _scenes = [];
@@ -226,17 +234,21 @@ core = null;
 
 rootScene = null;
 
-lapsedtime = 0;
-
 enchant();
 
 window.onload = function() {
-  var i, scene, _ref;
+  var i, scene, _ref,
+    _this = this;
   core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT);
-  rootScene = core.rootScene;
   core.rootScene.backgroundColor = BGCOLOR;
   core.fps = FPS;
   core.preload(IMAGELIST);
+  rootScene = core.rootScene;
+  window.addEventListener('devicemotion', function(e) {
+    MOTION_ACCEL = e.acceleration;
+    MOTION_GRAVITY = e.accelerationIncludingGravity;
+    return MOTION_ROTATE = e.rotationRate;
+  });
   core.keybind('Z'.charCodeAt(0), 'a');
   core.keybind('X'.charCodeAt(0), 'b');
   core.keybind(32, "space");
@@ -260,8 +272,8 @@ window.onload = function() {
       _scenes[TOPSCENE].addChild(_DEBUGLABEL);
     }
     return core.rootScene.addEventListener('enterframe', function(e) {
-      lapsedtime = core.frame / FPS;
-      return lapsedtime = parseFloat(lapsedtime.toFixed(2));
+      LAPSEDTIME = core.frame / FPS;
+      return LAPSEDTIME = parseFloat(LAPSEDTIME.toFixed(2));
     });
   };
   return core.start();
