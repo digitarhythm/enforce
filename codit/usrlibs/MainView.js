@@ -20,8 +20,7 @@ MainView = (function(_super) {
   }
 
   MainView.prototype.viewDidAppear = function() {
-    var size,
-      _this = this;
+    var _this = this;
     MainView.__super__.viewDidAppear.call(this);
     /*
             Please describe the processing about a view below from here.
@@ -87,11 +86,7 @@ MainView = (function(_super) {
         return _this.dispMemoview();
       }
     });
-    size = JSSizeMake(parseInt(this._frame.size.width / 2), parseInt(this._frame.size.height / 2));
-    this.imageview = new JSImageView(JSRectMake((this._frame.size.width - size.width) / 2, (this._frame.size.height - size.height) / 2, size.width, size.height));
-    this.imageview.setContentMode("JSViewContentModeScaleAspectFit");
-    this.imageview.setHidden(true);
-    this.addSubview(this.imageview);
+    this.imageRefresh();
     this.infoview = new JSTextView(JSRectMake(4, this._frame.size.height - 24, this._frame.size.width - 4, 24));
     this.infoview.setBackgroundColor(JSColor("#f0f0f0"));
     this.infoview.setTextColor(JSColor("black"));
@@ -102,6 +97,16 @@ MainView = (function(_super) {
     return this.infoview.addTapGesture(function() {
       return _this.dispInfoview();
     });
+  };
+
+  MainView.prototype.imageRefresh = function() {
+    var size;
+    if ((this.imageview != null)) this.imageview.removeFromSuperview();
+    size = JSSizeMake(parseInt(this._frame.size.width / 2), parseInt(this._frame.size.height / 2));
+    this.imageview = new JSImageView(JSRectMake((this._frame.size.width - size.width) / 2, (this._frame.size.height - size.height) / 2, size.width, size.height));
+    this.imageview.setContentMode("JSViewContentModeScaleAspectFit");
+    this.imageview.setHidden(true);
+    return this.addSubview(this.imageview);
   };
 
   MainView.prototype.dispInfoview = function(flagtmp) {

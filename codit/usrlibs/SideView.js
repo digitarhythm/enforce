@@ -245,6 +245,7 @@ SideView = (function(_super) {
               jdata = JSON.parse(data);
               _this.sourceview.setListData(jdata['file']);
               _this.sourceview.reload();
+              _this.mainview.sourceview.setText("");
               return _this.mainview.sourceview.setHidden(true);
             });
           });
@@ -261,13 +262,11 @@ SideView = (function(_super) {
             _this.mainview.editfile = void 0;
             ext = ["png", "jpg", "gif", "mp3", "ogg"];
             return _this.filemanager.fileList(_this.documentpath + "/media", ext, function(data) {
-              var img, jdata;
+              var jdata;
               jdata = JSON.parse(data);
               _this.mediaview.setListData(jdata['file']);
               _this.mediaview.reload();
-              img = new JSImage();
-              _this.mainview.imageview.setImage(img);
-              return _this.mainview.imageview.setHidden(true);
+              return _this.mainview.imageRefresh();
             });
           });
         }

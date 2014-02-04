@@ -197,6 +197,7 @@ class SideView extends JSView
                             jdata = JSON.parse(data)
                             @sourceview.setListData(jdata['file'])
                             @sourceview.reload()
+                            @mainview.sourceview.setText("")
                             @mainview.sourceview.setHidden(true)
             when "DELETE_IMAGE"
                 if (ret == 1)
@@ -211,9 +212,7 @@ class SideView extends JSView
                             jdata = JSON.parse(data)
                             @mediaview.setListData(jdata['file'])
                             @mediaview.reload()
-                            img = new JSImage()
-                            @mainview.imageview.setImage(img)
-                            @mainview.imageview.setHidden(true)
+                            @mainview.imageRefresh()
             when "IMAGE_RENAME"
                 fname = jret[0];
                 ext = fname.match(/.*\.(.*)/)

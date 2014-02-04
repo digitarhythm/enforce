@@ -77,11 +77,7 @@ class MainView extends JSView
                 e.preventDefault()
                 @dispMemoview()
 
-        size = JSSizeMake(parseInt(@_frame.size.width / 2), parseInt(@_frame.size.height / 2))
-        @imageview = new JSImageView(JSRectMake((@_frame.size.width - size.width) / 2, (@_frame.size.height - size.height) / 2, size.width, size.height))
-        @imageview.setContentMode("JSViewContentModeScaleAspectFit")
-        @imageview.setHidden(true)
-        @addSubview(@imageview)
+        @imageRefresh()
 
         @infoview = new JSTextView(JSRectMake(4, @_frame.size.height - 24, @_frame.size.width - 4, 24))
         @infoview.setBackgroundColor(JSColor("#f0f0f0"))
@@ -92,6 +88,15 @@ class MainView extends JSView
         @addSubview(@infoview)
         @infoview.addTapGesture =>
             @dispInfoview()
+
+    imageRefresh:->
+        if (@imageview?)
+            @imageview.removeFromSuperview()
+        size = JSSizeMake(parseInt(@_frame.size.width / 2), parseInt(@_frame.size.height / 2))
+        @imageview = new JSImageView(JSRectMake((@_frame.size.width - size.width) / 2, (@_frame.size.height - size.height) / 2, size.width, size.height))
+        @imageview.setContentMode("JSViewContentModeScaleAspectFit")
+        @imageview.setHidden(true)
+        @addSubview(@imageview)
     
     dispInfoview:(flagtmp = undefined)->
         if (!flagtmp?)
