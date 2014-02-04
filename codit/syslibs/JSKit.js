@@ -2495,6 +2495,7 @@ JSTextView = (function(_super) {
     } else {
       text = this._text;
     }
+    JSLog(text);
     return text;
   };
 
