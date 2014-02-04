@@ -188,30 +188,32 @@ class SideView extends JSView
                 if (ret == 1)
                     fname = alert.fname
                     @filemanager.removeItemAtPath @documentpath+"/src/"+alert.fname, (err)=>
-                        if (err == 1)
-                            @mainview.editorview.setText("")
-                            @mainview.editorview.setEditable(false)
-                            @mainview.sourceinfo.setText("")
-                            @mainview.editfile = undefined
-                            ext = ["coffee"]
-                            @filemanager.fileList @documentpath+"/src", ext, (data)=>
-                                jdata = JSON.parse(data)
-                                @sourceview.setListData(jdata['file'])
-                                @sourceview.reload()
+                        @mainview.editorview.setText("")
+                        @mainview.editorview.setEditable(false)
+                        @mainview.sourceinfo.setText("")
+                        @mainview.editfile = undefined
+                        ext = ["coffee"]
+                        @filemanager.fileList @documentpath+"/src", ext, (data)=>
+                            jdata = JSON.parse(data)
+                            @sourceview.setListData(jdata['file'])
+                            @sourceview.reload()
+                            @mainview.sourceview.setHidden(true)
             when "DELETE_IMAGE"
                 if (ret == 1)
                     fname = alert.fname
                     @filemanager.removeItemAtPath @documentpath+"/media/"+alert.fname, (err)=>
-                        if (err == 1)
-                            @mainview.editorview.setText("")
-                            @mainview.editorview.setEditable(false)
-                            @mainview.sourceinfo.setText("")
-                            @mainview.editfile = undefined
-                            ext = ["png", "jpg", "gif", "mp3", "ogg"]
-                            @filemanager.fileList @documentpath+"/media", ext, (data)=>
-                                jdata = JSON.parse(data)
-                                @mediaview.setListData(jdata['file'])
-                                @mediaview.reload()
+                        @mainview.editorview.setText("")
+                        @mainview.editorview.setEditable(false)
+                        @mainview.sourceinfo.setText("")
+                        @mainview.editfile = undefined
+                        ext = ["png", "jpg", "gif", "mp3", "ogg"]
+                        @filemanager.fileList @documentpath+"/media", ext, (data)=>
+                            jdata = JSON.parse(data)
+                            @mediaview.setListData(jdata['file'])
+                            @mediaview.reload()
+                            img = new JSImage()
+                            @mainview.imageview.setImage(img)
+                            @mainview.imageview.setHidden(true)
             when "IMAGE_RENAME"
                 fname = jret[0];
                 ext = fname.match(/.*\.(.*)/)

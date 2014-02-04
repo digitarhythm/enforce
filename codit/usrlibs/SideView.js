@@ -235,19 +235,18 @@ SideView = (function(_super) {
           fname = alert.fname;
           return this.filemanager.removeItemAtPath(this.documentpath + "/src/" + alert.fname, function(err) {
             var ext;
-            if (err === 1) {
-              _this.mainview.editorview.setText("");
-              _this.mainview.editorview.setEditable(false);
-              _this.mainview.sourceinfo.setText("");
-              _this.mainview.editfile = void 0;
-              ext = ["coffee"];
-              return _this.filemanager.fileList(_this.documentpath + "/src", ext, function(data) {
-                var jdata;
-                jdata = JSON.parse(data);
-                _this.sourceview.setListData(jdata['file']);
-                return _this.sourceview.reload();
-              });
-            }
+            _this.mainview.editorview.setText("");
+            _this.mainview.editorview.setEditable(false);
+            _this.mainview.sourceinfo.setText("");
+            _this.mainview.editfile = void 0;
+            ext = ["coffee"];
+            return _this.filemanager.fileList(_this.documentpath + "/src", ext, function(data) {
+              var jdata;
+              jdata = JSON.parse(data);
+              _this.sourceview.setListData(jdata['file']);
+              _this.sourceview.reload();
+              return _this.mainview.sourceview.setHidden(true);
+            });
           });
         }
         break;
@@ -256,19 +255,20 @@ SideView = (function(_super) {
           fname = alert.fname;
           return this.filemanager.removeItemAtPath(this.documentpath + "/media/" + alert.fname, function(err) {
             var ext;
-            if (err === 1) {
-              _this.mainview.editorview.setText("");
-              _this.mainview.editorview.setEditable(false);
-              _this.mainview.sourceinfo.setText("");
-              _this.mainview.editfile = void 0;
-              ext = ["png", "jpg", "gif", "mp3", "ogg"];
-              return _this.filemanager.fileList(_this.documentpath + "/media", ext, function(data) {
-                var jdata;
-                jdata = JSON.parse(data);
-                _this.mediaview.setListData(jdata['file']);
-                return _this.mediaview.reload();
-              });
-            }
+            _this.mainview.editorview.setText("");
+            _this.mainview.editorview.setEditable(false);
+            _this.mainview.sourceinfo.setText("");
+            _this.mainview.editfile = void 0;
+            ext = ["png", "jpg", "gif", "mp3", "ogg"];
+            return _this.filemanager.fileList(_this.documentpath + "/media", ext, function(data) {
+              var img, jdata;
+              jdata = JSON.parse(data);
+              _this.mediaview.setListData(jdata['file']);
+              _this.mediaview.reload();
+              img = new JSImage();
+              _this.mainview.imageview.setImage(img);
+              return _this.mainview.imageview.setHidden(true);
+            });
           });
         }
         break;
