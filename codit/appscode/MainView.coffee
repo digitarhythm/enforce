@@ -116,6 +116,12 @@ class MainView extends JSView
     focusMemoview:->
         $(@memoview._viewSelector+"_textarea").focus()
 
+    saveSource:->
+        if (@editfile?)
+            str = @editorview.getText()
+            savepath = @documentpath+"/src/"+@editfile
+            @filemanager.writeToFile savepath, str, (err)
+
     compileSource:->
         if (@editfile?)
             str = @editorview.getText()

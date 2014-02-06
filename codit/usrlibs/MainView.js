@@ -140,6 +140,15 @@ MainView = (function(_super) {
     return $(this.memoview._viewSelector + "_textarea").focus();
   };
 
+  MainView.prototype.saveSource = function() {
+    var savepath, str;
+    if ((this.editfile != null)) {
+      str = this.editorview.getText();
+      savepath = this.documentpath + "/src/" + this.editfile;
+      return this.filemanager.writeToFile(savepath, str, err);
+    }
+  };
+
   MainView.prototype.compileSource = function() {
     var savepath, str,
       _this = this;

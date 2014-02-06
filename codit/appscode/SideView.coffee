@@ -37,6 +37,7 @@ class SideView extends JSView
         @sourceview.setHidden(true)
         @addSubview(@sourceview)
         @sourceview.addTarget =>
+            @mainview.saveSource()
             fname = @sourceview.objectAtIndex(@sourceview.getSelect())
             @mainview.loadSourceFile(@documentpath+"/src/"+fname)
 

@@ -46,6 +46,7 @@ SideView = (function(_super) {
     this.addSubview(this.sourceview);
     this.sourceview.addTarget(function() {
       var fname;
+      _this.mainview.saveSource();
       fname = _this.sourceview.objectAtIndex(_this.sourceview.getSelect());
       return _this.mainview.loadSourceFile(_this.documentpath + "/src/" + fname);
     });
