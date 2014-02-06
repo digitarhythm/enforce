@@ -145,7 +145,7 @@ MainView = (function(_super) {
     if ((this.editfile != null)) {
       str = this.editorview.getText();
       savepath = this.documentpath + "/src/" + this.editfile;
-      return this.filemanager.writeToFile(savepath, str, err);
+      return this.filemanager.writeToFile(savepath, str);
     }
   };
 

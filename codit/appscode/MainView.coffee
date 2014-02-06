@@ -120,7 +120,7 @@ class MainView extends JSView
         if (@editfile?)
             str = @editorview.getText()
             savepath = @documentpath+"/src/"+@editfile
-            @filemanager.writeToFile savepath, str, (err)
+            @filemanager.writeToFile savepath, str
 
     compileSource:->
         if (@editfile?)
