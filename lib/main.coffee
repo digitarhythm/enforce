@@ -12,8 +12,9 @@
 CONTROL         = 0
 SPRITE          = 1
 LABEL           = 2
-PHYSICS         = 3
-WEBGL           = 4
+WEBGL           = 3
+PHYCIRCLE       = 4
+PHYBOX          = 5
 # Sceneの種類
 BGSCENE         = 0
 BGSCENE_SUB1    = 1
@@ -40,16 +41,21 @@ _main = null
 _DEBUGLABEL = null
 # enchantのcoreオブジェクト
 core = null
+# box2dのworldオブジェクト
+world = null
 # enchantのrootScene
 rootScene = null
 # enchantのオマジナイ
 enchant()
 # ゲーム起動時の処理
 window.onload = ->
+    # enchant初期化
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
     core.rootScene.backgroundColor = BGCOLOR
     core.fps = FPS
     core.preload(IMAGELIST)
+    # box2d初期化
+    world = new PhysicsWorld(0, GRAVITY)
 
     rootScene = core.rootScene
     window.addEventListener 'devicemotion', (e)=>
@@ -79,6 +85,7 @@ window.onload = ->
             _DEBUGLABEL.font = "10px 'Arial'"
             _scenes[TOPSCENE].addChild(_DEBUGLABEL)
         core.rootScene.addEventListener 'enterframe', (e)->
+            world.step(core.fps)
             LAPSEDTIME = core.frame / FPS
             LAPSEDTIME = parseFloat(LAPSEDTIME.toFixed(2))
     core.start()
@@ -136,6 +143,7 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
             motionsprite.xs = xs
             motionsprite.ys = ys
             motionsprite.gravity = g
+
         when LABEL
             # パラメータ初期化
             motionsprite.x = x
@@ -145,6 +153,16 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
             motionsprite.textAlign = "left"
             motionsprite.font = "12pt 'Arial'"
             motionsprite.color = "black"
+
+        when WEBGL
+            nop()
+
+        when PHYCIRCLE
+            nop()
+
+        when PHYBOX
+            nop()
+
 
     # 動きを定義したオブジェクトを生成する
     if (motionObj != undefined)
