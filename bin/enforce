@@ -86,7 +86,7 @@ static)
 	fi
 	if [ -f "./index.php" ]; then
 		rm -rf ./index.php
-        cp -a ${ENF}/lib/htaccess ./codit/.htaccess
+        mv -f ./codit/index.php ./codit/.index.php
 		${cwd}/_enforce_static > ./index.html
 	fi
 ;;
@@ -98,7 +98,7 @@ develop)
 	fi
 	if [ -f "./index.html" ]; then
 		rm -f ./index.html
-        rm -f ./codit/.htaccess
+        mv -f ./codit/.index.php ./codit/index.php
 		cp -a ${ENF}/index.php $(pwd)
 	fi
 ;;
