@@ -20,7 +20,7 @@ class MainView extends JSView
             if (data != "")
                 @preference = data
             else
-                @preference = [false, false, false]
+                @preference = [true, false, false]
         
     viewDidAppear:->
         super()

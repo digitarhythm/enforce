@@ -25,7 +25,7 @@ MainView = (function(_super) {
       if (data !== "") {
         return _this.preference = data;
       } else {
-        return _this.preference = [false, false, false];
+        return _this.preference = [true, false, false];
       }
     });
   }
