@@ -890,7 +890,7 @@ JSAlertView = (function(_super) {
     JSAlertView.__super__.constructor.call(this);
     this._bgColor = JSColor("clearColor");
     this._style = "JSAlertViewStyleDefault";
-    this.delegate = null;
+    this.delegate = this;
     this.cancel = false;
   }
 

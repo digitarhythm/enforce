@@ -19,7 +19,7 @@ PrefView = (function(_super) {
     this.preference = [];
     dialogtitle = new JSLabel(JSRectMake(8, 4, 120, 48));
     dialogtitle.setText("環境設定");
-    dialogtitle.setTextSize(14);
+    dialogtitle.setTextSize(12);
     dialogtitle.setTextAlignment("JSTextAlignmentLeft");
     dialogtitle.setTextColor(JSColor("black"));
     this.addSubview(dialogtitle);
@@ -32,8 +32,7 @@ PrefView = (function(_super) {
       }, function() {
         _this.preference[0] = _this.vimode.getValue();
         _this.userdefaults.setObject(_this.preference, "preference");
-        _this.delegate.prefRefresh();
-        return _this.removeFromSuperview();
+        return _this.delegate.closePrefview();
       });
     });
     this.cancelbutton = new JSButton(JSRectMake(this._frame.size.width - 84 * 2, this._frame.size.height - 28, 80, 24));
@@ -43,7 +42,7 @@ PrefView = (function(_super) {
       return _this.animateWithDuration(0.2, {
         alpha: 0.0
       }, function() {
-        return _this.removeFromSuperview();
+        return _this.delegate.closePrefview();
       });
     });
     this.userdefaults.stringForKey("preference", function(data) {

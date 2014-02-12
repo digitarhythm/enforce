@@ -4,7 +4,7 @@ class PrefView extends JSView
         ###
         Please describe initialization processing of a class below from here. 
         ###
-        
+
         @setCornerRadius(6.0)
         @setShadow(true)
 
@@ -13,7 +13,7 @@ class PrefView extends JSView
 
         dialogtitle = new JSLabel(JSRectMake(8, 4, 120, 48))
         dialogtitle.setText("環境設定")
-        dialogtitle.setTextSize(14)
+        dialogtitle.setTextSize(12)
         dialogtitle.setTextAlignment("JSTextAlignmentLeft")
         dialogtitle.setTextColor(JSColor("black"))
         @addSubview(dialogtitle)
@@ -26,8 +26,7 @@ class PrefView extends JSView
             @animateWithDuration 0.2, {alpha:0.0}, =>
                 @preference[0] = @vimode.getValue()
                 @userdefaults.setObject @preference, "preference"
-                @delegate.prefRefresh()
-                @removeFromSuperview()
+                @delegate.closePrefview()
         
         # Cancelボタン ##############################################
         @cancelbutton = new JSButton(JSRectMake(@_frame.size.width - 84 * 2, @_frame.size.height - 28, 80, 24))
@@ -35,7 +34,7 @@ class PrefView extends JSView
         @addSubview(@cancelbutton)
         @cancelbutton.addTarget =>
             @animateWithDuration 0.2, {alpha:0.0}, =>
-                @removeFromSuperview()
+                @delegate.closePrefview()
 
         # 初期設定 #################################################
         @userdefaults.stringForKey "preference", (data)=>
@@ -51,7 +50,6 @@ class PrefView extends JSView
             @vimode = new JSSwitch(JSRectMake(@_frame.size.width - 120, 64, 80, 24))
             @vimode.setValue(@preference[0])
             @addSubview(@vimode)
-
 
     viewDidAppear:->
         super()

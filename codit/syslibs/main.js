@@ -1,7 +1,7 @@
-var getRootView,
+var getRootView, rootView,
   _this = this;
 
-this.rootView = void 0;
+rootView = void 0;
 
 $(function() {
   var bounds, frame, height, rootID, width;
@@ -14,7 +14,7 @@ $(function() {
   _this.rootView.setClipToBounds(true);
   _this.rootView.setBackgroundColor(JSColor("clearColor"));
   $("body").append(_this.rootView._div);
-  _this.rootView.viewDidAppear();
+  rootView.viewDidAppear();
   rootID = _this.rootView._objectID;
   _this.applicationMain = new applicationMain(_this.rootView);
   _this.applicationMain.didFinishLaunching();

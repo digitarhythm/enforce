@@ -8,6 +8,7 @@ class MainView extends JSView
         @userdefaults = new JSUserDefaults()
         @currentEditFile = ""
         @setClipToBounds(true)
+        @prefview = undefined
 
         @editfile = undefined
         @filemanager = new JSFileManager()
@@ -230,11 +231,26 @@ class MainView extends JSView
         @imageview.setImage(img)
 
     dispPrefview:->
-        PREFWIDTH  = 480
-        PREFHEIGHT = 320
-        @prefview = new PrefView(JSRectMake((@_frame.size.width - PREFWIDTH) / 2, (@_frame.size.height - PREFHEIGHT) / 2, PREFWIDTH, PREFHEIGHT))
+        if (@prefview?)
+            return
+        bounds = getBounds()
+        @bgview = new JSView(bounds)
+        @bgview.setBackgroundColor(JSColor("black"))
+        @bgview.setAlpha(0.9)
+        rootView.addSubview(@bgview)
+        PREFWIDTH  = 320
+        PREFHEIGHT = 240
+        bounds = getBounds()
+        @prefview = new PrefView(JSRectMake((bounds.size.width - PREFWIDTH) / 2, (bounds.size.height - PREFHEIGHT) / 2, PREFWIDTH, PREFHEIGHT))
         @prefview.delegate = @
-        @addSubview(@prefview)
+        @bgview.addSubview(@prefview)
+
+    closePrefview:->
+        @prefRefresh()
+        @prefview.removeFromSuperview()
+        @prefview = undefined
+        @bgview.removeFromSuperview()
+        @bgview = undefined
 
     prefRefresh:->
         @userdefaults.stringForKey "preference", (data)=>
@@ -242,4 +258,6 @@ class MainView extends JSView
                 @preference = data
             else
                 @preference = [false, false, false]
-            @loadSourceFile(@currentEditFile)
+            if (@currentEditFile != "")
+                @saveSource()
+                @loadSourceFile(@currentEditFile)

@@ -15,6 +15,7 @@ MainView = (function(_super) {
     this.userdefaults = new JSUserDefaults();
     this.currentEditFile = "";
     this.setClipToBounds(true);
+    this.prefview = void 0;
     this.editfile = void 0;
     this.filemanager = new JSFileManager();
     this.documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory");
@@ -296,12 +297,27 @@ MainView = (function(_super) {
   };
 
   MainView.prototype.dispPrefview = function() {
-    var PREFHEIGHT, PREFWIDTH;
-    PREFWIDTH = 480;
-    PREFHEIGHT = 320;
-    this.prefview = new PrefView(JSRectMake((this._frame.size.width - PREFWIDTH) / 2, (this._frame.size.height - PREFHEIGHT) / 2, PREFWIDTH, PREFHEIGHT));
+    var PREFHEIGHT, PREFWIDTH, bounds;
+    if ((this.prefview != null)) return;
+    bounds = getBounds();
+    this.bgview = new JSView(bounds);
+    this.bgview.setBackgroundColor(JSColor("black"));
+    this.bgview.setAlpha(0.9);
+    rootView.addSubview(this.bgview);
+    PREFWIDTH = 320;
+    PREFHEIGHT = 240;
+    bounds = getBounds();
+    this.prefview = new PrefView(JSRectMake((bounds.size.width - PREFWIDTH) / 2, (bounds.size.height - PREFHEIGHT) / 2, PREFWIDTH, PREFHEIGHT));
     this.prefview.delegate = this;
-    return this.addSubview(this.prefview);
+    return this.bgview.addSubview(this.prefview);
+  };
+
+  MainView.prototype.closePrefview = function() {
+    this.prefRefresh();
+    this.prefview.removeFromSuperview();
+    this.prefview = void 0;
+    this.bgview.removeFromSuperview();
+    return this.bgview = void 0;
   };
 
   MainView.prototype.prefRefresh = function() {
@@ -312,7 +328,10 @@ MainView = (function(_super) {
       } else {
         _this.preference = [false, false, false];
       }
-      return _this.loadSourceFile(_this.currentEditFile);
+      if (_this.currentEditFile !== "") {
+        _this.saveSource();
+        return _this.loadSourceFile(_this.currentEditFile);
+      }
     });
   };
 
