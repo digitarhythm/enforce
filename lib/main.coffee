@@ -49,6 +49,7 @@ rootScene = null
 enchant()
 # ゲーム起動時の処理
 window.onload = ->
+    bounds = getBounds()
     # enchant初期化
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
     core.rootScene.backgroundColor = BGCOLOR

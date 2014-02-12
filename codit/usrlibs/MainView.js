@@ -7,16 +7,26 @@ MainView = (function(_super) {
   __extends(MainView, _super);
 
   function MainView(frame) {
+    var _this = this;
     MainView.__super__.constructor.call(this, frame);
     /*
             Please describe initialization processing of a class below from here.
     */
-    this.userDefaults = new JSUserDefaults();
+    this.userdefaults = new JSUserDefaults();
+    this.currentEditFile = "";
     this.setClipToBounds(true);
     this.editfile = void 0;
     this.filemanager = new JSFileManager();
     this.documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory");
     this.keyarray = [];
+    this.preference = [];
+    this.userdefaults.stringForKey("preference", function(data) {
+      if (data !== "") {
+        return _this.preference = data;
+      } else {
+        return _this.preference = [false, false, false];
+      }
+    });
   }
 
   MainView.prototype.viewDidAppear = function() {
@@ -50,6 +60,12 @@ MainView = (function(_super) {
     this.infobutton.addTarget(function() {
       return _this.dispInfoview();
     });
+    this.prefbutton = new JSButton(JSRectMake(this._frame.size.width - (32 + 2) * 4, 0, 32, 24));
+    this.prefbutton.setButtonTitle("E");
+    this.addSubview(this.prefbutton);
+    this.prefbutton.addTarget(function() {
+      return _this.dispPrefview();
+    });
     this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4, this._frame.size.height - 28 - 24));
     this.editorview.setBackgroundColor(JSColor("#000020"));
     this.editorview.setTextColor(JSColor("white"));
@@ -72,10 +88,12 @@ MainView = (function(_super) {
     this.memoview.setHidden(false);
     this.memoview.dispflag = false;
     this.addSubview(this.memoview);
-    this.userDefaults.stringForKey("memo", function(string) {
+    this.userdefaults.stringForKey("memo", function(string) {
       return _this.memoview.setText(string);
     });
-    $(this.memoview._viewSelector + "_textarea").vixtarea();
+    if (this.preference[0] === true) {
+      $(this.memoview._viewSelector + "_textarea").vixtarea();
+    }
     $(this.memoview._viewSelector + "_textarea").keyup(function(e) {
       return _this.keyarray[e.keyCode] = false;
     });
@@ -199,7 +217,7 @@ MainView = (function(_super) {
       });
     } else {
       memostr = this.memoview.getText();
-      this.userDefaults.setObject(memostr, "memo");
+      this.userdefaults.setObject(memostr, "memo");
       this.memoview.dispflag = false;
       return this.memoview.animateWithDuration(0.2, {
         left: this._frame.size.width,
@@ -214,6 +232,7 @@ MainView = (function(_super) {
     var tmp,
       _this = this;
     if ((this.editorview != null)) this.editorview.removeFromSuperview();
+    this.currentEditFile = fpath;
     this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4, this._frame.size.height - 28 - 24));
     this.editorview.setBackgroundColor(JSColor("#000020"));
     this.editorview.setTextColor(JSColor("white"));
@@ -228,10 +247,24 @@ MainView = (function(_super) {
       _this.editorview.setEditable(true);
       _this.editorview.setHidden(false);
       _this.editorview.setText(string);
-      $(_this.editorview._viewSelector + "_textarea").vixtarea({
-        backgroundColor: "#000020",
-        color: "white"
-      });
+      if (_this.preference[0] === true) {
+        $(_this.editorview._viewSelector + "_textarea").vixtarea({
+          backgroundColor: "#000020",
+          color: "white"
+        });
+      } else {
+        $(_this.editorview._viewSelector + "_textarea").keydown(function(e) {
+          var elem, pos, val;
+          if (e.keyCode === 9) {
+            e.preventDefault();
+            elem = e.target;
+            val = elem.value;
+            pos = elem.selectionStart;
+            elem.value = val.substr(0, pos) + '    ' + val.substr(pos, val.length);
+            return elem.setSelectionRange(pos + 4, pos + 4);
+          }
+        });
+      }
       _this.focusEditorview();
       $(_this.editorview._viewSelector + "_textarea").keyup(function(e) {
         return _this.keyarray[e.keyCode] = false;
@@ -260,6 +293,27 @@ MainView = (function(_super) {
     if ((this.imageview != null)) this.imageview.setHidden(false);
     img = new JSImage(fpath);
     return this.imageview.setImage(img);
+  };
+
+  MainView.prototype.dispPrefview = function() {
+    var PREFHEIGHT, PREFWIDTH;
+    PREFWIDTH = 480;
+    PREFHEIGHT = 320;
+    this.prefview = new PrefView(JSRectMake((this._frame.size.width - PREFWIDTH) / 2, (this._frame.size.height - PREFHEIGHT) / 2, PREFWIDTH, PREFHEIGHT));
+    this.prefview.delegate = this;
+    return this.addSubview(this.prefview);
+  };
+
+  MainView.prototype.prefRefresh = function() {
+    var _this = this;
+    return this.userdefaults.stringForKey("preference", function(data) {
+      if (data !== "") {
+        _this.preference = data;
+      } else {
+        _this.preference = [false, false, false];
+      }
+      return _this.loadSourceFile(_this.currentEditFile);
+    });
   };
 
   return MainView;

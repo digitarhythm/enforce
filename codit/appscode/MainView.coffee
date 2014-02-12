@@ -5,13 +5,21 @@ class MainView extends JSView
         Please describe initialization processing of a class below from here. 
         ###
 
-        @userDefaults = new JSUserDefaults()
+        @userdefaults = new JSUserDefaults()
+        @currentEditFile = ""
         @setClipToBounds(true)
 
         @editfile = undefined
         @filemanager = new JSFileManager()
         @documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory")
         @keyarray = []
+
+        @preference = []
+        @userdefaults.stringForKey "preference", (data)=>
+            if (data != "")
+                @preference = data
+            else
+                @preference = [false, false, false]
         
     viewDidAppear:->
         super()
@@ -45,6 +53,12 @@ class MainView extends JSView
         @infobutton.addTarget =>
             @dispInfoview()
 
+        @prefbutton = new JSButton(JSRectMake(@_frame.size.width - (32 + 2) * 4, 0, 32, 24))
+        @prefbutton.setButtonTitle("E")
+        @addSubview(@prefbutton)
+        @prefbutton.addTarget =>
+            @dispPrefview()
+
         @editorview = new JSTextView(JSRectMake(4, 24, @_frame.size.width - 4, @_frame.size.height - 28 - 24))
         @editorview.setBackgroundColor(JSColor("#000020"))
         @editorview.setTextColor(JSColor("white"))
@@ -66,9 +80,10 @@ class MainView extends JSView
         @memoview.setHidden(false)
         @memoview.dispflag = false
         @addSubview(@memoview)
-        @userDefaults.stringForKey "memo", (string)=>
+        @userdefaults.stringForKey "memo", (string)=>
             @memoview.setText(string)
-        $(@memoview._viewSelector+"_textarea").vixtarea()
+        if (@preference[0] == true)
+            $(@memoview._viewSelector+"_textarea").vixtarea()
         $(@memoview._viewSelector+"_textarea").keyup (e)=>
             @keyarray[e.keyCode] = false
         $(@memoview._viewSelector+"_textarea").keydown (e)=>
@@ -156,7 +171,7 @@ class MainView extends JSView
                 @focusMemoview()
         else
             memostr = @memoview.getText()
-            @userDefaults.setObject memostr, "memo"
+            @userdefaults.setObject memostr, "memo"
             @memoview.dispflag = false
             @memoview.animateWithDuration 0.2, {left: @_frame.size.width, width:0}, =>
                 @focusEditorview()
@@ -164,6 +179,7 @@ class MainView extends JSView
     loadSourceFile:(fpath)->
         if (@editorview?)
             @editorview.removeFromSuperview()
+        @currentEditFile = fpath
         @editorview = new JSTextView(JSRectMake(4, 24, @_frame.size.width - 4, @_frame.size.height - 28 - 24))
         @editorview.setBackgroundColor(JSColor("#000020"))
         @editorview.setTextColor(JSColor("white"))
@@ -178,7 +194,18 @@ class MainView extends JSView
             @editorview.setEditable(true)
             @editorview.setHidden(false)
             @editorview.setText(string)
-            $(@editorview._viewSelector+"_textarea").vixtarea({backgroundColor:"#000020",color:"white"})
+            if (@preference[0] == true)
+                $(@editorview._viewSelector+"_textarea").vixtarea({backgroundColor:"#000020",color:"white"})
+            else
+                $(@editorview._viewSelector+"_textarea").keydown (e)=>
+                    if(e.keyCode == 9)
+                        e.preventDefault()
+                        elem = e.target
+                        val = elem.value
+                        pos = elem.selectionStart
+                        elem.value = val.substr(0, pos) + '    ' + val.substr(pos, val.length)
+                        elem.setSelectionRange(pos + 4, pos + 4)
+                    
             @focusEditorview()
             $(@editorview._viewSelector+"_textarea").keyup (e)=>
                 @keyarray[e.keyCode] = false
@@ -202,3 +229,17 @@ class MainView extends JSView
         img = new JSImage(fpath)
         @imageview.setImage(img)
 
+    dispPrefview:->
+        PREFWIDTH  = 480
+        PREFHEIGHT = 320
+        @prefview = new PrefView(JSRectMake((@_frame.size.width - PREFWIDTH) / 2, (@_frame.size.height - PREFHEIGHT) / 2, PREFWIDTH, PREFHEIGHT))
+        @prefview.delegate = @
+        @addSubview(@prefview)
+
+    prefRefresh:->
+        @userdefaults.stringForKey "preference", (data)=>
+            if (data != "")
+                @preference = data
+            else
+                @preference = [false, false, false]
+            @loadSourceFile(@currentEditFile)
