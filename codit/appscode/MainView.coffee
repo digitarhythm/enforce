@@ -92,7 +92,6 @@ class MainView extends JSView
             if (@keyarray[16] && @keyarray[91] && e.keyCode == 77)
                 e.preventDefault()
                 @dispMemoview()
-
         @imageRefresh()
 
         @infoview = new JSTextView(JSRectMake(4, @_frame.size.height - 24, @_frame.size.width - 4, 24))
@@ -221,6 +220,9 @@ class MainView extends JSView
                 if (@keyarray[16] && @keyarray[91] && e.keyCode == 77)
                     e.preventDefault()
                     @dispMemoview()
+                if (@keyarray[16] && @keyarray[91] && e.keyCode == 69)
+                    e.preventDefault()
+                    @dispPrefview()
 
     dispImage:(fpath)->
         if (@editorview?)
@@ -236,7 +238,7 @@ class MainView extends JSView
         bounds = getBounds()
         @bgview = new JSView(bounds)
         @bgview.setBackgroundColor(JSColor("black"))
-        @bgview.setAlpha(0.9)
+        @bgview.setAlpha(1.0)
         rootView.addSubview(@bgview)
         PREFWIDTH  = 320
         PREFHEIGHT = 240

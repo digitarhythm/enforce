@@ -282,7 +282,11 @@ MainView = (function(_super) {
         }
         if (_this.keyarray[16] && _this.keyarray[91] && e.keyCode === 77) {
           e.preventDefault();
-          return _this.dispMemoview();
+          _this.dispMemoview();
+        }
+        if (_this.keyarray[16] && _this.keyarray[91] && e.keyCode === 69) {
+          e.preventDefault();
+          return _this.dispPrefview();
         }
       });
     });
@@ -302,7 +306,7 @@ MainView = (function(_super) {
     bounds = getBounds();
     this.bgview = new JSView(bounds);
     this.bgview.setBackgroundColor(JSColor("black"));
-    this.bgview.setAlpha(0.9);
+    this.bgview.setAlpha(1.0);
     rootView.addSubview(this.bgview);
     PREFWIDTH = 320;
     PREFHEIGHT = 240;
