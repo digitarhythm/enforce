@@ -36,7 +36,7 @@
         }
     </style>
 </head>
-<body>
+<body bgcolor="black">
 </body>
 </html>
 

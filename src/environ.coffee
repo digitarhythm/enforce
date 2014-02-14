@@ -8,9 +8,9 @@
 
 # static values setting ***********************************************************************************
 DEBUG           = true                      # デバッグモード
-SCREEN_WIDTH    = 240                       # 画面の幅
-SCREEN_HEIGHT   = 320                       # 画面の高さ
-FPS             = 24                        # フレームレート
+SCREEN_WIDTH    = 320                       # 画面の幅
+SCREEN_HEIGHT   = 480                       # 画面の高さ
+FPS             = 60                        # フレームレート
 BGCOLOR         = "black"                   # 背景色
 OBJECTNUM       = 100                       # キャラの最大数
 GRAVITY         = 9.8                       # 重力（box2dで使用）

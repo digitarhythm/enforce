@@ -95,7 +95,7 @@ debugwrite = (str)->
     if (DEBUG == true)
         _DEBUGLABEL.text = str
 
-createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, g = 0.0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = GAMESCENE)->
+createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, g = 0.0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1)->
     if (motionObj == null)
         motionObj = undefined
 
@@ -111,10 +111,16 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
     switch (_type_)
         when CONTROL, SPRITE
             motionsprite = new Sprite()
+            if (scene < 0)
+                scene = GAMESCENE
         when LABEL
             motionsprite = new Label()
+            if (scene < 0)
+                scene = GAMESCENE_SUB2
         else
             motionsprite = undefined
+            if (scene < 0)
+                scene = GAMESCENE
 
     # スプライトを表示
     _scenes[scene].addChild(motionsprite)
