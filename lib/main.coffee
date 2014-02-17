@@ -95,6 +95,42 @@ debugwrite = (str)->
     if (DEBUG == true)
         _DEBUGLABEL.text = str
 
+# 2D/3D共用オブジェクト生成メソッド
+addObject = (param)->
+    JSLog(param)
+    motionobj = if (param.motionobj?) then param.motionobj else undefined
+    _type_ = if (param.type?) then param.type else SPRITE
+    x = if (param.x?) then param.x else 0
+    y = if (param.y?) then param.y else 0
+    z = if (param.z?) then param.z else 0
+    xs = if (param.xs?) then param.xs else 0
+    ys = if (param.ys?) then param.ys else 0
+    zs = if (param.zs?) then param.zs else 0
+    g = if (param.gravity?) then param.gravity else 0
+    image = if (param.image?) then param.image else 0
+    cellx = if (param.cellx?) then param.cellx else 0
+    celly = if (param.celly?) then param.celly else 0
+    opacity = if (param.opacity?) then param.opacity else 1.0
+    animlist = if (param.animlist?) then param.animlist else [[0]]
+    animnum = if (param.animnum?) then param.animnum else 0
+    visible = if (param.visible?) then param.visible else true
+    scene = if (param.scene?) then param.scene else -1
+
+    JSLog("type=%@", _type_)
+
+    switch _type_
+        when CONTROL, SPRITE, LABEL
+            obj = createObject(motionobj, _type_, x, y, xs, ys, g, image, cellx, celly, opacity, animlist, animnum, visible, scene)
+
+        when PHYCIRCLE, PHYCUBE
+            nop()
+
+        when GLSPHERE, GLCUBE
+            nop()
+
+    return obj
+
+# enforce1.x互換用2Dスプライト生成メソッド
 createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, g = 0.0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1)->
     if (motionObj == null)
         motionObj = undefined
