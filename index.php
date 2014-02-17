@@ -8,6 +8,11 @@
 	<script type="text/javascript" src="./extlib/enchant.min.js"></script>
 	<script type="text/javascript" src="./extlib/Box2dWeb-2.1.a.3.min.js"></script>
 	<script type="text/javascript" src="./extlib/box2d.enchant.js"></script>
+	<script type="text/javascript" src="./extlib/gl-matrix-min.js"></script>
+	<script type="text/javascript" src="./extlib/gl.enchant.js"></script>
+	<script type="text/javascript" src="./extlib/collada.gl.enchant.js"></script>
+	<script type="text/javascript" src="./extlib/mmd.gl.enchant.js"></script>
+	<script type="text/javascript" src="./extlib/socket.enchant.js"></script>
 	<script type="text/javascript" src="./usrobject/environ.js"></script>
 	<script type="text/javascript" src="./sysobject/enforce.core.js"></script>
 <?php

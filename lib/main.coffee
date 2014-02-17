@@ -206,13 +206,16 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
             motionsprite.font = "12pt 'Arial'"
             motionsprite.color = "black"
 
-        when WEBGL
+        when GLSPHERE
+            nop()
+
+        when GLCUBE
             nop()
 
         when PHYCIRCLE
             nop()
 
-        when PHYBOX
+        when PHYCUBE
             nop()
 
 
