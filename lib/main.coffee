@@ -97,15 +97,13 @@ debugwrite = (str)->
 
 # 2D/3D共用オブジェクト生成メソッド
 addObject = (param)->
-    JSLog(param)
+    # 2D用パラメーター
     motionobj = if (param.motionobj?) then param.motionobj else undefined
     _type_ = if (param.type?) then param.type else SPRITE
     x = if (param.x?) then param.x else 0
     y = if (param.y?) then param.y else 0
-    z = if (param.z?) then param.z else 0
     xs = if (param.xs?) then param.xs else 0
     ys = if (param.ys?) then param.ys else 0
-    zs = if (param.zs?) then param.zs else 0
     g = if (param.gravity?) then param.gravity else 0
     image = if (param.image?) then param.image else 0
     cellx = if (param.cellx?) then param.cellx else 0
@@ -115,6 +113,9 @@ addObject = (param)->
     animnum = if (param.animnum?) then param.animnum else 0
     visible = if (param.visible?) then param.visible else true
     scene = if (param.scene?) then param.scene else -1
+    # 3D用パラメーター
+    z = if (param.z?) then param.z else 0
+    zs = if (param.zs?) then param.zs else 0
 
     switch _type_
         when CONTROL, SPRITE, LABEL
