@@ -116,8 +116,6 @@ addObject = (param)->
     visible = if (param.visible?) then param.visible else true
     scene = if (param.scene?) then param.scene else -1
 
-    JSLog("type=%@", _type_)
-
     switch _type_
         when CONTROL, SPRITE, LABEL
             obj = createObject(motionobj, _type_, x, y, xs, ys, g, image, cellx, celly, opacity, animlist, animnum, visible, scene)
@@ -137,7 +135,6 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 
     objnum = _getNullObject()
     if (objnum < 0)
-        JSLog("object undefined")
         return undefined
 
     obj = _objects[objnum]
