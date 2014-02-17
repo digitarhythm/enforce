@@ -12,9 +12,10 @@
 CONTROL         = 0
 SPRITE          = 1
 LABEL           = 2
-WEBGL           = 3
-PHYCIRCLE       = 4
-PHYBOX          = 5
+PHYCIRCLE       = 3
+PHYCUBE         = 4
+GLSPHERE        = 5
+GLCUBE          = 6
 # Sceneの種類
 BGSCENE         = 0
 BGSCENE_SUB1    = 1
@@ -69,10 +70,14 @@ window.onload = ->
     core.keybind('X'.charCodeAt(0), 'b')
     core.keybind(32, "space")
 
+    # シーングループを生成
     for i in [0...(TOPSCENE+1)]
         scene = new Group()
         _scenes[i] = scene
         core.rootScene.addChild(scene)
+
+    # 3Dシーンを生成
+    scene3D = new Scene3D()
 
     core.onload = ->
         for i in [0...OBJECTNUM]
@@ -121,10 +126,16 @@ addObject = (param)->
         when CONTROL, SPRITE, LABEL
             obj = createObject(motionobj, _type_, x, y, xs, ys, g, image, cellx, celly, opacity, animlist, animnum, visible, scene)
 
-        when PHYCIRCLE, PHYCUBE
+        when PHYCIRCLE
             nop()
 
-        when GLSPHERE, GLCUBE
+        when PHYCUBE
+            nop()
+
+        when GLSPHERE
+            obj = new Sphere()
+
+        when GLCUBE
             nop()
 
     return obj
