@@ -170,7 +170,7 @@ SideView = (function(_super) {
           }
         });
         this.addSubview(this.delButton);
-        ext = ["png", "jpg", "gif", "mp3", "ogg"];
+        ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"];
         return this.filemanager.fileList(this.documentpath + "/media", ext, function(data) {
           var dispdata, jdata;
           jdata = JSON.parse(data);
@@ -201,7 +201,7 @@ SideView = (function(_super) {
         path = res.path;
         thumb = path.replace(/\./, "_s.");
         _this.filemanager.removeItemAtPath(_this.picturepath + "/.thumb/" + thumb);
-        ext = ["png", "jpg", "gif", "mp3", "ogg"];
+        ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"];
         return _this.filemanager.fileList(_this.documentpath + "/media", ext, function(data) {
           var jdata;
           jdata = JSON.parse(data);
@@ -261,7 +261,7 @@ SideView = (function(_super) {
             _this.mainview.editorview.setEditable(false);
             _this.mainview.sourceinfo.setText("");
             _this.mainview.editfile = void 0;
-            ext = ["png", "jpg", "gif", "mp3", "ogg"];
+            ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"];
             return _this.filemanager.fileList(_this.documentpath + "/media", ext, function(data) {
               var jdata;
               jdata = JSON.parse(data);
@@ -283,7 +283,7 @@ SideView = (function(_super) {
           oldfpath = this.documentpath + "/media/" + alert.oldfname;
           newfpath = this.documentpath + "/media/" + fname;
           return this.filemanager.moveItemAtPath(oldfpath, newfpath, function(err) {
-            ext = ["png", "jpg", "gif", "mp3", "ogg"];
+            ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"];
             return _this.filemanager.fileList(_this.documentpath + "/media", ext, function(data) {
               var jdata;
               jdata = JSON.parse(data);

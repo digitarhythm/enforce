@@ -1,4 +1,4 @@
-# motionObj, kind, x, y, xs, ys, g, image, chara_w, chara_h, opacity, animlist, anime, visible
+# motionObj, type, x, y, xs, ys, gravity, image, cellx, celly, opacity, animlist, anime, visible, scene
 class [__classname__] extends _stationary
     #**************************
     # character constructor

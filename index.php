@@ -10,6 +10,7 @@
 	<script type="text/javascript" src="./extlib/box2d.enchant.js"></script>
 	<script type="text/javascript" src="./extlib/gl-matrix-min.js"></script>
 	<script type="text/javascript" src="./extlib/gl.enchant.js"></script>
+	<script type="text/javascript" src="./extlib/primitive.gl.enchant.js"></script>
 	<script type="text/javascript" src="./extlib/collada.gl.enchant.js"></script>
 	<script type="text/javascript" src="./extlib/mmd.gl.enchant.js"></script>
 	<script type="text/javascript" src="./extlib/socket.enchant.js"></script>

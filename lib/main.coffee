@@ -16,6 +16,7 @@ PHYCIRCLE       = 3
 PHYCUBE         = 4
 GLSPHERE        = 5
 GLCUBE          = 6
+GLMODEL         = 7
 # Sceneの種類
 BGSCENE         = 0
 BGSCENE_SUB1    = 1
@@ -44,20 +45,37 @@ _DEBUGLABEL = null
 core = null
 # box2dのworldオブジェクト
 world = null
+# 3Dのscene
+rootScene3D = null
 # enchantのrootScene
 rootScene = null
 # enchantのオマジナイ
 enchant()
 # ゲーム起動時の処理
 window.onload = ->
-    bounds = getBounds()
     # enchant初期化
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
-    core.rootScene.backgroundColor = BGCOLOR
+    #core.rootScene.backgroundColor = BGCOLOR
     core.fps = FPS
     core.preload(IMAGELIST)
     # box2d初期化
     world = new PhysicsWorld(0, GRAVITY)
+    # 3Dシーンを生成
+    rootScene3D = new Scene3D()
+    # ライト生成
+    light = new DirectionalLight()
+    light.directionZ = -1
+    light.color = [1.0, 1.0, 1.0]
+    rootScene3D.setDirectionalLight(light)
+    # カメラ生成
+    camera = new Camera3D()
+    camera.x = 0
+    camera.y = 0
+    camera.z = -100
+    camera.centerX = 0
+    camera.centerY = 0
+    camera.centerZ = 0
+    rootScene3D.setCamera(camera)
 
     rootScene = core.rootScene
     window.addEventListener 'devicemotion', (e)=>
@@ -74,10 +92,7 @@ window.onload = ->
     for i in [0...(TOPSCENE+1)]
         scene = new Group()
         _scenes[i] = scene
-        core.rootScene.addChild(scene)
-
-    # 3Dシーンを生成
-    scene3D = new Scene3D()
+        rootScene.addChild(scene)
 
     core.onload = ->
         for i in [0...OBJECTNUM]
@@ -90,7 +105,8 @@ window.onload = ->
             _DEBUGLABEL.color = "white"
             _DEBUGLABEL.font = "10px 'Arial'"
             _scenes[TOPSCENE].addChild(_DEBUGLABEL)
-        core.rootScene.addEventListener 'enterframe', (e)->
+
+        rootScene.addEventListener 'enterframe', (e)->
             world.step(core.fps)
             LAPSEDTIME = core.frame / FPS
             LAPSEDTIME = parseFloat(LAPSEDTIME.toFixed(2))
@@ -103,7 +119,7 @@ debugwrite = (str)->
 # 2D/3D共用オブジェクト生成メソッド
 addObject = (param)->
     # 2D用パラメーター
-    motionobj = if (param.motionobj?) then param.motionobj else undefined
+    motionObj = if (param.motionObj?) then param.motionObj else undefined
     _type_ = if (param.type?) then param.type else SPRITE
     x = if (param.x?) then param.x else 0
     y = if (param.y?) then param.y else 0
@@ -118,27 +134,85 @@ addObject = (param)->
     animnum = if (param.animnum?) then param.animnum else 0
     visible = if (param.visible?) then param.visible else true
     scene = if (param.scene?) then param.scene else -1
+    model = if (param.model?) then param.model else undefined
     # 3D用パラメーター
     z = if (param.z?) then param.z else 0
     zs = if (param.zs?) then param.zs else 0
 
+    # オブジェクト生成
     switch _type_
-        when CONTROL, SPRITE, LABEL
-            obj = createObject(motionobj, _type_, x, y, xs, ys, g, image, cellx, celly, opacity, animlist, animnum, visible, scene)
+        # 2Dオブジェクト
+        when CONTROL, SPRITE, LABEL, PHYCIRCLE, PHYCUBE
+            obj = createObject(motionObj, _type_, x, y, xs, ys, g, image, cellx, celly, opacity, animlist, animnum, visible, scene)
 
-        when PHYCIRCLE
-            nop()
-
-        when PHYCUBE
-            nop()
-
-        when GLSPHERE
-            obj = new Sphere()
-
-        when GLCUBE
-            nop()
+        # 3Dオブジェクト
+        when GLSPHERE, GLCUBE, GLMODEL
+            obj = createObject2(motionObj, _type_, x, y, z, xs, ys, zs, g, model, opacity)
 
     return obj
+
+# 3Dスプライト生成
+createObject2 = (motionObj = undefined, _type_ = GLSPHERE, x = 0, y = 0, z = 0, xs = 0.0, ys = 0.0, zs = 0.0, g = 0.0, model = undefined, opacity = 1.0)->
+    if (motionObj == null)
+        motionObj = undefined
+
+    objnum = _getNullObject()
+    if (objnum < 0)
+        return undefined
+
+    obj = _objects[objnum]
+    obj.active = true
+
+    # 3Dスプライトを生成
+    switch (_type_)
+        when GLSPHERE
+            motionsprite = new Sphere()
+
+        when GLCUBE
+            motionsprite = new Cube()
+
+        when GLMODEL
+            motionsprite = new Sprite3D()
+
+    # 値を設定する
+    motionsprite.x = x
+    motionsprite.y = y
+    motionsprite.z = z
+    motionsprite._x_ = x
+    motionsprite._y_ = y
+    motionsprite._z_ = z
+    motionsprite.xs = xs
+    motionsprite.ys = ys
+    motionsprite.zs = zs
+    motionsprite.gravity = g
+    motionsprite.a = opacity
+
+    # スプライトを表示
+    rootScene3D.addChild(motionsprite)
+
+    # 動きを定義したオブジェクトを生成する
+    if (motionObj != undefined)
+        obj.motionObj = new motionObj(motionsprite)
+    else
+        obj.motionObj = new _stationary(motionsprite)
+
+    uid = uniqueID()
+    obj.motionObj._uniqueID = uid
+    obj.motionObj._scene = rootScene3D
+
+    if (motionsprite != undefined)
+        # イベント定義
+        motionsprite.addEventListener 'enterframe', ->
+            if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
+                obj.motionObj.behavior()
+
+    # モデル割り当て
+    if (IMAGELIST[model]? && model?)
+        motionsprite.set(core.assets[IMAGELIST[model]])
+
+    obj.motionObj._type_ = _type_
+
+    return obj.motionObj
 
 # enforce1.x互換用2Dスプライト生成メソッド
 createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, g = 0.0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1)->
@@ -157,7 +231,7 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
         when CONTROL, SPRITE
             motionsprite = new Sprite()
             if (scene < 0)
-                scene = GAMESCENE
+                scene = GAMESCENE_SUB1
         when LABEL
             motionsprite = new Label()
             if (scene < 0)
@@ -165,7 +239,7 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
         else
             motionsprite = undefined
             if (scene < 0)
-                scene = GAMESCENE
+                scene = GAMESCENE_SUB1
 
     # スプライトを表示
     _scenes[scene].addChild(motionsprite)
@@ -205,12 +279,6 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
             motionsprite.textAlign = "left"
             motionsprite.font = "12pt 'Arial'"
             motionsprite.color = "black"
-
-        when GLSPHERE
-            nop()
-
-        when GLCUBE
-            nop()
 
         when PHYCIRCLE
             nop()

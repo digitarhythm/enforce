@@ -34,39 +34,48 @@ class _stationary
     # ビヘイビアー
     #***************************************************************
     behavior:->
-        if (@_type_ == SPRITE && @sprite?)
+        if (@_type_ != LABEL && @sprite?)
             if (@sprite.x != @sprite.xback)
                 @sprite._x_ = @sprite.x
             if (@sprite.y != @sprite.yback)
                 @sprite._y_ = @sprite.y
+            if (@sprite.z != @sprite.zback)
+                @sprite._z_ = @sprite.z
             @sprite.ys += @sprite.gravity
             @sprite._x_ += @sprite.xs
-            @sprite._y_ += @sprite.ys
+            if (@_type_ < 5)
+                @sprite._y_ += @sprite.ys
+            else
+                @sprite._y_ -= @sprite.ys
+            @sprite._z_ += @sprite.zs
             @sprite.x = Math.round(@sprite._x_)
             @sprite.y = Math.round(@sprite._y_)
+            @sprite.z = Math.round(@sprite._z_)
             @sprite.xback = @sprite.x
             @sprite.yback = @sprite.y
+            @sprite.zback = @sprite.z
 
-        # 画面外に出たら自動的に消滅する
-        if (@sprite.x < -@sprite.width || @sprite.x > SCREEN_WIDTH || @sprite.y < -@sprite.height || @sprite.y > SCREEN_HEIGHT)
-            if (typeof(@autoRemove) == 'function')
-                @autoRemove()
-                removeObject(@)
-
-        if (@sprite.animlist?)
-            animpattern = @sprite.animlist[@sprite.animnum]
-            @sprite.frame = animpattern[@_dispframe++]
-            if (@_dispframe >= animpattern.length)
-                if (@_endflag == true)
-                    @_endflag = false
+        if (@_type_ < 5)
+            # 画面外に出たら自動的に消滅する
+            if (@sprite.x < -@sprite.width || @sprite.x > SCREEN_WIDTH || @sprite.y < -@sprite.height || @sprite.y > SCREEN_HEIGHT)
+                if (typeof(@autoRemove) == 'function')
+                    @autoRemove()
                     removeObject(@)
-                    return
-                else if (@_returnflag == true)
-                    @_returnflag = false
-                    @sprite.animnum = @_beforeAnimnum
-                    @_dispframe = 0
-                else
-                    @_dispframe = 0
+
+            if (@sprite.animlist?)
+                animpattern = @sprite.animlist[@sprite.animnum]
+                @sprite.frame = animpattern[@_dispframe++]
+                if (@_dispframe >= animpattern.length)
+                    if (@_endflag == true)
+                        @_endflag = false
+                        removeObject(@)
+                        return
+                    else if (@_returnflag == true)
+                        @_returnflag = false
+                        @sprite.animnum = @_beforeAnimnum
+                        @_dispframe = 0
+                    else
+                        @_dispframe = 0
 
         if (@_waittime > 0 && LAPSEDTIME > @_waittime)
             @_waittime = 0
@@ -154,4 +163,12 @@ class _stationary
         @sprite.animnum = animnum
         @_dispframe = 0
         @_returnflag = true
+
+    #***************************************************************
+    # 3DスプライトにColladaモデルを設定する
+    #***************************************************************
+    setModel:(num)->
+        model = IMAGELIST[num]
+        JSLog("mode=%@", model)
+        @set(core.assets[model])
 

@@ -2,7 +2,7 @@
 class enchantMain
     constructor:->
         bearobj = addObject
-            motionobj: bear
+            motionObj: bear
             type: SPRITE
             x: rand(320-32)
             y: rand(240-32)
