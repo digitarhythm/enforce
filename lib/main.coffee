@@ -71,7 +71,7 @@ window.onload = ->
     camera = new Camera3D()
     camera.x = 0
     camera.y = 0
-    camera.z = -100
+    camera.z = -1000
     camera.centerX = 0
     camera.centerY = 0
     camera.centerZ = 0
@@ -167,12 +167,15 @@ createObject2 = (motionObj = undefined, _type_ = GLSPHERE, x = 0, y = 0, z = 0, 
     switch (_type_)
         when GLSPHERE
             motionsprite = new Sphere()
+            motionsprite.scaleX = motionsprite.scaleY = motionsprite.scaleZ = 10
 
         when GLCUBE
             motionsprite = new Cube()
+            motionsprite.scaleX = motionsprite.scaleY = motionsprite.scaleZ = 10
 
         when GLMODEL
             motionsprite = new Sprite3D()
+            motionsprite.scaleX = motionsprite.scaleY = motionsprite.scaleZ = 10
 
     # 値を設定する
     motionsprite.x = x
