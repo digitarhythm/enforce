@@ -57,7 +57,7 @@ class _stationary
 
         if (@_type_ < 5)
             # 画面外に出たら自動的に消滅する
-            if (@sprite.x < -@sprite.width || @sprite.x > SCREEN_WIDTH || @sprite.y < -@sprite.height || @sprite.y > SCREEN_HEIGHT)
+            if (@sprite.x < -@sprite.width || @sprite.x > SCREEN_WIDTH || @sprite.y < -@sprite.height || @sprite.y > SCREEN_HEIGHT || @_autoRemove == true)
                 if (typeof(@autoRemove) == 'function')
                     @autoRemove()
                     removeObject(@)
@@ -169,6 +169,5 @@ class _stationary
     #***************************************************************
     setModel:(num)->
         model = IMAGELIST[num]
-        JSLog("mode=%@", model)
         @set(core.assets[model])
 

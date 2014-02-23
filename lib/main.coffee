@@ -55,23 +55,27 @@ enchant()
 window.onload = ->
     # enchant初期化
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
+    # 3Dシーンを生成
+    rootScene3D = new Scene3D()
     #core.rootScene.backgroundColor = BGCOLOR
     core.fps = FPS
     core.preload(IMAGELIST)
     # box2d初期化
     world = new PhysicsWorld(0, GRAVITY)
-    # 3Dシーンを生成
-    rootScene3D = new Scene3D()
     # ライト生成
-    light = new DirectionalLight()
-    light.directionZ = -1
-    light.color = [1.0, 1.0, 1.0]
-    rootScene3D.setDirectionalLight(light)
+    dlight = new DirectionalLight()
+    dlight.directionZ = 5
+    dlight.color = [1.0, 1.0, 1.0]
+    rootScene3D.setDirectionalLight(dlight)
+    alight = new AmbientLight()
+    alight.directionZ = 1
+    alight.color = [1.0, 1.0, 1.0]
+    rootScene3D.setAmbientLight(alight)
     # カメラ生成
     camera = new Camera3D()
     camera.x = 0
     camera.y = 0
-    camera.z = -1000
+    camera.z = 1000
     camera.centerX = 0
     camera.centerY = 0
     camera.centerZ = 0
@@ -167,31 +171,32 @@ createObject2 = (motionObj = undefined, _type_ = GLSPHERE, x = 0, y = 0, z = 0, 
     switch (_type_)
         when GLSPHERE
             motionsprite = new Sphere()
-            motionsprite.scaleX = motionsprite.scaleY = motionsprite.scaleZ = 10
 
         when GLCUBE
             motionsprite = new Cube()
-            motionsprite.scaleX = motionsprite.scaleY = motionsprite.scaleZ = 10
 
         when GLMODEL
             motionsprite = new Sprite3D()
-            motionsprite.scaleX = motionsprite.scaleY = motionsprite.scaleZ = 10
-
-    # 値を設定する
-    motionsprite.x = x
-    motionsprite.y = y
-    motionsprite.z = z
-    motionsprite._x_ = x
-    motionsprite._y_ = y
-    motionsprite._z_ = z
-    motionsprite.xs = xs
-    motionsprite.ys = ys
-    motionsprite.zs = zs
-    motionsprite.gravity = g
-    motionsprite.a = opacity
 
     # スプライトを表示
     rootScene3D.addChild(motionsprite)
+
+    # モデル割り当て
+    if (IMAGELIST[model]? && model?)
+        motionsprite.set(core.assets[IMAGELIST[model]])
+
+    # 値を設定する
+    motionsprite.x = parseInt(x)
+    motionsprite.y = parseInt(y)
+    motionsprite.z = parseInt(z)
+    motionsprite._x_ = parseFloat(x)
+    motionsprite._y_ = parseFloat(y)
+    motionsprite._z_ = parseFloat(z)
+    motionsprite.xs = parseFloat(xs)
+    motionsprite.ys = parseFloat(ys)
+    motionsprite.zs = parseFloat(zs)
+    motionsprite.gravity = parseFloat(g)
+    motionsprite.a = parseFloat(opacity)
 
     # 動きを定義したオブジェクトを生成する
     if (motionObj != undefined)
@@ -208,10 +213,6 @@ createObject2 = (motionObj = undefined, _type_ = GLSPHERE, x = 0, y = 0, z = 0, 
         motionsprite.addEventListener 'enterframe', ->
             if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                 obj.motionObj.behavior()
-
-    # モデル割り当て
-    if (IMAGELIST[model]? && model?)
-        motionsprite.set(core.assets[IMAGELIST[model]])
 
     obj.motionObj._type_ = _type_
 
