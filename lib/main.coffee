@@ -61,7 +61,7 @@ window.onload = ->
     # box2d初期化
     world = new PhysicsWorld(0, GRAVITY)
     # 3Dシーンを生成
-    if (typeof('Scene3D') == 'function')
+    if (typeof(Scene3D) == 'function')
         rootScene3D = new Scene3D()
         # スポットライト生成
         #dlight = new DirectionalLight()
