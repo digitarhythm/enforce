@@ -61,30 +61,31 @@ window.onload = ->
     # box2d初期化
     world = new PhysicsWorld(0, GRAVITY)
     # 3Dシーンを生成
-    rootScene3D = new Scene3D()
-    # スポットライト生成
-    #dlight = new DirectionalLight()
-    #dlight.directionX = 0
-    #dlight.directionY = 100
-    #dlight.directionZ = 0
-    #dlight.color = [1.0, 1.0, 1.0]
-    #rootScene3D.setDirectionalLight(dlight)
-    # 環境光ライト生成
-    #alight = new AmbientLight()
-    #alight.directionX = 0
-    #alight.directionY = 100
-    #alight.directionZ = 0
-    #alight.color = [1.0, 1.0, 1.0]
-    #rootScene3D.setAmbientLight(alight)
-    # カメラ生成
-    camera = new Camera3D()
-    camera.x = 0
-    camera.y = 100
-    camera.z = 500
-    camera.centerX = 0
-    camera.centerY = 0
-    camera.centerZ = 0
-    rootScene3D.setCamera(camera)
+    if (typeof('Scene3D') == 'function')
+        rootScene3D = new Scene3D()
+        # スポットライト生成
+        #dlight = new DirectionalLight()
+        #dlight.directionX = 0
+        #dlight.directionY = 100
+        #dlight.directionZ = 0
+        #dlight.color = [1.0, 1.0, 1.0]
+        #rootScene3D.setDirectionalLight(dlight)
+        # 環境光ライト生成
+        #alight = new AmbientLight()
+        #alight.directionX = 0
+        #alight.directionY = 100
+        #alight.directionZ = 0
+        #alight.color = [1.0, 1.0, 1.0]
+        #rootScene3D.setAmbientLight(alight)
+        # カメラ生成
+        camera = new Camera3D()
+        camera.x = 0
+        camera.y = 100
+        camera.z = 500
+        camera.centerX = 0
+        camera.centerY = 0
+        camera.centerZ = 0
+        rootScene3D.setCamera(camera)
 
     rootScene = core.rootScene
     window.addEventListener 'devicemotion', (e)=>

@@ -12,7 +12,7 @@ $webgl = $ini["ENVIRON"]["webgl"];
 	<script type="text/javascript" src="./extlib/enchant.min.js"></script>
 	<script type="text/javascript" src="./extlib/Box2dWeb-2.1.a.3.min.js"></script>
 	<script type="text/javascript" src="./extlib/box2d.enchant.js"></script>
-<?php   if ($webgl) {
+<?php   if ($webgl == true) {
 ?>	<script type="text/javascript" src="./extlib/gl-matrix-min.js"></script>
 	<script type="text/javascript" src="./extlib/gl.enchant.js"></script>
 	<script type="text/javascript" src="./extlib/primitive.gl.enchant.js"></script>
