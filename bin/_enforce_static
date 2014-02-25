@@ -1,41 +1,5 @@
-#!/usr/bin/php -f
-<?php
-echo "<!DOCTYPE html>\n";
-echo "<html>\n";
-echo "<head>\n";
-echo "<meta charset='UTF-8'>\n";
-echo "<meta http-equiv='x-ua-compatible' content='IE=Edge'>\n";
-echo "<meta name='viewport' content='width=device-width, user-scalable=no'>\n";
-echo "<meta name='apple-mobile-web-app-capable' content='yes'>\n";
-echo "<script type='text/javascript' src='./extlib/enchant.min.js'></script>\n";
-echo "<script type='text/javascript' src='./extlib/Box2dWeb-2.1.a.3.min.js'></script>\n";
-echo "<script type='text/javascript' src='./extlib/box2d.enchant.js'></script>\n";
-echo "<script type='text/javascript' src='./usrobject/environ.js'></script>\n";
-echo "<script type='text/javascript' src='./sysobject/enforce.core.js'></script>\n";
-$srcdir = "./plugins";
-$dir = opendir($srcdir);
-while ($fname = readdir($dir)) {
-	if (is_dir($srcdir."/".$fname)) {
-		continue;
-	}
-	echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
-}
+#!/bin/bash
 
-$srcdir = "./usrobject";
-$dir = opendir($srcdir);
-while ($fname = readdir($dir)) {
-	if (is_dir($srcdir."/".$fname) || preg_match("/stationary.js/", $fname)) {
-		continue;
-	}
-	echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
-}
-echo "</head>\n";
-echo "<style type='text/css'>\n";
-echo "body {\n";
-echo "margin: 0;\n";
-echo "padding: 0;\n";
-echo "</style>\n";
-echo "<head>\n";
-echo "<body>\n";
-echo "<body>\n";
-echo "</html>\n";
+CWD=`pwd`
+
+php -f $CWD/index.php > $CWD/index.html

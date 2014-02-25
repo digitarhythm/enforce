@@ -54,28 +54,33 @@ enchant()
 # ゲーム起動時の処理
 window.onload = ->
     # enchant初期化
+    enchant.ENV.MOUSE_ENABLED = false
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
-    # 3Dシーンを生成
-    rootScene3D = new Scene3D()
-    #core.rootScene.backgroundColor = BGCOLOR
     core.fps = FPS
     core.preload(IMAGELIST)
     # box2d初期化
     world = new PhysicsWorld(0, GRAVITY)
-    # ライト生成
-    dlight = new DirectionalLight()
-    dlight.directionZ = 5
-    dlight.color = [1.0, 1.0, 1.0]
-    rootScene3D.setDirectionalLight(dlight)
-    alight = new AmbientLight()
-    alight.directionZ = 1
-    alight.color = [1.0, 1.0, 1.0]
-    rootScene3D.setAmbientLight(alight)
+    # 3Dシーンを生成
+    rootScene3D = new Scene3D()
+    # スポットライト生成
+    #dlight = new DirectionalLight()
+    #dlight.directionX = 0
+    #dlight.directionY = 100
+    #dlight.directionZ = 0
+    #dlight.color = [1.0, 1.0, 1.0]
+    #rootScene3D.setDirectionalLight(dlight)
+    # 環境光ライト生成
+    #alight = new AmbientLight()
+    #alight.directionX = 0
+    #alight.directionY = 100
+    #alight.directionZ = 0
+    #alight.color = [1.0, 1.0, 1.0]
+    #rootScene3D.setAmbientLight(alight)
     # カメラ生成
     camera = new Camera3D()
     camera.x = 0
-    camera.y = 0
-    camera.z = 1000
+    camera.y = 100
+    camera.z = 500
     camera.centerX = 0
     camera.centerY = 0
     camera.centerZ = 0

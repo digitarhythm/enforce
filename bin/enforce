@@ -85,9 +85,9 @@ static)
 		exit
 	fi
 	if [ -f "./index.php" ]; then
-		rm -rf ./index.php
         mv -f ./codit/index.php ./codit/.index.php
 		${cwd}/_enforce_static > ./index.html
+		rm -rf ./index.php
 	fi
 ;;
 
