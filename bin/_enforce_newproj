@@ -24,6 +24,7 @@ cp -af $ENF/media/* $PROJ/media/
 cp -af $ENF/src/enchantMain.coffee $PROJ/src/
 cp -af $ENF/src/environ.coffee $PROJ/src/
 cp -af $ENF/extlib/* $PROJ/extlib/
+cp -af $ENF/lib/config.ini $PROJ/lib/
 
 # エディターのコピー
 cp -af $ENF/codit $PROJ/

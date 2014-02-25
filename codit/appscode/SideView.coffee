@@ -144,7 +144,7 @@ class SideView extends JSView
                         @addSubview(alert)
                         alert.show()
                 @addSubview(@delButton)
-                ext = ["png", "jpg", "gif", "mp3", "ogg"]
+                ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"]
                 @filemanager.fileList @documentpath+"/media", ext, (data)=>
                     jdata = JSON.parse(data)
                     dispdata = jdata['file']
@@ -166,7 +166,7 @@ class SideView extends JSView
                 path = res.path
                 thumb = path.replace(/\./, "_s.")
                 @filemanager.removeItemAtPath(@picturepath+"/.thumb/"+thumb)
-                ext = ["png", "jpg", "gif", "mp3", "ogg"]
+                ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"]
                 @filemanager.fileList @documentpath+"/media", ext, (data)=>
                     jdata = JSON.parse(data)
                     @mediaview.setListData(jdata['file'])
@@ -208,7 +208,7 @@ class SideView extends JSView
                         @mainview.editorview.setEditable(false)
                         @mainview.sourceinfo.setText("")
                         @mainview.editfile = undefined
-                        ext = ["png", "jpg", "gif", "mp3", "ogg"]
+                        ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"]
                         @filemanager.fileList @documentpath+"/media", ext, (data)=>
                             jdata = JSON.parse(data)
                             @mediaview.setListData(jdata['file'])
@@ -225,7 +225,7 @@ class SideView extends JSView
                     oldfpath = @documentpath+"/media/"+alert.oldfname
                     newfpath = @documentpath+"/media/"+fname
                     @filemanager.moveItemAtPath oldfpath, newfpath, (err)=>
-                        ext = ["png", "jpg", "gif", "mp3", "ogg"]
+                        ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"]
                         @filemanager.fileList @documentpath+"/media", ext, (data)=>
                             jdata = JSON.parse(data)
                             @mediaview.setListData(jdata['file'])
