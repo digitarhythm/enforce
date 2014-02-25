@@ -51,6 +51,7 @@ enchant()
 window.onload = ->
     bounds = getBounds()
     # enchant初期化
+    enchant.ENV.MOUSE_ENABLED = false
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
     core.rootScene.backgroundColor = BGCOLOR
     core.fps = FPS
