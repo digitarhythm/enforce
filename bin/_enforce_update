@@ -5,7 +5,7 @@ ENF=$(cd $(dirname $0)/..;pwd)
 PROJ=$CWD
 
 # フレームワークファイルのコピー
-if [ -f $PROJ/index.html ]; then
+if [ ! -f $PROJ/index.php ]; then
 	echo "ERROR: This project is static mode."
 	exit
 fi
@@ -13,6 +13,10 @@ fi
 cp -af $ENF/index.php $PROJ/
 cp -af $ENF/extlib/* $PROJ/extlib/
 coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/*.coffee
-mv -f $PROJ/codit/Library/sqlite3.db /tmp/
-cp -af $ENF/codit $PROJ/
-mv -f /tmp/sqlite3.db $PROJ/codit/Library/
+
+if [ "$1" == "-with-codit" ]; then
+    if [ ! -f "$PROJ/lib/sqlite3.db" ]; then
+        cp -af $ENF/lib/sqlite3.db $PROJ/lib/
+    fi
+    cp -af $ENF/codit $PROJ/
+fi

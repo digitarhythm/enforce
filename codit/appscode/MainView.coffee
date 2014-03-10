@@ -11,9 +11,12 @@ class MainView extends JSView
         @prefview = undefined
 
         @editfile = undefined
+        @editorview = undefined
         @filemanager = new JSFileManager()
         @documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory")
+        @enforcepath = @documentpath+"/../.."
         @keyarray = []
+        @sourcelist = []
 
         @preference = []
         @userdefaults.stringForKey "preference", (data)=>
@@ -29,8 +32,8 @@ class MainView extends JSView
         ###
 
         @sourceinfo = new JSTextField(JSRectMake(4, 0, parseInt(@_frame.size.width / 2), 24))
+        @sourceinfo.setBackgroundColor(JSColor("white"))
         @sourceinfo.setEditable(false)
-        @sourceinfo.setBackgroundColor(JSColor("clearColor"))
         @sourceinfo.setTextSize(14)
         @sourceinfo.setTextAlignment("JSTextAlignmentLeft")
         @addSubview(@sourceinfo)
@@ -38,8 +41,7 @@ class MainView extends JSView
         @savebutton = new JSButton(JSRectMake(@_frame.size.width - 32, 0, 32, 24))
         @savebutton.setButtonTitle("◯")
         @addSubview(@savebutton)
-        @savebutton.addTarget (e)=>
-            e.preventDefault()
+        @savebutton.addTarget =>
             @compileSource()
 
         @memobutton = new JSButton(JSRectMake(@_frame.size.width - (32 + 2) * 2, 0, 32, 24))
@@ -64,8 +66,8 @@ class MainView extends JSView
         @editorview.setBackgroundColor(JSColor("#000020"))
         @editorview.setTextColor(JSColor("white"))
         @editorview.setTextSize(10)
-        @editorview.setHidden(true)
-        #@editorview.setEditable(false)
+        #@editorview.setHidden(true)
+        @editorview.setEditable(false)
         @addSubview(@editorview)
         $(@editorview._viewSelector+"_textarea").keyup (e)=>
             @keyarray[e.keyCode] = false
@@ -83,8 +85,6 @@ class MainView extends JSView
         @addSubview(@memoview)
         @userdefaults.stringForKey "memo", (string)=>
             @memoview.setText(string)
-        if (@preference[0] == true)
-            $(@memoview._viewSelector+"_textarea").vixtarea()
         $(@memoview._viewSelector+"_textarea").keyup (e)=>
             @keyarray[e.keyCode] = false
         $(@memoview._viewSelector+"_textarea").keydown (e)=>
@@ -134,8 +134,9 @@ class MainView extends JSView
     saveSource:->
         if (@editfile?)
             str = @editorview.getText()
-            savepath = @documentpath+"/src/"+@editfile
-            @filemanager.writeToFile savepath, str
+            if (str != "")
+                savepath = @documentpath+"/src/"+@editfile
+                @filemanager.writeToFile savepath, str
 
     compileSource:->
         if (@editfile?)
@@ -165,6 +166,17 @@ class MainView extends JSView
 
     dispMemoview:->
         if (@memoview.dispflag == false)
+            if (@preference[0] == true)
+                $(@memoview._viewSelector+"_textarea").vixtarea()
+            else
+                $(@memoview._viewSelector+"_textarea").keydown (e)=>
+                    if(e.keyCode == 9)
+                        e.preventDefault()
+                        elem = e.target
+                        val = elem.value
+                        pos = elem.selectionStart
+                        elem.value = val.substr(0, pos) + '    ' + val.substr(pos, val.length)
+                        elem.setSelectionRange(pos + 4, pos + 4)
             @memoview.dispflag = true
             @bringSubviewToFront(@memoview)
             @memoview.animateWithDuration 0.2, {left: Math.floor(@_frame.size.width / 3) * 2, width: Math.floor(@_frame.size.width / 3)}, =>
@@ -176,20 +188,23 @@ class MainView extends JSView
             @memoview.animateWithDuration 0.2, {left: @_frame.size.width, width:0}, =>
                 @focusEditorview()
 
-    loadSourceFile:(fpath)->
+    loadSourceFile:(fname)->
         if (@editorview?)
             @editorview.removeFromSuperview()
+        fpath = @documentpath+"/src/"+fname
         @currentEditFile = fpath
+        tmp = fpath.match(/.*\/(.*)(.coffee)/)
+        @editfile = tmp[1]+tmp[2]
+        source = tmp[1]
+        @sourceinfo.setText(source)
         @editorview = new JSTextView(JSRectMake(4, 24, @_frame.size.width - 4, @_frame.size.height - 28 - 24))
         @editorview.setBackgroundColor(JSColor("#000020"))
         @editorview.setTextColor(JSColor("white"))
         @editorview.setTextSize(10)
         @addSubview(@editorview)
+        @bringSubviewToFront(@editorview)
         @bringSubviewToFront(@infoview)
-        tmp = fpath.match(/.*\/(.*)/)
-        @editfile = tmp[1]
         @imageview.setHidden(true)
-        @sourceinfo.setText(@editfile)
         @filemanager.stringWithContentsOfFile fpath, (string)=>
             @editorview.setEditable(true)
             @editorview.setHidden(false)
@@ -224,13 +239,14 @@ class MainView extends JSView
                     e.preventDefault()
                     @dispPrefview()
 
-    dispImage:(fpath)->
-        if (@editorview?)
-            @editorview.setHidden(true)
-        if (@imageview?)
-            @imageview.setHidden(false)
-        img = new JSImage(fpath)
-        @imageview.setImage(img)
+    loadMediaFile:(fname)->
+            fpath = @enforcepath+"/media/"+fname
+            if (@editorview?)
+                @editorview.setHidden(true)
+            if (@imageview?)
+                @imageview.setHidden(false)
+            img = new JSImage(fpath)
+            @imageview.setImage(img)
 
     dispPrefview:->
         if (@prefview?)

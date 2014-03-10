@@ -1,4 +1,4 @@
-var JSActivityIndicatorView, JSAlertView, JSButton, JSControl, JSFileManager, JSGLView, JSImage, JSImagePicker, JSImageView, JSLabel, JSListView, JSMenuView, JSObject, JSPoint, JSRange, JSRect, JSResponder, JSScrollView, JSSegmentedControl, JSSize, JSSwitch, JSTableView, JSTableViewCell, JSTableViewController, JSTextField, JSTextView, JSUserCookies, JSUserDefaults, JSView, JSWindow,
+var JSActivityIndicatorView, JSAlertView, JSButton, JSControl, JSFileManager, JSImage, JSImagePicker, JSImageView, JSLabel, JSListView, JSMenuView, JSObject, JSPoint, JSRange, JSRect, JSResponder, JSScrollView, JSSegmentedControl, JSSize, JSSwitch, JSTableView, JSTableViewCell, JSTableViewController, JSTextField, JSTextView, JSUserCookies, JSUserDefaults, JSView, JSWindow,
   __hasProp = Object.prototype.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; },
   __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
@@ -1043,92 +1043,6 @@ JSControl = (function(_super) {
 
 })(JSView);
 
-JSGLView = (function(_super) {
-
-  __extends(JSGLView, _super);
-
-  function JSGLView(frame, _bgColor, _alpha, _antialias) {
-    if (frame == null) frame = JSRectMake(0, 0, 320, 240);
-    this._bgColor = _bgColor != null ? _bgColor : "#f0f0f0";
-    this._alpha = _alpha != null ? _alpha : 1.0;
-    this._antialias = _antialias != null ? _antialias : true;
-    this.render_sub = __bind(this.render_sub, this);
-    this.render = __bind(this.render, this);
-    JSGLView.__super__.constructor.call(this, frame);
-    this._perspective = 15;
-    this._camera_x = 0;
-    this._camera_y = 0;
-    this._camera_z = 10;
-    this._lookat_x = 0;
-    this._lookat_y = 0;
-    this._lookat_z = 0;
-    this._lightcolor = 0xffffff;
-    this._lightdir_x = 0.577;
-    this._lightdir_y = 0.577;
-    this._lightdir_z = 0.577;
-    this._ambientLightColor = 0x404040;
-    this.delegate = this._self;
-    this._renderer = new THREE.WebGLRenderer({
-      antialias: this._antialias
-    });
-    this._renderer.setSize(frame.size.width, frame.size.height);
-    this._renderer.setClearColorHex(this._bgcolor, this._alpha);
-  }
-
-  JSGLView.prototype.setCamera = function(_perspective, _camera_x, _camera_y, _camera_z, _lookat_x, _lookat_y, _lookat_z) {
-    this._perspective = _perspective;
-    this._camera_x = _camera_x;
-    this._camera_y = _camera_y;
-    this._camera_z = _camera_z;
-    this._lookat_x = _lookat_x;
-    this._lookat_y = _lookat_y;
-    this._lookat_z = _lookat_z;
-    this._camera = new THREE.PerspectiveCamera(this._perspective, this._frame.size.width / this._frame.size.height);
-    this._camera.position = new THREE.Vector3(this._camera_x, this._camera_y, this._camera_z);
-    this._camera.lookAt(new THREE.Vector3(this._lootat_x, this._lootat_y, this._lootat_z));
-    return this._scene.add(this._camera);
-  };
-
-  JSGLView.prototype.setLight = function(_lightcolor, _lightdir_x, _lightdir_y, _lightdir_z) {
-    this._lightcolor = _lightcolor;
-    this._lightdir_x = _lightdir_x;
-    this._lightdir_y = _lightdir_y;
-    this._lightdir_z = _lightdir_z;
-    this._light = new THREE.DirectionalLight(this._lightcolor);
-    this._light.position = new THREE.Vector3(this._lightdir_x, this._lightdir_y, this._lightdir_z);
-    return this._scene.add(this._light);
-  };
-
-  JSGLView.prototype.setAmbient = function(_ambientLightColor) {
-    this._ambientLightColor = _ambientLightColor;
-    this._ambient = new THREE.AmbientLight(this._ambientLightColor);
-    return this._scene.add(this._ambient);
-  };
-
-  JSGLView.prototype.render = function() {
-    this._baseTime = +(new Date);
-    return this.render_sub();
-  };
-
-  JSGLView.prototype.render_sub = function() {
-    requestAnimationFrame(this.render_sub);
-    this.delegate.enterFrame();
-    return this._renderer.render(this._scene, this._camera);
-  };
-
-  JSGLView.prototype.viewDidAppear = function() {
-    JSGLView.__super__.viewDidAppear.call(this);
-    $(this._viewSelector).append(this._renderer.domElement);
-    this._scene = new THREE.Scene();
-    this.setCamera(this._perspective, this._camera_x, this._camera_y, this._camera_z, this._lookat_x, this._lootat_y, this._lookat_z);
-    this.setLight(this._lightcolor, this._lightdir_x, this._lightdir_y, this._lightdir_z);
-    return this.setAmbient(this._ambientLightColor);
-  };
-
-  return JSGLView;
-
-})(JSView);
-
 JSImageView = (function(_super) {
 
   __extends(JSImageView, _super);
@@ -1336,6 +1250,7 @@ JSTableViewCell = (function(_super) {
     this._imageview = null;
     this._text = "";
     this._textColor = JSColor("black");
+    this._textSize = 12;
     this._textAlignment = "JSTextAlignmentLeft";
     this._bgColor = JSColor("clearColor");
     this._borderColor = JSColor("#d0d8e0");
@@ -1348,6 +1263,13 @@ JSTableViewCell = (function(_super) {
     this._text = _text;
     if (($(this._viewSelector + "_text").length)) {
       return $(this._viewSelector + "_text").html(this._text);
+    }
+  };
+
+  JSTableViewCell.prototype.setTextSize = function(_textSize) {
+    this._textSize = _textSize;
+    if (($(this._viewSelector + "_text").length)) {
+      return $(this._viewSelector + "_text").css("font-size", this._textSize);
     }
   };
 
@@ -1402,6 +1324,7 @@ JSTableViewCell = (function(_super) {
     this.setFrame(this._frame);
     this.setText(this._text);
     this.setTextColor(this._textColor);
+    this.setTextSize(this._textSize);
     this.setTextAlignment(this._textAlignment);
     this.setImage(this._image);
     return $(this._viewSelector).on('tap', function(event) {
@@ -2019,20 +1942,21 @@ JSMenuView = (function(_super) {
     _ref = this._menuitem;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       disp = _ref[_i];
-      menustr += "<li><a href='#'>" + disp + "</a></li>";
+      menustr += "<li><a href='#' style='background-color:" + this._backgroundColor + ";'>" + disp + "</a></li>";
     }
     this._div = this._div.replace(/<!--menuitem-->/, menustr);
     if (($(this._viewSelector + "_menu").length)) {
       $(this._viewSelector + "_menu").remove();
     }
     $(this._viewSelector).append(this._div);
-    $(this._viewSelector + "_menu").css("left", this._parent._frame.origin.x + "px");
-    $(this._viewSelector + "_menu").css("top", this._parent._frame.origin.y + "px");
-    $(this._viewSelector + "_menu").css("width", this._parent._frame.size.width + "px");
-    $(this._viewSelector + "_menu").css("height", this._parent._frame.size.height + "px");
+    $(this._viewSelector + "_menu").css("left", "0px");
+    $(this._viewSelector + "_menu").css("top", "0px");
+    $(this._viewSelector + "_menu").css("width", this._frame.size.width + "px");
+    $(this._viewSelector + "_menu").css("height", (this._frame.size.height * this._menuitem.length) + "px");
     $(this._viewSelector + "_menu").css("position", "absolute");
     $(this._viewSelector + "_menu").css("overflow", "visible");
     $(this._viewSelector + "_menu").css("font-size", this._textSize + "pt");
+    $(this._viewSelector + "_menu").css("background-color", this._backgroundColor);
     return $(this._viewSelector + "_menu").menu({
       select: function(event, ui) {
         var item;
@@ -2212,12 +2136,13 @@ JSTableView = (function(_super) {
     this.childlist = [];
     this.bounds = getBounds();
     if (!(this._titleBar != null)) {
-      this._titleBar = new JSLabel(JSRectMake(0, 0, this.bounds.size.width, 32));
+      this._titleBar = new JSLabel(JSRectMake(0, 0, this._frame.size.width, this._rowHeight));
       this._titleBar.setText(this._title);
       this._titleBar.setTextAlignment("JSTextAlignmentLeft");
       this._titleBar.setTextSize(11);
       this._titleBar.setBackgroundColor(this._titlebarColor);
       this._titleBar.setTextColor(this._titleColor);
+      this._titleBar.setAlpha(0.9);
     }
   }
 
@@ -2226,7 +2151,7 @@ JSTableView = (function(_super) {
   };
 
   JSTableView.prototype.addTableView = function() {
-    var cell, cellHeight, diff_y, dispNum, frm, i, _ref;
+    var cell, cellHeight, diff_y, frm, i, _ref;
     if (typeof this.dataSource.numberOfRowsInSection === 'function') {
       this._dataNum = this.dataSource.numberOfRowsInSection();
     } else {
@@ -2237,10 +2162,8 @@ JSTableView = (function(_super) {
     } else {
       this._sectionNum = 1;
     }
-    this._tableView.setFrame(getBounds());
     this._tableView.setScroll(true);
-    dispNum = parseInt(this.bounds.size.height / this._rowHeight);
-    diff_y = 32;
+    diff_y = this._rowHeight;
     for (i = 0, _ref = this._dataNum; 0 <= _ref ? i < _ref : i > _ref; 0 <= _ref ? i++ : i--) {
       cell = this.dataSource.cellForRowAtIndexPath(i);
       cell._cellnum = i;
@@ -2270,22 +2193,20 @@ JSTableView = (function(_super) {
   };
 
   JSTableView.prototype.viewDidAppear = function() {
+    var frm;
     JSTableView.__super__.viewDidAppear.call(this);
     if (!(this._tableView != null)) {
-      this._tableView = new JSScrollView();
+      frm = JSRectMake(0, 0, this._frame.size.width, this._frame.size.height);
+      this._tableView = new JSScrollView(frm);
       this._self.addSubview(this._tableView);
     }
-    if (!(this._titleBar != null)) {
-      this._titleBar = new JSLabel(JSRectMake(0, 0, this.bounds.size.width, 32));
-    }
-    this._titleBar.setAlpha(0.9);
-    this._self.addSubview(this._titleBar);
-    return this.addTableView();
+    this.addTableView();
+    return this._self.addSubview(this._titleBar);
   };
 
   return JSTableView;
 
-})(JSScrollView);
+})(JSView);
 
 JSTextField = (function(_super) {
 

@@ -9,31 +9,55 @@ MediaView = (function(_super) {
   function MediaView(frame) {
     MediaView.__super__.constructor.call(this, frame);
     /*
-    		Please describe initialization processing of a class below from here.
+            Please describe user processing below from here.
     */
-    this.media_path = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory") + "/media";
+    this.CELLHEIGHT = 20;
+    this.lastedittab = void 0;
+    this.dispdata = [];
+    this.delegate = this.dataSource = this._self;
+    this.documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory");
+    this.enforcepath = this.documentpath + "/../..";
+    this.picturepath = JSSearchPathForDirectoriesInDomains("JSPictureDirectory");
   }
 
-  MediaView.prototype.viewDidAppear = function() {
-    var ext, filemanager,
-      _this = this;
-    MediaView.__super__.viewDidAppear.call(this);
-    /*
-    		Please describe the processing about a view below from here.
-    */
-    this.mediaview = new JSListView(JSRectMake(0, 0, this._frame.size.width, this._frame.size.height));
-    this.mediaview.setBackgroundColor(JSColor("clearColor"));
-    this.addSubview(this.mediaview);
-    ext = ["png", "jpg", "gif", "mp3", "ogg"];
-    filemanager = new JSFileManager();
-    return filemanager.fileList(this.media_path, ext, function(data) {
-      var jdata;
-      jdata = JSON.parse(data);
-      _this.mediaview.setListData(jdata['file']);
-      return _this.mediaview.reload();
-    });
+  MediaView.prototype.numberOfRowsInSection = function() {
+    return this.dispdata.length;
+  };
+
+  MediaView.prototype.cellForRowAtIndexPath = function(i) {
+    var cell, fname;
+    if (!(this.childlist[i] != null)) {
+      cell = new JSTableViewCell();
+    } else {
+      cell = this.childlist[i];
+      cell.setBackgroundColor(JSColor("clearColor"));
+    }
+    cell.setBorderColor(JSColor("clearColor"));
+    cell.setBorderWidth(0);
+    cell.delegate = this._self;
+    fname = this.dispdata[i].match(/(.*)\..*/);
+    cell.setText(fname[1]);
+    cell.setTextSize(14);
+    return cell;
+  };
+
+  MediaView.prototype.heightForRowAtIndexPath = function(num) {
+    return this.CELLHEIGHT;
+  };
+
+  MediaView.prototype.didSelectRowAtIndexPath = function(num, e) {
+    var cell, fname;
+    if (this.lastedittab === num) return;
+    fname = this.dispdata[num];
+    this._parent.mainview.loadSourceFile(fname);
+    if ((this.lastedittab != null)) {
+      this.childlist[this.lastedittab].setBackgroundColor(JSColor("clearColor"));
+    }
+    cell = this.cellForRowAtIndexPath(num);
+    cell.setBackgroundColor(JSColor("#abcdef"));
+    return this.lastedittab = num;
   };
 
   return MediaView;
 
-})(JSView);
+})(JSTableView);

@@ -1,12 +1,28 @@
 #!/bin/bash
 
-if [ -z $1 ]; then
+if [ -z ${1} ]; then
 	exit
+fi
+
+if [ "${1}" = "-with-codit" ]; then
+    CODIT=1
+    PACKAGE=$2
+elif [ -n ${2} ]; then
+    if [ "${2}" = "-with-codit" ]; then
+        CODIT=1
+        PACKAGE=${1}
+    else
+        CODIT=0
+        PACKAGE=${1}
+    fi
+else
+    CODIT=0
+    PACKAGE=${1}
 fi
 
 CWD=`pwd`
 ENF=$(cd $(dirname $0)/..;pwd)
-PROJ=$CWD/$1
+PROJ=$CWD/$PACKAGE
 
 # 必要なディレクトリの作成
 echo "Project Dcirectory:"$PROJ
@@ -25,9 +41,12 @@ cp -af $ENF/src/enchantMain.coffee $PROJ/src/
 cp -af $ENF/src/environ.coffee $PROJ/src/
 cp -af $ENF/extlib/* $PROJ/extlib/
 cp -af $ENF/lib/config.ini $PROJ/lib/
+cp -af $ENF/lib/sqlite3.db $PROJ/lib/
 
 # エディターのコピー
-cp -af $ENF/codit $PROJ/
+if [ "${CODIT}" = "1" ]; then
+    cp -af $ENF/codit $PROJ/
+fi
 
 # サンプルソースをコピー
 cp -af $ENF/src/bear.coffee $PROJ/src/

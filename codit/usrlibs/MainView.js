@@ -17,9 +17,12 @@ MainView = (function(_super) {
     this.setClipToBounds(true);
     this.prefview = void 0;
     this.editfile = void 0;
+    this.editorview = void 0;
     this.filemanager = new JSFileManager();
     this.documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory");
+    this.enforcepath = this.documentpath + "/../..";
     this.keyarray = [];
+    this.sourcelist = [];
     this.preference = [];
     this.userdefaults.stringForKey("preference", function(data) {
       if (data !== "") {
@@ -37,16 +40,15 @@ MainView = (function(_super) {
             Please describe the processing about a view below from here.
     */
     this.sourceinfo = new JSTextField(JSRectMake(4, 0, parseInt(this._frame.size.width / 2), 24));
+    this.sourceinfo.setBackgroundColor(JSColor("white"));
     this.sourceinfo.setEditable(false);
-    this.sourceinfo.setBackgroundColor(JSColor("clearColor"));
     this.sourceinfo.setTextSize(14);
     this.sourceinfo.setTextAlignment("JSTextAlignmentLeft");
     this.addSubview(this.sourceinfo);
     this.savebutton = new JSButton(JSRectMake(this._frame.size.width - 32, 0, 32, 24));
     this.savebutton.setButtonTitle("◯");
     this.addSubview(this.savebutton);
-    this.savebutton.addTarget(function(e) {
-      e.preventDefault();
+    this.savebutton.addTarget(function() {
       return _this.compileSource();
     });
     this.memobutton = new JSButton(JSRectMake(this._frame.size.width - (32 + 2) * 2, 0, 32, 24));
@@ -71,7 +73,7 @@ MainView = (function(_super) {
     this.editorview.setBackgroundColor(JSColor("#000020"));
     this.editorview.setTextColor(JSColor("white"));
     this.editorview.setTextSize(10);
-    this.editorview.setHidden(true);
+    this.editorview.setEditable(false);
     this.addSubview(this.editorview);
     $(this.editorview._viewSelector + "_textarea").keyup(function(e) {
       return _this.keyarray[e.keyCode] = false;
@@ -92,9 +94,6 @@ MainView = (function(_super) {
     this.userdefaults.stringForKey("memo", function(string) {
       return _this.memoview.setText(string);
     });
-    if (this.preference[0] === true) {
-      $(this.memoview._viewSelector + "_textarea").vixtarea();
-    }
     $(this.memoview._viewSelector + "_textarea").keyup(function(e) {
       return _this.keyarray[e.keyCode] = false;
     });
@@ -163,8 +162,10 @@ MainView = (function(_super) {
     var savepath, str;
     if ((this.editfile != null)) {
       str = this.editorview.getText();
-      savepath = this.documentpath + "/src/" + this.editfile;
-      return this.filemanager.writeToFile(savepath, str);
+      if (str !== "") {
+        savepath = this.documentpath + "/src/" + this.editfile;
+        return this.filemanager.writeToFile(savepath, str);
+      }
     }
   };
 
@@ -208,6 +209,21 @@ MainView = (function(_super) {
     var memostr,
       _this = this;
     if (this.memoview.dispflag === false) {
+      if (this.preference[0] === true) {
+        $(this.memoview._viewSelector + "_textarea").vixtarea();
+      } else {
+        $(this.memoview._viewSelector + "_textarea").keydown(function(e) {
+          var elem, pos, val;
+          if (e.keyCode === 9) {
+            e.preventDefault();
+            elem = e.target;
+            val = elem.value;
+            pos = elem.selectionStart;
+            elem.value = val.substr(0, pos) + '    ' + val.substr(pos, val.length);
+            return elem.setSelectionRange(pos + 4, pos + 4);
+          }
+        });
+      }
       this.memoview.dispflag = true;
       this.bringSubviewToFront(this.memoview);
       return this.memoview.animateWithDuration(0.2, {
@@ -229,21 +245,24 @@ MainView = (function(_super) {
     }
   };
 
-  MainView.prototype.loadSourceFile = function(fpath) {
-    var tmp,
+  MainView.prototype.loadSourceFile = function(fname) {
+    var fpath, source, tmp,
       _this = this;
     if ((this.editorview != null)) this.editorview.removeFromSuperview();
+    fpath = this.documentpath + "/src/" + fname;
     this.currentEditFile = fpath;
+    tmp = fpath.match(/.*\/(.*)(.coffee)/);
+    this.editfile = tmp[1] + tmp[2];
+    source = tmp[1];
+    this.sourceinfo.setText(source);
     this.editorview = new JSTextView(JSRectMake(4, 24, this._frame.size.width - 4, this._frame.size.height - 28 - 24));
     this.editorview.setBackgroundColor(JSColor("#000020"));
     this.editorview.setTextColor(JSColor("white"));
     this.editorview.setTextSize(10);
     this.addSubview(this.editorview);
+    this.bringSubviewToFront(this.editorview);
     this.bringSubviewToFront(this.infoview);
-    tmp = fpath.match(/.*\/(.*)/);
-    this.editfile = tmp[1];
     this.imageview.setHidden(true);
-    this.sourceinfo.setText(this.editfile);
     return this.filemanager.stringWithContentsOfFile(fpath, function(string) {
       _this.editorview.setEditable(true);
       _this.editorview.setHidden(false);
@@ -292,8 +311,9 @@ MainView = (function(_super) {
     });
   };
 
-  MainView.prototype.dispImage = function(fpath) {
-    var img;
+  MainView.prototype.loadMediaFile = function(fname) {
+    var fpath, img;
+    fpath = this.enforcepath + "/media/" + fname;
     if ((this.editorview != null)) this.editorview.setHidden(true);
     if ((this.imageview != null)) this.imageview.setHidden(false);
     img = new JSImage(fpath);

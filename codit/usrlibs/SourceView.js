@@ -9,31 +9,55 @@ SourceView = (function(_super) {
   function SourceView(frame) {
     SourceView.__super__.constructor.call(this, frame);
     /*
-    		Please describe initialization processing of a class below from here.
+            Please describe user processing below from here.
     */
-    this.source_path = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory") + "/src";
+    this.CELLHEIGHT = 20;
+    this.lastedittab = void 0;
+    this.dispdata = [];
+    this.delegate = this.dataSource = this._self;
+    this.documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory");
+    this.enforcepath = this.documentpath + "/../..";
+    this.picturepath = JSSearchPathForDirectoriesInDomains("JSPictureDirectory");
   }
 
-  SourceView.prototype.viewDidAppear = function() {
-    var ext, filemanager,
-      _this = this;
-    SourceView.__super__.viewDidAppear.call(this);
-    /*
-    		Please describe the processing about a view below from here.
-    */
-    this.sourceview = new JSListView(JSRectMake(0, 0, this._frame.size.width, this._frame.size.height));
-    this.sourceview.setBackgroundColor(JSColor("clearColor"));
-    this.addSubview(this.sourceview);
-    ext = ["coffee"];
-    filemanager = new JSFileManager();
-    return filemanager.fileList(this.source_path, ext, function(data) {
-      var jdata;
-      jdata = JSON.parse(data);
-      _this.sourceview.setListData(jdata['file']);
-      return _this.sourceview.reload();
-    });
+  SourceView.prototype.numberOfRowsInSection = function() {
+    return this.dispdata.length;
+  };
+
+  SourceView.prototype.cellForRowAtIndexPath = function(i) {
+    var cell, fname;
+    if (!(this.childlist[i] != null)) {
+      cell = new JSTableViewCell();
+    } else {
+      cell = this.childlist[i];
+      cell.setBackgroundColor(JSColor("clearColor"));
+    }
+    cell.setBorderColor(JSColor("clearColor"));
+    cell.setBorderWidth(0);
+    cell.delegate = this._self;
+    fname = this.dispdata[i].match(/(.*)\..*/);
+    cell.setText(fname[1]);
+    cell.setTextSize(14);
+    return cell;
+  };
+
+  SourceView.prototype.heightForRowAtIndexPath = function(num) {
+    return this.CELLHEIGHT;
+  };
+
+  SourceView.prototype.didSelectRowAtIndexPath = function(num, e) {
+    var cell, fname;
+    if (this.lastedittab === num) return;
+    fname = this.dispdata[num];
+    this._parent.mainview.loadSourceFile(fname);
+    if ((this.lastedittab != null)) {
+      this.childlist[this.lastedittab].setBackgroundColor(JSColor("clearColor"));
+    }
+    cell = this.cellForRowAtIndexPath(num);
+    cell.setBackgroundColor(JSColor("#abcdef"));
+    return this.lastedittab = num;
   };
 
   return SourceView;
 
-})(JSView);
+})(JSTableView);

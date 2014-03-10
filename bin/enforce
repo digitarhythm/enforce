@@ -44,11 +44,12 @@ fi
 case ${opt} in
 new)
 	pkg=$2
+    pkg2=$3
 	if [ -z "$pkg" ]; then
 		echo "Please specify an option."
 		exit
 	fi
-	${cwd}/_enforce_newproj ${pkg}
+	${cwd}/_enforce_newproj ${pkg} ${pkg2}
 ;;
 
 build)
@@ -64,7 +65,7 @@ update)
 		echo "Please perform in a package directory."
 		exit
 	fi
-	${cwd}/_enforce_update
+	${cwd}/_enforce_update ${opt2}
 ;;
 
 derive)
@@ -76,7 +77,7 @@ derive)
 		echo "Please specify an option."
 		exit
 	fi
-	${cwd}/_enforce_derive $opt2
+	${cwd}/_enforce_derive ${opt2}
 ;;
 
 static)
@@ -85,7 +86,7 @@ static)
 		exit
 	fi
 	if [ -f "./index.php" ]; then
-        mv -f ./codit/index.php ./codit/.index.php
+        rm -rf ./codit
 		${cwd}/_enforce_static > ./index.html
 		rm -rf ./index.php
 	fi
@@ -98,8 +99,10 @@ develop)
 	fi
 	if [ -f "./index.html" ]; then
 		rm -f ./index.html
-        mv -f ./codit/.index.php ./codit/index.php
-		cp -a ${ENF}/index.php $(pwd)
+        if [ "$opt2" == "-with-codit" ]; then
+            cp -af ${ENF}/codit $(pwd)/codit
+        fi
+		cp -af ${ENF}/index.php $(pwd)/index.php
 	fi
 ;;
 

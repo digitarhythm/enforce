@@ -5,8 +5,11 @@ class SideView extends JSView
         Please describe initialization processing of a class below from here. 
         ###
 
+        @CELLHEIGHT = 20
+        @TABHEIGHT = 24
+
         @selecttab = 0
-        @tabheight = 24
+        @dispdata = []
         @sourceview = undefined
         @mediaview = undefined
         @documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory")
@@ -21,26 +24,27 @@ class SideView extends JSView
         Please describe the processing about a view below from here. 
         ###
 
+        # ソースビューとメディアビューのタブ
         select = ["code", "media"]
         @tabview = new JSSegmentedControl(select)
         @tabview.setTextSize(9)
-        @tabview.setFrame(JSRectMake(0, 0, @_frame.size.width - 2, @tabheight))
+        @tabview.setFrame(JSRectMake(0, 0, @_frame.size.width - 2, @TABHEIGHT))
         @tabview.setValue(@selecttab)
         @addSubview(@tabview)
         @tabview.addTarget =>
             @selecttab = @tabview._selectedSegmentIndex
             @dispListView()
 
-        @sourceview = new JSListView(JSRectMake(0, @tabview._frame.size.height, @_frame.size.width, @_frame.size.height - @tabview._frame.size.height - 24))
-        @sourceview.setTextSize(14)
-        @sourceview.setBackgroundColor(JSColor("white"))
-        @sourceview.setHidden(true)
+        @sourceview = new SourceView(JSRectMake(0, @tabview._frame.size.height, @_frame.size.width, @_frame.size.height - @tabview._frame.size.height - 64))
+        @sourceview._titleBar.setText("source list")
         @addSubview(@sourceview)
-        @sourceview.addTarget =>
-            @mainview.saveSource()
-            fname = @sourceview.objectAtIndex(@sourceview.getSelect())
-            @mainview.loadSourceFile(@documentpath+"/src/"+fname)
+        #@sourceview.setBorderWidth(1)
+        #@sourceview.setBorderColor(JSColor("red"))
 
+        @mediaview = new MediaView(JSRectMake(0, @tabview._frame.size.height, @_frame.size.width, @_frame.size.height - @tabview._frame.size.height - 64))
+        @mediaview._titleBar.setText("media list")
+        @addSubview(@mediaview)
+        ###
         @mediaview = new JSListView(JSRectMake(0, @tabview._frame.size.height, @_frame.size.width, @_frame.size.height - @tabview._frame.size.height - 24))
         @mediaview.setTextSize(14)
         @mediaview.setBackgroundColor(JSColor("white"))
@@ -49,6 +53,7 @@ class SideView extends JSView
         @mediaview.addTarget =>
             fname = @mediaview.objectAtIndex(@mediaview.getSelect())
             @mainview.dispImage(@enforcepath+"/media/"+fname)
+        ###
 
         @dispListView()
 
@@ -61,6 +66,9 @@ class SideView extends JSView
             @renameButton.removeFromSuperview()
         switch tab
             when 0 # ソースモード
+                dir = @documentpath+"/src"
+                ext = ["coffee"]
+
                 if (@mainview.editorview?)
                     @mainview.editorview.setHidden(false)
                 @mainview.imageview.setHidden(true)
@@ -69,20 +77,17 @@ class SideView extends JSView
                 @addButton = new JSButton(JSRectMake(0, @_frame.size.height - 24, 32, 24))
                 @addButton.setButtonTitle("+")
                 @addSubview(@addButton)
-                ext = ["coffee"]
-                @filemanager.fileList @documentpath+"/src", ext, (data)=>
-                    jdata = JSON.parse(data)
-                    dispdata = jdata['file']
-                    dispdata.sort (a, b)=>
+                @filemanager.fileList dir, ext, (data)=>
+                    jdata = JSON.parse(data)['file']
+                    @sourceview.dispdata = jdata
+                    @sourceview.dispdata.sort (a, b)=>
                         if (a < b)
                             return -1
                         else if (a > b)
                             return 1
                         else
                             return 0
-                    @sourceview.setListData(dispdata)
-                    @sourceview.reload()
-                    @sourceview.setSelect(0)
+                    @sourceview.reloadData()
                     $(@sourceview._viewSelector+"_select").focus()
                 @addButton.addTarget =>
                     alert = new JSAlertView("Create New Class File", "Input new class file name.", [""])
@@ -96,7 +101,7 @@ class SideView extends JSView
                 @delButton.setButtonTitle("-")
                 @addSubview(@delButton)
                 @delButton.addTarget =>
-                    fname = @sourceview.objectAtIndex(@sourceview.getSelect())
+                    fname = @sourceview.dispdata[@sourceview.lastedittab]
                     if (fname?)
                         alert = new JSAlertView("Caution", "Delete '"+fname+"' OK?")
                         alert.delegate = @_self
@@ -106,7 +111,10 @@ class SideView extends JSView
                         @addSubview(alert)
                         alert.show()
 
-            when 1 # 画像モード
+            when 1 # メディアモード
+                dir = @documentpath+"/media"
+                ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"]
+
                 if (@mainview.editorview?)
                     @mainview.editorview.setHidden(true)
                 @mainview.imageview.setHidden(false)
@@ -134,7 +142,7 @@ class SideView extends JSView
                 @delButton = new JSButton(JSRectMake(@_frame.size.width - 32, @_frame.size.height - 24, 32, 24))
                 @delButton.setButtonTitle("-")
                 @delButton.addTarget =>
-                    fname = @mediaview.objectAtIndex(@mediaview.getSelect())
+                    fname = @mediaview.dispdata[@lastedittab]
                     if (fname?)
                         alert = new JSAlertView("Caution", "Delete '"+fname+"' OK?")
                         alert.delegate = @_self
@@ -145,18 +153,16 @@ class SideView extends JSView
                         alert.show()
                 @addSubview(@delButton)
                 ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"]
-                @filemanager.fileList @documentpath+"/media", ext, (data)=>
-                    jdata = JSON.parse(data)
-                    dispdata = jdata['file']
-                    dispdata.sort (a, b)=>
+                @filemanager.fileList dir, ext, (data)=>
+                    @mediaview.dispdata = JSON.parse(data)['file']
+                    @mediaview.dispdata.sort (a, b)=>
                         if (a < b)
                             return -1
                         else if (a > b)
                             return 1
                         else
                             return 0
-                    @mediaview.setListData(dispdata)
-                    @mediaview.reload()
+                    @mediaview.reloadData()
 
     didImageUpload:(res)->
         imgpath = @picturepath+"/"+res.path
@@ -182,9 +188,13 @@ class SideView extends JSView
                 , (data)=>
                     ext = ["coffee"]
                     @filemanager.fileList @documentpath+"/src", ext, (data)=>
-                        jdata = JSON.parse(data)
-                        @sourceview.setListData(jdata['file'])
-                        @sourceview.reload()
+                        datatmp = JSON.parse(data)
+                        @dispdata = []
+                        for d in datatmp['file']
+                            @dispdata.push(d)
+                        @dispdata.sort()
+                        #@sourceview.setListData(jdata['file'])
+                        @sourceview.reloadData()
             when "DELETE_FILE"
                 if (ret == 1)
                     fname = alert.fname
@@ -195,11 +205,15 @@ class SideView extends JSView
                         @mainview.editfile = undefined
                         ext = ["coffee"]
                         @filemanager.fileList @documentpath+"/src", ext, (data)=>
-                            jdata = JSON.parse(data)
-                            @sourceview.setListData(jdata['file'])
-                            @sourceview.reload()
-                            @mainview.sourceview.setText("")
-                            @mainview.sourceview.setHidden(true)
+                            datatmp = JSON.parse(data)
+                            @dispdata = []
+                            for d in datatmp['file']
+                                @dispdata.push(d)
+                            @dispdata.sort()
+                            #@sourceview.setListData(jdata['file'])
+                            @sourceview.reloadData()
+                            @mainview.editorview.setText("")
+                            #@mainview.sourceview.setHidden(true)
             when "DELETE_IMAGE"
                 if (ret == 1)
                     fname = alert.fname

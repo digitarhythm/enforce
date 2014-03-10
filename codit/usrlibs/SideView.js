@@ -11,8 +11,10 @@ SideView = (function(_super) {
     /*
             Please describe initialization processing of a class below from here.
     */
+    this.CELLHEIGHT = 20;
+    this.TABHEIGHT = 24;
     this.selecttab = 0;
-    this.tabheight = 24;
+    this.dispdata = [];
     this.sourceview = void 0;
     this.mediaview = void 0;
     this.documentpath = JSSearchPathForDirectoriesInDomains("JSDocumentDirectory");
@@ -32,39 +34,34 @@ SideView = (function(_super) {
     select = ["code", "media"];
     this.tabview = new JSSegmentedControl(select);
     this.tabview.setTextSize(9);
-    this.tabview.setFrame(JSRectMake(0, 0, this._frame.size.width - 2, this.tabheight));
+    this.tabview.setFrame(JSRectMake(0, 0, this._frame.size.width - 2, this.TABHEIGHT));
     this.tabview.setValue(this.selecttab);
     this.addSubview(this.tabview);
     this.tabview.addTarget(function() {
       _this.selecttab = _this.tabview._selectedSegmentIndex;
       return _this.dispListView();
     });
-    this.sourceview = new JSListView(JSRectMake(0, this.tabview._frame.size.height, this._frame.size.width, this._frame.size.height - this.tabview._frame.size.height - 24));
-    this.sourceview.setTextSize(14);
-    this.sourceview.setBackgroundColor(JSColor("white"));
-    this.sourceview.setHidden(true);
+    this.sourceview = new SourceView(JSRectMake(0, this.tabview._frame.size.height, this._frame.size.width, this._frame.size.height - this.tabview._frame.size.height - 64));
+    this.sourceview._titleBar.setText("source list");
     this.addSubview(this.sourceview);
-    this.sourceview.addTarget(function() {
-      var fname;
-      _this.mainview.saveSource();
-      fname = _this.sourceview.objectAtIndex(_this.sourceview.getSelect());
-      return _this.mainview.loadSourceFile(_this.documentpath + "/src/" + fname);
-    });
-    this.mediaview = new JSListView(JSRectMake(0, this.tabview._frame.size.height, this._frame.size.width, this._frame.size.height - this.tabview._frame.size.height - 24));
-    this.mediaview.setTextSize(14);
-    this.mediaview.setBackgroundColor(JSColor("white"));
-    this.mediaview.setHidden(true);
+    this.mediaview = new MediaView(JSRectMake(0, this.tabview._frame.size.height, this._frame.size.width, this._frame.size.height - this.tabview._frame.size.height - 64));
+    this.mediaview._titleBar.setText("media list");
     this.addSubview(this.mediaview);
-    this.mediaview.addTarget(function() {
-      var fname;
-      fname = _this.mediaview.objectAtIndex(_this.mediaview.getSelect());
-      return _this.mainview.dispImage(_this.enforcepath + "/media/" + fname);
-    });
+    /*
+            @mediaview = new JSListView(JSRectMake(0, @tabview._frame.size.height, @_frame.size.width, @_frame.size.height - @tabview._frame.size.height - 24))
+            @mediaview.setTextSize(14)
+            @mediaview.setBackgroundColor(JSColor("white"))
+            @mediaview.setHidden(true)
+            @addSubview(@mediaview)
+            @mediaview.addTarget =>
+                fname = @mediaview.objectAtIndex(@mediaview.getSelect())
+                @mainview.dispImage(@enforcepath+"/media/"+fname)
+    */
     return this.dispListView();
   };
 
   SideView.prototype.dispListView = function(tab) {
-    var ext,
+    var dir, ext,
       _this = this;
     if (tab == null) tab = parseInt(this.selecttab);
     if ((this.addButton != null)) this.addButton.removeFromSuperview();
@@ -72,6 +69,8 @@ SideView = (function(_super) {
     if ((this.renameButton != null)) this.renameButton.removeFromSuperview();
     switch (tab) {
       case 0:
+        dir = this.documentpath + "/src";
+        ext = ["coffee"];
         if ((this.mainview.editorview != null)) {
           this.mainview.editorview.setHidden(false);
         }
@@ -81,12 +80,11 @@ SideView = (function(_super) {
         this.addButton = new JSButton(JSRectMake(0, this._frame.size.height - 24, 32, 24));
         this.addButton.setButtonTitle("+");
         this.addSubview(this.addButton);
-        ext = ["coffee"];
-        this.filemanager.fileList(this.documentpath + "/src", ext, function(data) {
-          var dispdata, jdata;
-          jdata = JSON.parse(data);
-          dispdata = jdata['file'];
-          dispdata.sort(function(a, b) {
+        this.filemanager.fileList(dir, ext, function(data) {
+          var jdata;
+          jdata = JSON.parse(data)['file'];
+          _this.sourceview.dispdata = jdata;
+          _this.sourceview.dispdata.sort(function(a, b) {
             if (a < b) {
               return -1;
             } else if (a > b) {
@@ -95,9 +93,7 @@ SideView = (function(_super) {
               return 0;
             }
           });
-          _this.sourceview.setListData(dispdata);
-          _this.sourceview.reload();
-          _this.sourceview.setSelect(0);
+          _this.sourceview.reloadData();
           return $(_this.sourceview._viewSelector + "_select").focus();
         });
         this.addButton.addTarget(function() {
@@ -115,7 +111,7 @@ SideView = (function(_super) {
         this.addSubview(this.delButton);
         return this.delButton.addTarget(function() {
           var alert, fname;
-          fname = _this.sourceview.objectAtIndex(_this.sourceview.getSelect());
+          fname = _this.sourceview.dispdata[_this.sourceview.lastedittab];
           if ((fname != null)) {
             alert = new JSAlertView("Caution", "Delete '" + fname + "' OK?");
             alert.delegate = _this._self;
@@ -127,6 +123,8 @@ SideView = (function(_super) {
           }
         });
       case 1:
+        dir = this.documentpath + "/media";
+        ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"];
         if ((this.mainview.editorview != null)) {
           this.mainview.editorview.setHidden(true);
         }
@@ -158,7 +156,7 @@ SideView = (function(_super) {
         this.delButton.setButtonTitle("-");
         this.delButton.addTarget(function() {
           var alert, fname;
-          fname = _this.mediaview.objectAtIndex(_this.mediaview.getSelect());
+          fname = _this.mediaview.dispdata[_this.lastedittab];
           if ((fname != null)) {
             alert = new JSAlertView("Caution", "Delete '" + fname + "' OK?");
             alert.delegate = _this._self;
@@ -171,11 +169,9 @@ SideView = (function(_super) {
         });
         this.addSubview(this.delButton);
         ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"];
-        return this.filemanager.fileList(this.documentpath + "/media", ext, function(data) {
-          var dispdata, jdata;
-          jdata = JSON.parse(data);
-          dispdata = jdata['file'];
-          dispdata.sort(function(a, b) {
+        return this.filemanager.fileList(dir, ext, function(data) {
+          _this.mediaview.dispdata = JSON.parse(data)['file'];
+          _this.mediaview.dispdata.sort(function(a, b) {
             if (a < b) {
               return -1;
             } else if (a > b) {
@@ -184,8 +180,7 @@ SideView = (function(_super) {
               return 0;
             }
           });
-          _this.mediaview.setListData(dispdata);
-          return _this.mediaview.reload();
+          return _this.mediaview.reloadData();
         });
     }
   };
@@ -225,10 +220,16 @@ SideView = (function(_super) {
           var ext;
           ext = ["coffee"];
           return _this.filemanager.fileList(_this.documentpath + "/src", ext, function(data) {
-            var jdata;
-            jdata = JSON.parse(data);
-            _this.sourceview.setListData(jdata['file']);
-            return _this.sourceview.reload();
+            var d, datatmp, _i, _len, _ref;
+            datatmp = JSON.parse(data);
+            _this.dispdata = [];
+            _ref = datatmp['file'];
+            for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+              d = _ref[_i];
+              _this.dispdata.push(d);
+            }
+            _this.dispdata.sort();
+            return _this.sourceview.reloadData();
           });
         });
       case "DELETE_FILE":
@@ -242,12 +243,17 @@ SideView = (function(_super) {
             _this.mainview.editfile = void 0;
             ext = ["coffee"];
             return _this.filemanager.fileList(_this.documentpath + "/src", ext, function(data) {
-              var jdata;
-              jdata = JSON.parse(data);
-              _this.sourceview.setListData(jdata['file']);
-              _this.sourceview.reload();
-              _this.mainview.sourceview.setText("");
-              return _this.mainview.sourceview.setHidden(true);
+              var d, datatmp, _i, _len, _ref;
+              datatmp = JSON.parse(data);
+              _this.dispdata = [];
+              _ref = datatmp['file'];
+              for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+                d = _ref[_i];
+                _this.dispdata.push(d);
+              }
+              _this.dispdata.sort();
+              _this.sourceview.reloadData();
+              return _this.mainview.editorview.setText("");
             });
           });
         }
