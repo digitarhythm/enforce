@@ -38,7 +38,7 @@ class MediaView extends JSTableView
         if (@lastedittab == num)
             return
         fname = @dispdata[num]
-        @_parent.mainview.loadSourceFile(fname)
+        @_parent.mainview.loadMediaFile(fname)
         if (@lastedittab?)
             @childlist[@lastedittab].setBackgroundColor(JSColor("clearColor"))
         cell = @cellForRowAtIndexPath(num)

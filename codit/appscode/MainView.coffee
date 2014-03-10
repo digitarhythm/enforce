@@ -240,13 +240,14 @@ class MainView extends JSView
                     @dispPrefview()
 
     loadMediaFile:(fname)->
-            fpath = @enforcepath+"/media/"+fname
-            if (@editorview?)
-                @editorview.setHidden(true)
-            if (@imageview?)
-                @imageview.setHidden(false)
-            img = new JSImage(fpath)
-            @imageview.setImage(img)
+        JSLog("fname=%@", fname)
+        fpath = @enforcepath+"/media/"+fname
+        if (@editorview?)
+            @editorview.setHidden(true)
+        if (@imageview?)
+            @imageview.setHidden(false)
+        img = new JSImage(fpath)
+        @imageview.setImage(img)
 
     dispPrefview:->
         if (@prefview?)

@@ -49,7 +49,7 @@ MediaView = (function(_super) {
     var cell, fname;
     if (this.lastedittab === num) return;
     fname = this.dispdata[num];
-    this._parent.mainview.loadSourceFile(fname);
+    this._parent.mainview.loadMediaFile(fname);
     if ((this.lastedittab != null)) {
       this.childlist[this.lastedittab].setBackgroundColor(JSColor("clearColor"));
     }

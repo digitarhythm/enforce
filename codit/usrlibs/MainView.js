@@ -313,6 +313,7 @@ MainView = (function(_super) {
 
   MainView.prototype.loadMediaFile = function(fname) {
     var fpath, img;
+    JSLog("fname=%@", fname);
     fpath = this.enforcepath + "/media/" + fname;
     if ((this.editorview != null)) this.editorview.setHidden(true);
     if ((this.imageview != null)) this.imageview.setHidden(false);
