@@ -16,6 +16,7 @@ MainView = (function(_super) {
     this.currentEditFile = "";
     this.setClipToBounds(true);
     this.prefview = void 0;
+    this.glview = void 0;
     this.editfile = void 0;
     this.editorview = void 0;
     this.filemanager = new JSFileManager();
@@ -312,13 +313,20 @@ MainView = (function(_super) {
   };
 
   MainView.prototype.loadMediaFile = function(fname) {
-    var fpath, img;
-    JSLog("fname=%@", fname);
+    var fpath, img, size;
     fpath = this.enforcepath + "/media/" + fname;
-    if ((this.editorview != null)) this.editorview.setHidden(true);
-    if ((this.imageview != null)) this.imageview.setHidden(false);
-    img = new JSImage(fpath);
-    return this.imageview.setImage(img);
+    if ((this.glview != null)) this.glview.removeFromSuperview();
+    if (fname.match(/.*\.dae/)) {
+      size = JSSizeMake(parseInt(this._frame.size.width / 2), parseInt(this._frame.size.height / 2));
+      this.glview = new ColladaView(JSRectMake(Math.floor(this._frame.size.width - size.width) / 2, Math.floor(this._frame.size.height - size.height) / 2, size.width, size.height));
+      this.glview.fname = fname;
+      return this.addSubview(this.glview);
+    } else {
+      if ((this.editorview != null)) this.editorview.setHidden(true);
+      if ((this.imageview != null)) this.imageview.setHidden(false);
+      img = new JSImage(fpath);
+      return this.imageview.setImage(img);
+    }
   };
 
   MainView.prototype.dispPrefview = function() {

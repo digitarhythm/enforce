@@ -15,10 +15,10 @@ JSGLView = (function(_super) {
     this.render_sub = __bind(this.render_sub, this);
     this.render = __bind(this.render, this);
     JSGLView.__super__.constructor.call(this, frame);
-    this._perspective = 15;
+    this._perspective = 24;
     this._camera_x = 0;
-    this._camera_y = 0;
-    this._camera_z = 10;
+    this._camera_y = 100;
+    this._camera_z = 100;
     this._lookat_x = 0;
     this._lookat_y = 0;
     this._lookat_z = 0;

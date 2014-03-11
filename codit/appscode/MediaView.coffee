@@ -26,8 +26,8 @@ class MediaView extends JSTableView
         cell.setBorderColor(JSColor("clearColor"))
         cell.setBorderWidth(0)
         cell.delegate = @_self
-        fname = @dispdata[i].match(/(.*)\..*/)
-        cell.setText(fname[1])
+        fname = @dispdata[i]
+        cell.setText(fname)
         cell.setTextSize(14)
         return cell
 

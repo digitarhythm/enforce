@@ -61,6 +61,7 @@
 		<script type="text/javascript" charset="UTF-8" src="syslibs/jquery.upload-1.0.2.min.js"></script>
 		<script type="text/javascript" charset="UTF-8" src="syslibs/imgLiquid-min.js"></script>
 		<script type="text/javascript" charset="UTF-8" src="syslibs/three.min.js"></script>
+		<script type="text/javascript" charset="UTF-8" src="syslibs/ColladaLoader.js"></script>
 		<script type="text/javascript" charset="UTF-8" src="syslibs/library.js"></script>
 		<script type="text/javascript" charset="UTF-8" src="syslibs/JSKit.js"></script>
 <?php

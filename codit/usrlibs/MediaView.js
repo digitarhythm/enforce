@@ -35,8 +35,8 @@ MediaView = (function(_super) {
     cell.setBorderColor(JSColor("clearColor"));
     cell.setBorderWidth(0);
     cell.delegate = this._self;
-    fname = this.dispdata[i].match(/(.*)\..*/);
-    cell.setText(fname[1]);
+    fname = this.dispdata[i];
+    cell.setText(fname);
     cell.setTextSize(14);
     return cell;
   };

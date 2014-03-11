@@ -9,6 +9,7 @@ class MainView extends JSView
         @currentEditFile = ""
         @setClipToBounds(true)
         @prefview = undefined
+        @glview = undefined
 
         @editfile = undefined
         @editorview = undefined
@@ -240,14 +241,21 @@ class MainView extends JSView
                     @dispPrefview()
 
     loadMediaFile:(fname)->
-        JSLog("fname=%@", fname)
         fpath = @enforcepath+"/media/"+fname
-        if (@editorview?)
-            @editorview.setHidden(true)
-        if (@imageview?)
-            @imageview.setHidden(false)
-        img = new JSImage(fpath)
-        @imageview.setImage(img)
+        if (@glview?)
+            @glview.removeFromSuperview()
+        if (fname.match(/.*\.dae/))
+            size = JSSizeMake(parseInt(@_frame.size.width / 2), parseInt(@_frame.size.height / 2))
+            @glview = new ColladaView(JSRectMake(Math.floor(@_frame.size.width - size.width) / 2, Math.floor(@_frame.size.height - size.height) / 2, size.width, size.height))
+            @glview.fname = fname
+            @addSubview(@glview)
+        else
+            if (@editorview?)
+                @editorview.setHidden(true)
+            if (@imageview?)
+                @imageview.setHidden(false)
+            img = new JSImage(fpath)
+            @imageview.setImage(img)
 
     dispPrefview:->
         if (@prefview?)

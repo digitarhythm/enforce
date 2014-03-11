@@ -38,6 +38,9 @@ SideView = (function(_super) {
     this.tabview.setValue(this.selecttab);
     this.addSubview(this.tabview);
     this.tabview.addTarget(function() {
+      if ((_this.mainview.glview != null)) {
+        _this.mainview.glview.removeFromSuperview();
+      }
       _this.selecttab = _this.tabview._selectedSegmentIndex;
       return _this.dispListView();
     });
@@ -47,16 +50,6 @@ SideView = (function(_super) {
     this.mediaview = new MediaView(JSRectMake(0, this.tabview._frame.size.height, this._frame.size.width, this._frame.size.height - this.tabview._frame.size.height - 64));
     this.mediaview._titleBar.setText("media list");
     this.addSubview(this.mediaview);
-    /*
-            @mediaview = new JSListView(JSRectMake(0, @tabview._frame.size.height, @_frame.size.width, @_frame.size.height - @tabview._frame.size.height - 24))
-            @mediaview.setTextSize(14)
-            @mediaview.setBackgroundColor(JSColor("white"))
-            @mediaview.setHidden(true)
-            @addSubview(@mediaview)
-            @mediaview.addTarget =>
-                fname = @mediaview.objectAtIndex(@mediaview.getSelect())
-                @mainview.dispImage(@enforcepath+"/media/"+fname)
-    */
     return this.dispListView();
   };
 

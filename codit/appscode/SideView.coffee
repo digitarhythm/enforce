@@ -32,6 +32,8 @@ class SideView extends JSView
         @tabview.setValue(@selecttab)
         @addSubview(@tabview)
         @tabview.addTarget =>
+            if (@mainview.glview?)
+                @mainview.glview.removeFromSuperview()
             @selecttab = @tabview._selectedSegmentIndex
             @dispListView()
 
@@ -44,16 +46,6 @@ class SideView extends JSView
         @mediaview = new MediaView(JSRectMake(0, @tabview._frame.size.height, @_frame.size.width, @_frame.size.height - @tabview._frame.size.height - 64))
         @mediaview._titleBar.setText("media list")
         @addSubview(@mediaview)
-        ###
-        @mediaview = new JSListView(JSRectMake(0, @tabview._frame.size.height, @_frame.size.width, @_frame.size.height - @tabview._frame.size.height - 24))
-        @mediaview.setTextSize(14)
-        @mediaview.setBackgroundColor(JSColor("white"))
-        @mediaview.setHidden(true)
-        @addSubview(@mediaview)
-        @mediaview.addTarget =>
-            fname = @mediaview.objectAtIndex(@mediaview.getSelect())
-            @mainview.dispImage(@enforcepath+"/media/"+fname)
-        ###
 
         @dispListView()
 
