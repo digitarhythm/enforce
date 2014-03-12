@@ -62,6 +62,7 @@ SideView = (function(_super) {
     if ((this.renameButton != null)) this.renameButton.removeFromSuperview();
     switch (tab) {
       case 0:
+        this.sourceview.lastedittab = void 0;
         dir = this.documentpath + "/src";
         ext = ["coffee"];
         if ((this.mainview.editorview != null)) {
@@ -116,6 +117,7 @@ SideView = (function(_super) {
           }
         });
       case 1:
+        this.mediaview.lastedittab = void 0;
         dir = this.documentpath + "/media";
         ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"];
         if ((this.mainview.editorview != null)) {
@@ -149,7 +151,7 @@ SideView = (function(_super) {
         this.delButton.setButtonTitle("-");
         this.delButton.addTarget(function() {
           var alert, fname;
-          fname = _this.mediaview.dispdata[_this.lastedittab];
+          fname = _this.mediaview.dispdata[_this.maediaview.lastedittab];
           if ((fname != null)) {
             alert = new JSAlertView("Caution", "Delete '" + fname + "' OK?");
             alert.delegate = _this._self;

@@ -58,6 +58,7 @@ class SideView extends JSView
             @renameButton.removeFromSuperview()
         switch tab
             when 0 # ソースモード
+                @sourceview.lastedittab = undefined
                 dir = @documentpath+"/src"
                 ext = ["coffee"]
 
@@ -104,6 +105,7 @@ class SideView extends JSView
                         alert.show()
 
             when 1 # メディアモード
+                @mediaview.lastedittab = undefined
                 dir = @documentpath+"/media"
                 ext = ["png", "jpg", "gif", "mp3", "ogg", "dae"]
 
@@ -134,7 +136,7 @@ class SideView extends JSView
                 @delButton = new JSButton(JSRectMake(@_frame.size.width - 32, @_frame.size.height - 24, 32, 24))
                 @delButton.setButtonTitle("-")
                 @delButton.addTarget =>
-                    fname = @mediaview.dispdata[@lastedittab]
+                    fname = @mediaview.dispdata[@maediaview.lastedittab]
                     if (fname?)
                         alert = new JSAlertView("Caution", "Delete '"+fname+"' OK?")
                         alert.delegate = @_self
