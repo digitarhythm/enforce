@@ -41,7 +41,10 @@ class _stationary
                 @sprite._y_ = @sprite.y
             if (@sprite.z != @sprite.zback)
                 @sprite._z_ = @sprite.z
-            @sprite.ys += @sprite.gravity
+            if (@_type_ == GLMODEL)
+                @sprite.ys -= @sprite.gravity
+            else
+                @sprite.ys += @sprite.gravity
             @sprite._x_ += @sprite.xs
             if (@_type_ < 5)
                 @sprite._y_ += @sprite.ys

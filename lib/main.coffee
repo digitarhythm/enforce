@@ -7,32 +7,38 @@
 # Coded by Kow Sakazaki
 #***********************************************************************
 
-# 定数定義 *************************************************************
-# オブジェクトの種類
-CONTROL         = 0
-SPRITE          = 1
-LABEL           = 2
-PHYCIRCLE       = 3
-PHYCUBE         = 4
-GLSPHERE        = 5
-GLCUBE          = 6
-GLMODEL         = 7
-# Sceneの種類
-BGSCENE         = 0
-BGSCENE_SUB1    = 1
-BGSCENE_SUB2    = 2
-GAMESCENE       = 3
-GAMESCENE_SUB1  = 4
-GAMESCENE_SUB2  = 5
-TOPSCENE        = 6
-# センサー系
-MOTION_ACCEL    = undefined
-MOTION_GRAVITY  = undefined
-MOTION_ROTATE   = undefined
-# ゲーム起動時からの経過時間（秒）
-LAPSEDTIME      = 0
+#******************************************************************************
+# 初期化処理
+#******************************************************************************
 
-# 初期化処理 ***********************************************************
+# 定数定義
+
+# オブジェクトの種類
+CONTROL             = 0
+SPRITE              = 1
+LABEL               = 2
+PHYSICAL            = 3
+GLMODEL             = 4
+# Sceneの種類
+BGSCENE             = 0
+BGSCENE_SUB1        = 1
+BGSCENE_SUB2        = 2
+GAMESCENE           = 3
+GAMESCENE_SUB1      = 4
+GAMESCENE_SUB2      = 5
+TOPSCENE            = 6
+
+# グローバル初期化
+
+# センサー系
+MOTION_ACCEL        = undefined
+MOTION_GRAVITY      = undefined
+MOTION_ROTATE       = undefined
+# ゲーム起動時からの経過時間（秒）
+LAPSEDTIME          = 0
+# 3D系
+CAMERA              = undefined
+
 # オブジェクトが入っている配列
 _objects = []
 # Scene格納用配列
@@ -49,6 +55,11 @@ world = null
 rootScene3D = null
 # enchantのrootScene
 rootScene = null
+
+#******************************************************************************
+# 起動時の処理
+#******************************************************************************
+
 # enchantのオマジナイ
 enchant()
 # ゲーム起動時の処理
@@ -64,6 +75,7 @@ window.onload = ->
     #if (typeof(Scene3D) == 'function')
     if (isWebGL())
         rootScene3D = new Scene3D()
+
         # スポットライト生成
         #dlight = new DirectionalLight()
         #dlight.directionX = 0
@@ -71,6 +83,7 @@ window.onload = ->
         #dlight.directionZ = 0
         #dlight.color = [1.0, 1.0, 1.0]
         #rootScene3D.setDirectionalLight(dlight)
+
         # 環境光ライト生成
         #alight = new AmbientLight()
         #alight.directionX = 0
@@ -78,15 +91,16 @@ window.onload = ->
         #alight.directionZ = 0
         #alight.color = [1.0, 1.0, 1.0]
         #rootScene3D.setAmbientLight(alight)
+
         # カメラ生成
-        camera = new Camera3D()
-        camera.x = 0
-        camera.y = 100
-        camera.z = 500
-        camera.centerX = 0
-        camera.centerY = 0
-        camera.centerZ = 0
-        rootScene3D.setCamera(camera)
+        CAMERA = new Camera3D()
+        CAMERA.x = 0
+        CAMERA.y = 100
+        CAMERA.z = 500
+        CAMERA.centerX = 0
+        CAMERA.centerY = 0
+        CAMERA.centerZ = 0
+        rootScene3D.setCamera(CAMERA)
 
     rootScene = core.rootScene
     window.addEventListener 'devicemotion', (e)=>
@@ -127,7 +141,9 @@ debugwrite = (str)->
     if (DEBUG == true)
         _DEBUGLABEL.text = str
 
+#******************************************************************************
 # 2D/3D共用オブジェクト生成メソッド
+#******************************************************************************
 addObject = (param)->
     # 2D用パラメーター
     motionObj = if (param.motionObj?) then param.motionObj else undefined
@@ -153,17 +169,20 @@ addObject = (param)->
     # オブジェクト生成
     switch _type_
         # 2Dオブジェクト
-        when CONTROL, SPRITE, LABEL, PHYCIRCLE, PHYCUBE
+        when CONTROL, SPRITE, LABEL, PHYSICAL
             obj = createObject(motionObj, _type_, x, y, xs, ys, g, image, cellx, celly, opacity, animlist, animnum, visible, scene)
 
         # 3Dオブジェクト
-        when GLSPHERE, GLCUBE, GLMODEL
+        when GLMODEL
             obj = createObject2(motionObj, _type_, x, y, z, xs, ys, zs, g, model, opacity)
 
     return obj
 
+#******************************************************************************
 # 3Dスプライト生成
-createObject2 = (motionObj = undefined, _type_ = GLSPHERE, x = 0, y = 0, z = 0, xs = 0.0, ys = 0.0, zs = 0.0, g = 0.0, model = undefined, opacity = 1.0)->
+#******************************************************************************
+createObject2 = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, xs = 0.0, ys = 0.0, zs = 0.0, g = 0.0, model = Sphere, opacity = 1.0)->
+
     if (motionObj == null)
         motionObj = undefined
 
@@ -175,35 +194,33 @@ createObject2 = (motionObj = undefined, _type_ = GLSPHERE, x = 0, y = 0, z = 0, 
     obj.active = true
 
     # 3Dスプライトを生成
-    switch (_type_)
-        when GLSPHERE
-            motionsprite = new Sphere()
-
-        when GLCUBE
-            motionsprite = new Cube()
-
+    switch _type_
         when GLMODEL
-            motionsprite = new Sprite3D()
+            if (isFinite(model))
+                motionsprite = new Sprite3D()
+            else
+                motionsprite = new model()
 
     # スプライトを表示
     rootScene3D.addChild(motionsprite)
 
     # モデル割り当て
-    if (IMAGELIST[model]? && model?)
-        motionsprite.set(core.assets[IMAGELIST[model]])
+    if (isFinite(model))
+        if (IMAGELIST[model]? && model?)
+            motionsprite.set(core.assets[IMAGELIST[model]])
 
     # 値を設定する
     motionsprite.x = parseInt(x)
     motionsprite.y = parseInt(y)
     motionsprite.z = parseInt(z)
-    motionsprite._x_ = parseFloat(x)
-    motionsprite._y_ = parseFloat(y)
-    motionsprite._z_ = parseFloat(z)
-    motionsprite.xs = parseFloat(xs)
-    motionsprite.ys = parseFloat(ys)
-    motionsprite.zs = parseFloat(zs)
-    motionsprite.gravity = parseFloat(g)
+    motionsprite._x_ = x
+    motionsprite._y_ = y
+    motionsprite._z_ = z
+    motionsprite.xs = xs
+    motionsprite.ys = ys
+    motionsprite.zs = zs
     motionsprite.a = parseFloat(opacity)
+    #motionsprite.gravity = g * 1.0
 
     # 動きを定義したオブジェクトを生成する
     if (motionObj != undefined)
@@ -225,7 +242,9 @@ createObject2 = (motionObj = undefined, _type_ = GLSPHERE, x = 0, y = 0, z = 0, 
 
     return obj.motionObj
 
+#******************************************************************************
 # enforce1.x互換用2Dスプライト生成メソッド
+#******************************************************************************
 createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, g = 0.0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1)->
     if (motionObj == null)
         motionObj = undefined
@@ -328,6 +347,7 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
     return obj.motionObj
 
 #**********************************************************************
+# オブジェクト削除（画面からも消える）
 #**********************************************************************
 removeObject = (motionObj)->
     if (!motionObj?)
@@ -352,6 +372,8 @@ removeObject = (motionObj)->
     parent.active = false
 
 #**********************************************************************
+# オブジェクトリストの中で未使用のものの配列番号を返す。
+# 無かった場合は-1を返す
 #**********************************************************************
 _getNullObject = ->
     ret = -1
@@ -362,6 +384,7 @@ _getNullObject = ->
     return ret
 
 #**********************************************************************
+# オブジェクトリストの指定した番号のオブジェクトを返す
 #**********************************************************************
 getObject:(id)->
     ret = undefined
