@@ -31,9 +31,9 @@ TOPSCENE            = 6
 # グローバル初期化
 
 # センサー系
-MOTION_ACCEL        = undefined
-MOTION_GRAVITY      = undefined
-MOTION_ROTATE       = undefined
+MOTION_ACCEL        = [x:0, y:0, z:0]
+MOTION_GRAVITY      = [x:0, y:0, z:0]
+MOTION_ROTATE       = [alpha:0, beta:0, gamma:0]
 # ゲーム起動時からの経過時間（秒）
 LAPSEDTIME          = 0
 # 3D系
@@ -72,8 +72,7 @@ window.onload = ->
     # box2d初期化
     world = new PhysicsWorld(0, GRAVITY)
     # 3Dシーンを生成
-    #if (typeof(Scene3D) == 'function')
-    if (isWebGL())
+    if (typeof(Scene3D) == 'function')
         rootScene3D = new Scene3D()
 
         # スポットライト生成
@@ -85,18 +84,18 @@ window.onload = ->
         #rootScene3D.setDirectionalLight(dlight)
 
         # 環境光ライト生成
-        #alight = new AmbientLight()
-        #alight.directionX = 0
-        #alight.directionY = 100
-        #alight.directionZ = 0
-        #alight.color = [1.0, 1.0, 1.0]
-        #rootScene3D.setAmbientLight(alight)
+        alight = new AmbientLight()
+        alight.directionX = 0
+        alight.directionY = 100
+        alight.directionZ = 0
+        alight.color = [1.0, 1.0, 1.0]
+        rootScene3D.setAmbientLight(alight)
 
         # カメラ生成
         CAMERA = new Camera3D()
         CAMERA.x = 0
-        CAMERA.y = 100
-        CAMERA.z = 500
+        CAMERA.y = 0
+        CAMERA.z = 300
         CAMERA.centerX = 0
         CAMERA.centerY = 0
         CAMERA.centerZ = 0
@@ -106,7 +105,10 @@ window.onload = ->
     window.addEventListener 'devicemotion', (e)=>
         MOTION_ACCEL = e.acceleration
         MOTION_GRAVITY = e.accelerationIncludingGravity
-        MOTION_ROTATE = e.rotationRate
+    window.addEventListener 'deviceorientation', (e)=>
+        MOTION_ROTATE.alpha = e.alpha
+        MOTION_ROTATE.beta = e.beta
+        MOTION_ROTATE.gamma = e.gamma
 
     # キーバインド
     core.keybind('Z'.charCodeAt(0), 'a')
@@ -148,14 +150,14 @@ addObject = (param)->
     # 2D用パラメーター
     motionObj = if (param.motionObj?) then param.motionObj else undefined
     _type_ = if (param.type?) then param.type else SPRITE
-    x = if (param.x?) then param.x else 0
-    y = if (param.y?) then param.y else 0
-    xs = if (param.xs?) then param.xs else 0
-    ys = if (param.ys?) then param.ys else 0
-    g = if (param.gravity?) then param.gravity else 0
+    x = if (param.x?) then param.x else 0.0
+    y = if (param.y?) then param.y else 0.0
+    xs = if (param.xs?) then param.xs else 0.0
+    ys = if (param.ys?) then param.ys else 0.0
+    gravity = if (param.gravity?) then param.gravity else 0.0
     image = if (param.image?) then param.image else 0
-    cellx = if (param.cellx?) then param.cellx else 0
-    celly = if (param.celly?) then param.celly else 0
+    cellx = if (param.cellx?) then param.cellx else 0.0
+    celly = if (param.celly?) then param.celly else 0.0
     opacity = if (param.opacity?) then param.opacity else 1.0
     animlist = if (param.animlist?) then param.animlist else [[0]]
     animnum = if (param.animnum?) then param.animnum else 0
@@ -163,25 +165,25 @@ addObject = (param)->
     scene = if (param.scene?) then param.scene else -1
     model = if (param.model?) then param.model else undefined
     # 3D用パラメーター
-    z = if (param.z?) then param.z else 0
-    zs = if (param.zs?) then param.zs else 0
+    z = if (param.z?) then param.z else 0.0
+    zs = if (param.zs?) then param.zs else 0.0
 
     # オブジェクト生成
     switch _type_
         # 2Dオブジェクト
         when CONTROL, SPRITE, LABEL, PHYSICAL
-            obj = createObject(motionObj, _type_, x, y, xs, ys, g, image, cellx, celly, opacity, animlist, animnum, visible, scene)
+            obj = createObject(motionObj, _type_, x, y, xs, ys, gravity image, cellx, celly, opacity, animlist, animnum, visible, scene)
 
         # 3Dオブジェクト
         when GLMODEL
-            obj = createObject2(motionObj, _type_, x, y, z, xs, ys, zs, g, model, opacity)
+            obj = createObject2(motionObj, _type_, x, y, z, xs, ys, zs, gravity, model, opacity)
 
     return obj
 
 #******************************************************************************
 # 3Dスプライト生成
 #******************************************************************************
-createObject2 = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, xs = 0.0, ys = 0.0, zs = 0.0, g = 0.0, model = Sphere, opacity = 1.0)->
+createObject2 = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, xs = 0.0, ys = 0.0, zs = 0.0, gravity = 0.0, model = Sphere, opacity = 1.0)->
 
     if (motionObj == null)
         motionObj = undefined
@@ -220,7 +222,7 @@ createObject2 = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, x
     motionsprite.ys = ys
     motionsprite.zs = zs
     motionsprite.a = parseFloat(opacity)
-    #motionsprite.gravity = g * 1.0
+    motionsprite.gravity = gravity
 
     # 動きを定義したオブジェクトを生成する
     if (motionObj != undefined)
@@ -245,7 +247,7 @@ createObject2 = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, x
 #******************************************************************************
 # enforce1.x互換用2Dスプライト生成メソッド
 #******************************************************************************
-createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, g = 0.0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1)->
+createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, gravity = 0.0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1)->
     if (motionObj == null)
         motionObj = undefined
 
@@ -298,7 +300,7 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
             motionsprite.animnum = animnum
             motionsprite.xs = xs
             motionsprite.ys = ys
-            motionsprite.gravity = g
+            motionsprite.gravity = gravity
 
         when LABEL
             # パラメータ初期化
@@ -310,12 +312,8 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
             motionsprite.font = "12pt 'Arial'"
             motionsprite.color = "black"
 
-        when PHYCIRCLE
+        when PHYSICAL
             nop()
-
-        when PHYCUBE
-            nop()
-
 
     # 動きを定義したオブジェクトを生成する
     if (motionObj != undefined)
