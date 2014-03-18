@@ -139,8 +139,9 @@ window.onload = ->
             LAPSEDTIME = parseFloat(LAPSEDTIME.toFixed(2))
     core.start()
 
-debugwrite = (str)->
+debugwrite = (str, fontsize = 10)->
     if (DEBUG == true)
+        _DEBUGLABEL.font = fontsize+"px 'Arial'"
         _DEBUGLABEL.text = str
 
 #******************************************************************************
