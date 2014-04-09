@@ -34,7 +34,7 @@ class _stationary
     # ビヘイビアー
     #***************************************************************
     behavior:->
-        if (@_type_ != LABEL && @sprite?)
+        if (@_type_ != LABEL && @_type_ != DSPRITE && @_type_ != SSPRITE && @sprite?)
             if (@sprite.x != @sprite.xback)
                 @sprite._x_ = @sprite.x
             if (@sprite.y != @sprite.yback)

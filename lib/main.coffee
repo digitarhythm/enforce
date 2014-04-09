@@ -17,8 +17,9 @@
 CONTROL             = 0
 SPRITE              = 1
 LABEL               = 2
-PHYSICAL            = 3
-GLMODEL             = 4
+DSPRITE             = 3
+SSPRITE             = 4
+GLMODEL             = 5
 # Sceneの種類
 BGSCENE             = 0
 BGSCENE_SUB1        = 1
@@ -66,7 +67,9 @@ enchant()
 window.onload = ->
     # enchant初期化
     enchant.ENV.MOUSE_ENABLED = false
+    enchant.Sound.enabledInMobileSafari = true
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
+    core.rootScene.backgroundColor = "transparent"
     core.fps = FPS
     core.preload(IMAGELIST)
     # box2d初期化
@@ -118,6 +121,7 @@ window.onload = ->
     # シーングループを生成
     for i in [0...(TOPSCENE+1)]
         scene = new Group()
+        scene.backgroundColor = "yellow"
         _scenes[i] = scene
         rootScene.addChild(scene)
 
@@ -156,15 +160,19 @@ addObject = (param)->
     xs = if (param.xs?) then param.xs else 0.0
     ys = if (param.ys?) then param.ys else 0.0
     gravity = if (param.gravity?) then param.gravity else 0.0
-    image = if (param.image?) then param.image else 0
+    image = if (param.image?) then param.image else undefined
     cellx = if (param.cellx?) then param.cellx else 0.0
     celly = if (param.celly?) then param.celly else 0.0
     opacity = if (param.opacity?) then param.opacity else 1.0
-    animlist = if (param.animlist?) then param.animlist else [[0]]
+    animlist = if (param.animlist?) then param.animlist else undefined
     animnum = if (param.animnum?) then param.animnum else 0
     visible = if (param.visible?) then param.visible else true
     scene = if (param.scene?) then param.scene else -1
     model = if (param.model?) then param.model else undefined
+    density = if (param.density?) then param.density else 1.0
+    friction = if (param.friction?) then param.friction else 0.5
+    restitution = if (param.restitution?) then param.restitution else 0.1
+    move = if (param.move?) then param.move else false
     # 3D用パラメーター
     z = if (param.z?) then param.z else 0.0
     zs = if (param.zs?) then param.zs else 0.0
@@ -172,8 +180,8 @@ addObject = (param)->
     # オブジェクト生成
     switch _type_
         # 2Dオブジェクト
-        when CONTROL, SPRITE, LABEL, PHYSICAL
-            obj = createObject(motionObj, _type_, x, y, xs, ys, gravity image, cellx, celly, opacity, animlist, animnum, visible, scene)
+        when CONTROL, SPRITE, LABEL, DSPRITE, SSPRITE
+            obj = createObject(motionObj, _type_, x, y, xs, ys, gravity, image, cellx, celly, opacity, animlist, animnum, visible, scene, density, friction, restitution, move)
 
         # 3Dオブジェクト
         when GLMODEL
@@ -248,7 +256,7 @@ createObject2 = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, x
 #******************************************************************************
 # enforce1.x互換用2Dスプライト生成メソッド
 #******************************************************************************
-createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, gravity = 0.0, image = 0, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1)->
+createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, gravity = 0.0, image = undefined, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1, density = 1.0, friction = 0.5, restitution = 0.1, move = false)->
     if (motionObj == null)
         motionObj = undefined
 
@@ -258,6 +266,8 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 
     obj = _objects[objnum]
     obj.active = true
+
+    JSLog("density=%@", density)
 
     # スプライトを生成
     switch (_type_)
@@ -269,6 +279,14 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
             motionsprite = new Label()
             if (scene < 0)
                 scene = GAMESCENE_SUB2
+        when DSPRITE
+            motionsprite = new PhyBoxSprite(cellx, celly, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, move)
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+        when SSPRITE
+            motionsprite = new PhyBoxSprite(cellx, celly, enchant.box2d.STATIC_SPRITE, density, friction, restitution, move)
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
         else
             motionsprite = undefined
             if (scene < 0)
@@ -313,8 +331,16 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
             motionsprite.font = "12pt 'Arial'"
             motionsprite.color = "black"
 
-        when PHYSICAL
-            nop()
+        when DSPRITE, SSPRITE
+            motionsprite.frame = 0
+            if (animlist?)
+                motionsprite.backgroundColor = "transparent"
+            else
+                motionsprite.backgroundColor = "white"
+            motionsprite.animlist = animlist
+            motionsprite.animnum = animnum
+            motionsprite.x = x
+            motionsprite.y = y
 
     # 動きを定義したオブジェクトを生成する
     if (motionObj != undefined)
