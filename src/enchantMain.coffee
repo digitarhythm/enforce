@@ -9,6 +9,6 @@ class enchantMain
             xs: rand(10) - 5
             gravity: 1
             animlist: [[0, 1, 2, 1]]
-            image: 0
+            image: 'chara1'
             cellx: 32
             celly: 32

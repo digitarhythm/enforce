@@ -16,20 +16,26 @@ sprintf = (a, b...)->
 	return a
 
 # create unique ID
-uniqueID =->
+uniqueID = ->
 	S4 = ->
 		return (((1+Math.random())*0x10000)|0).toString(16).substring(1)
 	return (S4()+S4()+"-"+S4()+"-"+S4()+"-"+S4()+"-"+S4()+S4()+S4())
 
-getBounds =->
+getBounds = ->
 	frame = [parseInt(document.documentElement.clientWidth - 1), parseInt(document.documentElement.clientHeight - 1)]
 	return frame
 
-isWebGL =->
+isWebGL = ->
     try
         return !! window.WebGLRenderingContext && !! document.createElement('canvas').getContext('experimental-webgl')
     catch e
         return false
+
+setCookie = (name, value, expireValue = 1)->
+    $.cookie(name, value, { expires: expireValue })
+
+getCookie = (name)->
+    return $.cookie(name)
 
 # do noting
 nop =->

@@ -10,6 +10,8 @@ $webgl = $ini["ENVIRON"]["webgl"];
 	<script type="text/javascript" src="./extlib/enchant.min.js"></script>
     <meta name="viewport" content="width=device-width, user-scalable=no, minimal-ui">
     <meta name="apple-mobile-web-app-capable" content="yes">
+	<script type="text/javascript" src="./extlib/jquery-2.1.0.min.js"></script>
+	<script type="text/javascript" src="./extlib/jquery.cookie.js"></script>
 	<script type="text/javascript" src="./extlib/Box2dWeb-2.1.a.3.min.js"></script>
 	<script type="text/javascript" src="./extlib/box2d.enchant.js"></script>
 <?php   if ($webgl == true) {

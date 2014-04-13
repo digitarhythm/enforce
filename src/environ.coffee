@@ -16,6 +16,6 @@ OBJECTNUM       = 100                       # キャラの最大数
 GRAVITY         = 9.8                       # 重力（box2dで使用）
 
 # preloading image list ***********************************************************************************
-IMAGELIST       = [
-    'media/chara1.png'
-]
+MEDIALIST       = {
+    chara1: 'media/chara1.png'
+}

@@ -17,9 +17,11 @@
 CONTROL             = 0
 SPRITE              = 1
 LABEL               = 2
-DSPRITE             = 3
-SSPRITE             = 4
-GLMODEL             = 5
+GLMODEL             = 3
+DSPRITE_BOX         = 4
+DSPRITE_CIRCLE      = 5
+SSPRITE_BOX         = 6
+SSPRITE_CIRCLE      = 7
 # Sceneの種類
 BGSCENE             = 0
 BGSCENE_SUB1        = 1
@@ -51,7 +53,7 @@ _DEBUGLABEL = null
 # enchantのcoreオブジェクト
 core = null
 # box2dのworldオブジェクト
-world = null
+box2dworld = null
 # 3Dのscene
 rootScene3D = null
 # enchantのrootScene
@@ -71,9 +73,16 @@ window.onload = ->
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
     core.rootScene.backgroundColor = "transparent"
     core.fps = FPS
-    core.preload(IMAGELIST)
+    if (IMAGELIST?)
+        core.preload(IMAGELIST)
+    else if (MEDIALIST?)
+        imagearr = []
+        i = 0
+        for obj of MEDIALIST
+            imagearr[i++] = MEDIALIST[obj]
+        core.preload(imagearr)
     # box2d初期化
-    world = new PhysicsWorld(0, GRAVITY)
+    box2dworld = new PhysicsWorld(0, GRAVITY)
     # 3Dシーンを生成
     if (typeof(Scene3D) == 'function')
         rootScene3D = new Scene3D()
@@ -138,7 +147,7 @@ window.onload = ->
             _scenes[TOPSCENE].addChild(_DEBUGLABEL)
 
         rootScene.addEventListener 'enterframe', (e)->
-            world.step(core.fps)
+            box2dworld.step(core.fps)
             LAPSEDTIME = core.frame / FPS
             LAPSEDTIME = parseFloat(LAPSEDTIME.toFixed(2))
     core.start()
@@ -180,19 +189,19 @@ addObject = (param)->
     # オブジェクト生成
     switch _type_
         # 2Dオブジェクト
-        when CONTROL, SPRITE, LABEL, DSPRITE, SSPRITE
-            obj = createObject(motionObj, _type_, x, y, xs, ys, gravity, image, cellx, celly, opacity, animlist, animnum, visible, scene, density, friction, restitution, move)
+        when CONTROL, SPRITE, LABEL, DSPRITE_BOX, DSPRITE_CIRCLE, SSPRITE_BOX, SSPRITE_CIRCLE
+            obj = createObject2d(motionObj, _type_, x, y, xs, ys, gravity, image, cellx, celly, opacity, animlist, animnum, visible, scene, density, friction, restitution, move)
 
         # 3Dオブジェクト
         when GLMODEL
-            obj = createObject2(motionObj, _type_, x, y, z, xs, ys, zs, gravity, model, opacity)
+            obj = createObject3d(motionObj, _type_, x, y, z, xs, ys, zs, gravity, model, opacity)
 
     return obj
 
 #******************************************************************************
 # 3Dスプライト生成
 #******************************************************************************
-createObject2 = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, xs = 0.0, ys = 0.0, zs = 0.0, gravity = 0.0, model = Sphere, opacity = 1.0)->
+createObject3d = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, xs = 0.0, ys = 0.0, zs = 0.0, gravity = 0.0, model = Sphere, opacity = 1.0)->
 
     if (motionObj == null)
         motionObj = undefined
@@ -217,8 +226,8 @@ createObject2 = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, x
 
     # モデル割り当て
     if (isFinite(model))
-        if (IMAGELIST[model]? && model?)
-            motionsprite.set(core.assets[IMAGELIST[model]])
+        if (MEDIALIST[model]? && model?)
+            motionsprite.set(core.assets[MEDIALIST[model]])
 
     # 値を設定する
     motionsprite.x = parseInt(x)
@@ -254,9 +263,9 @@ createObject2 = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, x
     return obj.motionObj
 
 #******************************************************************************
-# enforce1.x互換用2Dスプライト生成メソッド
+# enforce2.0以降用2Dスプライト生成関数
 #******************************************************************************
-createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, gravity = 0.0, image = undefined, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1, density = 1.0, friction = 0.5, restitution = 0.1, move = false)->
+createObject2d = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, gravity = 0.0, image = undefined, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1, density = 1.0, friction = 0.5, restitution = 0.1, move = false)->
     if (motionObj == null)
         motionObj = undefined
 
@@ -266,8 +275,6 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
 
     obj = _objects[objnum]
     obj.active = true
-
-    JSLog("density=%@", density)
 
     # スプライトを生成
     switch (_type_)
@@ -279,12 +286,20 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
             motionsprite = new Label()
             if (scene < 0)
                 scene = GAMESCENE_SUB2
-        when DSPRITE
+        when DSPRITE_BOX
             motionsprite = new PhyBoxSprite(cellx, celly, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, move)
             if (scene < 0)
                 scene = GAMESCENE_SUB1
-        when SSPRITE
+        when DSPRITE_CIRCLE
+            motionsprite = new PhyCircleSprite(cellx / 2, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, move)
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+        when SSPRITE_BOX
             motionsprite = new PhyBoxSprite(cellx, celly, enchant.box2d.STATIC_SPRITE, density, friction, restitution, move)
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+        when SSPRITE_CIRCLE
+            motionsprite = new PhyCircleSprite(cellx / 2, enchant.box2d.STATIC_SPRITE, density, friction, restitution, move)
             if (scene < 0)
                 scene = GAMESCENE_SUB1
         else
@@ -331,7 +346,132 @@ createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, 
             motionsprite.font = "12pt 'Arial'"
             motionsprite.color = "black"
 
-        when DSPRITE, SSPRITE
+        when DSPRITE_BOX, DSPRITE_CIRCLE, SSPRITE_BOX, SSPRITE_CIRCLE
+            motionsprite.frame = 0
+            if (animlist?)
+                motionsprite.backgroundColor = "transparent"
+            else
+                motionsprite.backgroundColor = "white"
+            motionsprite.animlist = animlist
+            motionsprite.animnum = animnum
+            motionsprite.x = x
+            motionsprite.y = y
+
+    # 動きを定義したオブジェクトを生成する
+    if (motionObj != undefined)
+        obj.motionObj = new motionObj(motionsprite)
+    else
+        obj.motionObj = new _stationary(motionsprite)
+
+    uid = uniqueID()
+    obj.motionObj._uniqueID = uid
+    obj.motionObj._scene = scene
+
+    if (motionsprite != undefined)
+        # イベント定義
+        motionsprite.addEventListener 'enterframe', ->
+            if (obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
+                obj.motionObj.behavior()
+
+    # 画像割り当て
+    if (MEDIALIST[image]? && animlist?)
+        img = MEDIALIST[image]
+        motionsprite.image = core.assets[img]
+
+    # 初期画像
+    if (animlist?)
+        animpattern = animlist[animnum]
+        motionsprite.frame = animpattern[0]
+
+    obj.motionObj._type_ = _type_
+
+    return obj.motionObj
+
+#******************************************************************************
+# enforce1.x互換用2Dスプライト生成メソッド
+#******************************************************************************
+createObject = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, gravity = 0.0, image = undefined, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1, density = 1.0, friction = 0.5, restitution = 0.1, move = false)->
+    if (motionObj == null)
+        motionObj = undefined
+
+    objnum = _getNullObject()
+    if (objnum < 0)
+        return undefined
+
+    obj = _objects[objnum]
+    obj.active = true
+
+    # スプライトを生成
+    switch (_type_)
+        when CONTROL, SPRITE
+            motionsprite = new Sprite()
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+        when LABEL
+            motionsprite = new Label()
+            if (scene < 0)
+                scene = GAMESCENE_SUB2
+        when DSPRITE_BOX
+            motionsprite = new PhyBoxSprite(cellx, celly, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, move)
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+        when DSPRITE_CIRCLE
+            motionsprite = new PhyCircleSprite(cellx / 2, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, move)
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+        when SSPRITE_BOX
+            motionsprite = new PhyBoxSprite(cellx, celly, enchant.box2d.STATIC_SPRITE, density, friction, restitution, move)
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+        when SSPRITE_CIRCLE
+            motionsprite = new PhyCircleSprite(cellx / 2, enchant.box2d.STATIC_SPRITE, density, friction, restitution, move)
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+        else
+            motionsprite = undefined
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+
+    # スプライトを表示
+    _scenes[scene].addChild(motionsprite)
+
+    # _type_によってスプライトを初期化する
+    switch _type_
+        when SPRITE
+            # パラメータ初期化
+            motionsprite.frame = 0
+            motionsprite.backgroundColor = "transparent"
+            motionsprite.x = x
+            motionsprite.y = y
+            motionsprite._x_ = x
+            motionsprite._y_ = y
+            motionsprite.width = cellx
+            motionsprite.height = celly
+            motionsprite.originX = parseInt(cellx / 2)
+            motionsprite.originY = parseInt(celly / 2)
+            motionsprite.opacity = opacity
+            motionsprite.rotation = 0.0
+            motionsprite.scaleX = 1.0
+            motionsprite.scaleY = 1.0
+            motionsprite.visible = visible
+            motionsprite.intersectFlag = true
+            motionsprite.animlist = animlist
+            motionsprite.animnum = animnum
+            motionsprite.xs = xs
+            motionsprite.ys = ys
+            motionsprite.gravity = gravity
+
+        when LABEL
+            # パラメータ初期化
+            motionsprite.x = x
+            motionsprite.y = y
+            motionsprite._x_ = x
+            motionsprite._y_ = y
+            motionsprite.textAlign = "left"
+            motionsprite.font = "12pt 'Arial'"
+            motionsprite.color = "black"
+
+        when DSPRITE_BOX, DSPRITE_CIRCLE, SSPRITE_BOX, SSPRITE_CIRCLE
             motionsprite.frame = 0
             if (animlist?)
                 motionsprite.backgroundColor = "transparent"
@@ -390,11 +530,35 @@ removeObject = (motionObj)->
     if (typeof(motionObj.destructor) == 'function')
         motionObj.destructor()
 
-    _scenes[parent.motionObj._scene].removeChild(parent.motionObj.sprite)
+    if (motionObj._type_ == DSPRITE_BOX || motionObj._type_ == DSPRITE_CIRCLE || motionObj._type_ == SSPRITE_BOX || motionObj._type_ == SSPRITE_CIRCLE)
+        parent.motionObj.sprite.destroy()
+    else
+        _scenes[parent.motionObj._scene].removeChild(parent.motionObj.sprite)
     parent.motionObj.sprite = 0
 
     parent.motionObj = 0
     parent.active = false
+
+#**********************************************************************
+# オブジェクトリストの指定した番号のオブジェクトを返す
+#**********************************************************************
+getObject = (id)->
+    ret = undefined
+    for i in [0..._objects.length]
+        if (!_objects[i].motionObj?)
+            continue
+        if (_objects[i].motionObj._uniqueID == id)
+            ret = _objects[i].motionObj
+            break
+    return ret
+
+#**********************************************************************
+#**********************************************************************
+#**********************************************************************
+# 以下は内部使用ライブラリ関数
+#**********************************************************************
+#**********************************************************************
+#**********************************************************************
 
 #**********************************************************************
 # オブジェクトリストの中で未使用のものの配列番号を返す。
@@ -408,18 +572,3 @@ _getNullObject = ->
             break
     return ret
 
-#**********************************************************************
-# オブジェクトリストの指定した番号のオブジェクトを返す
-#**********************************************************************
-getObject:(id)->
-    ret = undefined
-    for i in [0..._objects.length]
-        if (!_objects[i].motionObj?)
-            continue
-        if (_objects[i].motionObj._uniqueID == id)
-            ret = _objects[i].motionObj
-            break
-    return ret
-
-#**********************************************************************
-#**********************************************************************

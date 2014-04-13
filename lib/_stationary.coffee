@@ -12,16 +12,20 @@ class _stationary
 
         if (@sprite?)
             @sprite.intersectFlag = true
-            @sprite.addEventListener 'touchstart', (e)=>
+            #@sprite.addEventListener 'touchstart', (e)=>
+            @sprite.ontouchstart = (e)=>
                 if (typeof @touchesBegan == 'function')
                     @touchesBegan(e)
-            @sprite.addEventListener 'touchmove', (e)=>
+            #@sprite.addEventListener 'touchmove', (e)=>
+            @sprite.ontouchmove = (e)=>
                 if (typeof @touchesMoved == 'function')
                     @touchesMoved(e)
-            @sprite.addEventListener 'touchend', (e)=>
+            #@sprite.addEventListener 'touchend', (e)=>
+            @sprite.ontouchend = (e)=>
                 if (typeof @touchesEnded == 'function')
                     @touchesEnded(e)
-            @sprite.addEventListener 'touchcancel', (e)=>
+            #@sprite.addEventListener 'touchcancel', (e)=>
+            @sprite.ontouchcancel = (e)=>
                 if (typeof @touchesCanceled == 'function')
                     @touchesCanceled(e)
 
@@ -34,7 +38,7 @@ class _stationary
     # ビヘイビアー
     #***************************************************************
     behavior:->
-        if (@_type_ != LABEL && @_type_ != DSPRITE && @_type_ != SSPRITE && @sprite?)
+        if (@_type_ == SPRITE && @sprite?)
             if (@sprite.x != @sprite.xback)
                 @sprite._x_ = @sprite.x
             if (@sprite.y != @sprite.yback)
@@ -141,7 +145,7 @@ class _stationary
     #***************************************************************
     # スプライト同士の衝突判定(intersect)
     #***************************************************************
-    isIntersect:(motionObj)->
+    isIntersect:(motionObj, method = undefined)->
         if (!motionObj.sprite?)
             return false
         if (@sprite.intersectFlag == true && motionObj.sprite.intersectFlag == true)
@@ -171,6 +175,6 @@ class _stationary
     # 3DスプライトにColladaモデルを設定する
     #***************************************************************
     setModel:(num)->
-        model = IMAGELIST[num]
+        model = MEDIALIST[num]
         @set(core.assets[model])
 
