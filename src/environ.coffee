@@ -17,5 +17,5 @@ GRAVITY         = 9.8                       # 重力（box2dで使用）
 
 # preloading image list ***********************************************************************************
 MEDIALIST       = {
-    chara1: 'media/chara1.png'
+    chara1: 'media/picture/chara1.png'
 }

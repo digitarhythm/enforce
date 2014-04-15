@@ -65,11 +65,11 @@ rootScene = null
 
 # enchantのオマジナイ
 enchant()
+enchant.Sound.enabledInMobileSafari = true
+enchant.ENV.MOUSE_ENABLED = false
 # ゲーム起動時の処理
 window.onload = ->
     # enchant初期化
-    enchant.ENV.MOUSE_ENABLED = false
-    enchant.Sound.enabledInMobileSafari = true
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
     core.rootScene.backgroundColor = "transparent"
     core.fps = FPS
@@ -559,6 +559,13 @@ getObject = (id)->
 #**********************************************************************
 #**********************************************************************
 #**********************************************************************
+
+#**********************************************************************
+# サウンド再生
+#**********************************************************************
+playSound = (name)->
+    soundfile = MEDIALIST[name]
+    sound = core.assets[soundfile].clone().play()
 
 #**********************************************************************
 # オブジェクトリストの中で未使用のものの配列番号を返す。
