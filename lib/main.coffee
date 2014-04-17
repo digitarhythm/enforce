@@ -307,6 +307,9 @@ createObject2d = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0
             if (scene < 0)
                 scene = GAMESCENE_SUB1
 
+    # TimeLineを時間ベースにする
+    motionsprite.tl.setTimeBased()
+
     # スプライトを表示
     _scenes[scene].addChild(motionsprite)
 

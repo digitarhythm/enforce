@@ -43,6 +43,9 @@ cp -af $ENF/extlib/* $PROJ/extlib/
 cp -af $ENF/lib/config.ini $PROJ/lib/
 cp -af $ENF/lib/sqlite3.db $PROJ/lib/
 
+# enforceバージョンの設定
+echo "1.0" > $PROJ/lib/version
+
 # エディターのコピー
 if [ "${CODIT}" = "1" ]; then
     cp -af $ENF/codit $PROJ/

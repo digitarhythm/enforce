@@ -4,6 +4,20 @@ CWD=`pwd`
 ENF=$(cd $(dirname $0)/..;pwd)
 PROJ=$CWD
 
+OLDIFS=$IFS
+IFS=
+exec < $PROJ/lib/version
+echo ${version}
+while read DATA
+do
+    version=$DATA
+done
+IFS=$OLDIFS
+if [ "$version" != "1.0" ]; then
+    echo "version unmatched."
+    exit
+fi
+
 # フレームワークファイルのコピー
 if [ ! -f $PROJ/index.php ]; then
 	echo "ERROR: This project is static mode."
