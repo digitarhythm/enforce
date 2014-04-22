@@ -3,6 +3,8 @@
 #
 # 2013.12.28 ver0.1
 # 2014.01.09 ver0.2
+# 2014.01.20 ver1.0
+# 2014.02.07 ver1.1
 #
 # Coded by Kow Sakazaki
 #***********************************************************************
@@ -71,7 +73,7 @@ enchant.ENV.MOUSE_ENABLED = false
 window.onload = ->
     # enchant初期化
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
-    core.rootScene.backgroundColor = "transparent"
+    core.rootScene.backgroundColor = BGCOLOR
     core.fps = FPS
     if (IMAGELIST?)
         core.preload(IMAGELIST)

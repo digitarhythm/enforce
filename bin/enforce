@@ -2,24 +2,31 @@
 
 opt=$1
 opt2=$2
+LIB=`pwd`"/lib"
 ENF=$(cd $(dirname $0)/..;pwd)
 cwd=$(cd $(dirname $0);pwd)
 
 ##################################################
 # enforce version check
 ##################################################
-OLDIFS=$IFS
-IFS=
-exec < $PROJ/lib/version
-echo ${version}
-while read DATA
-do
-    version=$DATA
-done
-IFS=$OLDIFS
-if [ "$version" != "1.0" ]; then
-    echo "version unmatched."
-    exit
+if [ "$opt" != "new" ]; then
+	if [ ! -f $LIB/version ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+    OLDIFS=$IFS
+    IFS=
+    exec < $LIB/version
+    echo ${version}
+    while read DATA
+    do
+        version=$DATA
+    done
+    IFS=$OLDIFS
+    if [ "$version" != "1.1" ]; then
+        echo "version unmatched."
+        exit
+    fi
 fi
 
 echo "Execute directory ["$(pwd)"]"
@@ -70,26 +77,14 @@ new)
 ;;
 
 build)
-	if [ ! -d "./usrobject" ]; then
-		echo "Please perform in a package directory."
-		exit
-	fi
 	${cwd}/_enforce_build
 ;;
 
 update)
-	if [ ! -d "./usrobject" ]; then
-		echo "Please perform in a package directory."
-		exit
-	fi
 	${cwd}/_enforce_update ${opt2}
 ;;
 
 derive)
-	if [ ! -d "./usrobject" ]; then
-		echo "Please perform in a package directory."
-		exit
-	fi
 	if [ -z "$opt2" ]; then
 		echo "Please specify an option."
 		exit
@@ -98,10 +93,6 @@ derive)
 ;;
 
 static)
-	if [ ! -d "./usrobject" ]; then
-		echo "Please perform in a package directory."
-		exit
-	fi
 	if [ -f "./index.php" ]; then
         rm -rf ./codit
 		${cwd}/_enforce_static > ./index.html
@@ -110,10 +101,6 @@ static)
 ;;
 
 develop)
-	if [ ! -d "./usrobject" ]; then
-		echo "Please perform in a package directory."
-		exit
-	fi
 	if [ -f "./index.html" ]; then
 		rm -f ./index.html
         if [ "$opt2" == "-with-codit" ]; then
