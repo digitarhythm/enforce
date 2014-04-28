@@ -12,19 +12,15 @@ class _stationary
 
         if (@sprite?)
             @sprite.intersectFlag = true
-            #@sprite.addEventListener 'touchstart', (e)=>
             @sprite.ontouchstart = (e)=>
                 if (typeof @touchesBegan == 'function')
                     @touchesBegan(e)
-            #@sprite.addEventListener 'touchmove', (e)=>
             @sprite.ontouchmove = (e)=>
                 if (typeof @touchesMoved == 'function')
                     @touchesMoved(e)
-            #@sprite.addEventListener 'touchend', (e)=>
             @sprite.ontouchend = (e)=>
                 if (typeof @touchesEnded == 'function')
                     @touchesEnded(e)
-            #@sprite.addEventListener 'touchcancel', (e)=>
             @sprite.ontouchcancel = (e)=>
                 if (typeof @touchesCanceled == 'function')
                     @touchesCanceled(e)
@@ -39,25 +35,32 @@ class _stationary
     #***************************************************************
     behavior:->
         if (@_type_ == SPRITE && @sprite?)
+
             if (@sprite.x != @sprite.xback)
                 @sprite._x_ = @sprite.x
             if (@sprite.y != @sprite.yback)
                 @sprite._y_ = @sprite.y
             if (@sprite.z != @sprite.zback)
                 @sprite._z_ = @sprite.z
+
             if (@_type_ == GLMODEL)
                 @sprite.ys -= @sprite.gravity
             else
                 @sprite.ys += @sprite.gravity
+
             @sprite._x_ += @sprite.xs
+
             if (@_type_ < 5)
                 @sprite._y_ += @sprite.ys
             else
                 @sprite._y_ -= @sprite.ys
+
             @sprite._z_ += @sprite.zs
-            @sprite.x = Math.round(@sprite._x_)
-            @sprite.y = Math.round(@sprite._y_)
-            @sprite.z = Math.round(@sprite._z_)
+
+            @sprite.x = Math.floor(@sprite._x_)
+            @sprite.y = Math.floor(@sprite._y_ - @sprite._z_)
+            @sprite.z = Math.floor(@sprite._z_)
+
             @sprite.xback = @sprite.x
             @sprite.yback = @sprite.y
             @sprite.zback = @sprite.z

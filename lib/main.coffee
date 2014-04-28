@@ -192,7 +192,7 @@ addObject = (param)->
     switch _type_
         # 2Dオブジェクト
         when CONTROL, SPRITE, LABEL, DSPRITE_BOX, DSPRITE_CIRCLE, SSPRITE_BOX, SSPRITE_CIRCLE
-            obj = createObject2d(motionObj, _type_, x, y, xs, ys, gravity, image, cellx, celly, opacity, animlist, animnum, visible, scene, density, friction, restitution, move)
+            obj = createObject2d(motionObj, _type_, x, y, z, xs, ys, zs, gravity, image, cellx, celly, opacity, animlist, animnum, visible, scene, density, friction, restitution, move)
 
         # 3Dオブジェクト
         when GLMODEL
@@ -267,7 +267,7 @@ createObject3d = (motionObj = undefined, _type_ = GLMODEL, x = 0, y = 0, z = 0, 
 #******************************************************************************
 # enforce2.0以降用2Dスプライト生成関数
 #******************************************************************************
-createObject2d = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0, ys = 0.0, gravity = 0.0, image = undefined, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1, density = 1.0, friction = 0.5, restitution = 0.1, move = false)->
+createObject2d = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, z = 0, xs = 0.0, ys = 0.0, zs = 0.0, gravity = 0.0, image = undefined, cellx = 0, celly = 0, opacity = 1.0, animlist = undefined, animnum = 0, visible = true, scene = -1, density = 1.0, friction = 0.5, restitution = 0.1, move = false)->
     if (motionObj == null)
         motionObj = undefined
 
@@ -323,8 +323,10 @@ createObject2d = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0
             motionsprite.backgroundColor = "transparent"
             motionsprite.x = x
             motionsprite.y = y
+            motionsprite.z = z
             motionsprite._x_ = x
             motionsprite._y_ = y
+            motionsprite._z_ = z
             motionsprite.width = cellx
             motionsprite.height = celly
             motionsprite.originX = parseInt(cellx / 2)
@@ -339,14 +341,17 @@ createObject2d = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0
             motionsprite.animnum = animnum
             motionsprite.xs = xs
             motionsprite.ys = ys
+            motionsprite.zs = zs
             motionsprite.gravity = gravity
 
         when LABEL
             # パラメータ初期化
             motionsprite.x = x
             motionsprite.y = y
+            motionsprite.z = z
             motionsprite._x_ = x
             motionsprite._y_ = y
+            motionsprite._z_ = z
             motionsprite.textAlign = "left"
             motionsprite.font = "12pt 'Arial'"
             motionsprite.color = "black"
@@ -361,6 +366,7 @@ createObject2d = (motionObj = undefined, _type_ = SPRITE, x = 0, y = 0, xs = 0.0
             motionsprite.animnum = animnum
             motionsprite.x = x
             motionsprite.y = y
+            motionsprite.z = z
 
     # 動きを定義したオブジェクトを生成する
     if (motionObj != undefined)
