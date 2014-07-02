@@ -7,23 +7,43 @@ ENF=$(cd $(dirname $0)/..;pwd)
 cwd=$(cd $(dirname $0);pwd)
 
 ##################################################
+# process codejs
+##################################################
+
+if [ -z "$opt" ]; then
+	echo "<Usage>"
+	echo "enforce2 function [option]"
+	echo "<function>"
+	echo "new    : create new project(require option is package name)"
+	echo "update : update system library"
+	echo "derive : create a new object class(require option is new class name)"
+	echo "static : project to static mode"
+	echo "static : project to develop mode"
+	exit
+fi
+
+##################################################
 # enforce version check
 ##################################################
 if [ "$opt" != "new" ]; then
-	if [ ! -f $LIB/version ]; then
-		echo "Please perform in a package directory."
-		exit
-	fi
+    if [ ! -f "./lib/version" ]; then
+        echo "Please perform in a package directory."
+        exit
+    fi
+
     OLDIFS=$IFS
     IFS=
     exec < $LIB/version
     echo ${version}
+
     while read DATA
     do
-        version=${DATA}
+        version=$DATA
     done
+
     IFS=$OLDIFS
-    if [ "$version" != "1.1" ]; then
+
+    if [ "$version" != "2.0" ]; then
         echo "version unmatched."
         exit
     fi
@@ -49,42 +69,37 @@ if [ $? -ne 0 ]; then
 	exit
 fi
 
-##################################################
-# process codejs
-##################################################
-
-if [ -z "$opt" ]; then
-	echo "<Usage>"
-	echo "enforce function [option]"
-	echo "<function>"
-	echo "new    : create new project(require option is package name)"
-	echo "update : update system library"
-	echo "derive : create a new object class(require option is new class name)"
-	echo "static : project to static mode"
-	echo "static : project to develop mode"
-	exit
-fi
-
 case ${opt} in
 new)
-	pkg=$2
-    pkg2=$3
-	if [ -z "$pkg" ]; then
+    pkg=$3
+	if [ -z "$opt2" ]; then
 		echo "Please specify an option."
 		exit
 	fi
-	${cwd}/_enforce_newproj ${pkg} ${pkg2}
+	${cwd}/_enforce_newproj ${opt2} ${pkg}
 ;;
 
 build)
-	${cwd}/_enforce_build
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	${cwd}/_enforce_build ${opt2}
 ;;
 
 update)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
 	${cwd}/_enforce_update ${opt2}
 ;;
 
 derive)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
 	if [ -z "$opt2" ]; then
 		echo "Please specify an option."
 		exit
@@ -93,6 +108,10 @@ derive)
 ;;
 
 static)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
 	if [ -f "./index.php" ]; then
         rm -rf ./codit
 		${cwd}/_enforce_static > ./index.html
@@ -101,11 +120,12 @@ static)
 ;;
 
 develop)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
 	if [ -f "./index.html" ]; then
 		rm -f ./index.html
-        if [ "$opt2" == "-with-codit" ]; then
-            cp -af ${ENF}/codit $(pwd)/codit
-        fi
 		cp -af ${ENF}/index.php $(pwd)/index.php
 	fi
 ;;

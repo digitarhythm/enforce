@@ -12,11 +12,5 @@ fi
 
 cp -af $ENF/index.php $PROJ/
 cp -af $ENF/extlib/* $PROJ/extlib/
-coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/*.coffee
-
-if [ "$1" == "-with-codit" ]; then
-    if [ ! -f "$PROJ/lib/sqlite3.db" ]; then
-        cp -af $ENF/lib/sqlite3.db $PROJ/lib/
-    fi
-    cp -af $ENF/codit $PROJ/
-fi
+cp -af $ENF/lib/*.png $PROJ/lib/
+coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.coffee $ENF/lib/library.coffee $ENF/lib/main.coffee

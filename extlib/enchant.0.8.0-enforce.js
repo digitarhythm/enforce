@@ -921,8 +921,8 @@ enchant.EventTarget = enchant.Class.create({
                 this._pageX = Math.round(window.scrollX || window.pageXOffset + bounding.left);
                 this._pageY = Math.round(window.scrollY || window.pageYOffset + bounding.top);
             }
-            diffx = Math.floor((window.innerWidth - (width * scale)) / 2);
-            diffy = Math.floor((window.innerHeight - (height * scale)) / 2);
+            diffx = Math.floor((innerWidth - (width * scale)) / 2);
+            diffy = Math.floor((innerHeight - (height * scale)) / 2);
             this._pageX += diffx;
             this._pageY += diffy;
             stage.style.left = diffx+"px";

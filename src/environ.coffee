@@ -1,21 +1,22 @@
 #**********************************************************************************************************
-# enchant.js game engine
+# enforce game engine
 #
-# 2013.12.28 ver0.1
+# 2014.04.04 ver2.0
 #
 # Coded by Kow Sakazaki
 #**********************************************************************************************************
 
 # static values setting ***********************************************************************************
 DEBUG           = true                      # デバッグモード
-SCREEN_WIDTH    = 320                       # 画面の幅
-SCREEN_HEIGHT   = 480                       # 画面の高さ
+SCREEN_WIDTH    = 600                       # 画面の幅
+SCREEN_HEIGHT   = 864                       # 画面の高さ
 FPS             = 60                        # フレームレート
 BGCOLOR         = "black"                   # 背景色
-OBJECTNUM       = 100                       # キャラの最大数
+OBJECTNUM       = 256                       # キャラの最大数
 GRAVITY         = 9.8                       # 重力（box2dで使用）
 
 # preloading image list ***********************************************************************************
 MEDIALIST       = {
-    chara1: 'media/picture/chara1.png'
+    bear    : 'media/picture/chara1.png'
+    droid   : 'media/collada/droid.dae'
 }

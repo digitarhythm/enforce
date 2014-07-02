@@ -2,28 +2,62 @@ class _stationary
     #***************************************************************
     # コンストラクター
     #***************************************************************
-    constructor:(@sprite)->
+    constructor:(initparam)->
         @_processnumber = 0
         @_waittime = 0.0
         @_dispframe = 0
         @_endflag = false
         @_returnflag = false
         @_autoRemove = false
+        @_animTime = LAPSEDTIME * 1000
+        @sprite = initparam['motionsprite']
 
         if (@sprite?)
-            @sprite.intersectFlag = true
+            @x = initparam['x']
+            @y = initparam['y']
+            @z = initparam['z']
+            @xs = initparam['xs']
+            @ys = initparam['ys']
+            @zs = initparam['zs']
+            @visible = initparam['visible']
+            @scaleX = initparam['scaleX']
+            @scaleY = initparam['scaleY']
+            @scaleZ = initparam['scaleZ']
+            @gravity = initparam['gravity']
+            @intersectFlag = initparam['intersectFlag']
+            @width = initparam['width']
+            @height = initparam['height']
+            @diffx = initparam['diffx']
+            @diffy = initparam['diffy']
+            @animlist = initparam['animlist']
+            @animnum = initparam['animnum']
+            @opacity = initparam['opacity']
+            @_type = initparam['_type']
+            @sprite.scale(@scaleX, @scaleY, @scaleZ)
+
+            if (@_type == WEBGL)
+                @rotX = initparam['rotX']
+                @rotY = initparam['rotY']
+                @rotZ = initparam['rotZ']
+
             @sprite.ontouchstart = (e)=>
+                pos = {x:e.x, y:e.y}
                 if (typeof @touchesBegan == 'function')
-                    @touchesBegan(e)
+                    @touchesBegan(pos)
             @sprite.ontouchmove = (e)=>
+                pos = {x:e.x, y:e.y}
                 if (typeof @touchesMoved == 'function')
-                    @touchesMoved(e)
+                    @touchesMoved(pos)
             @sprite.ontouchend = (e)=>
+                pos = {x:e.x, y:e.y}
                 if (typeof @touchesEnded == 'function')
-                    @touchesEnded(e)
+                    @touchesEnded(pos)
             @sprite.ontouchcancel = (e)=>
+                pos = {x:e.x, y:e.y}
                 if (typeof @touchesCanceled == 'function')
-                    @touchesCanceled(e)
+                    @touchesCanceled(pos)
+
+            @intersectFlag = true
 
     #***************************************************************
     # デストラクター
@@ -34,58 +68,82 @@ class _stationary
     # ビヘイビアー
     #***************************************************************
     behavior:->
-        if (@_type_ == SPRITE && @sprite?)
+        # スプライトの座標等パラメータを更新する
+        if (@sprite?)
+            switch (@_type)
+                when SPRITE
+                    @sprite.x = Math.floor(@x - @diffx)
+                    @sprite.y = Math.floor(@y - @diffy - @z)
 
-            if (@sprite.x != @sprite.xback)
-                @sprite._x_ = @sprite.x
-            if (@sprite.y != @sprite.yback)
-                @sprite._y_ = @sprite.y
-            if (@sprite.z != @sprite.zback)
-                @sprite._z_ = @sprite.z
+                    @ys += @gravity
 
-            if (@_type_ == GLMODEL)
-                @sprite.ys -= @sprite.gravity
-            else
-                @sprite.ys += @sprite.gravity
+                    @x += @xs
+                    @y += @ys
+                    @z += @zs
 
-            @sprite._x_ += @sprite.xs
+                    if (@opacity != @sprite.opacity)
+                        if (@sprite.opacity == @opacity_back)
+                            @sprite.opacity = @opacity
+                        else
+                            @opacity = @sprite.opacity
+                    @opacity_back = @sprite.opacity
 
-            if (@_type_ < 5)
-                @sprite._y_ += @sprite.ys
-            else
-                @sprite._y_ -= @sprite.ys
+                    @sprite.visible = @visible
+                    @sprite.scaleX  = @scaleX
+                    @sprite.scaleY  = @scaleY
+                    @sprite.width = @width
+                    @sprite.height = @height
 
-            @sprite._z_ += @sprite.zs
+                    if (@_type == SPRITE && @animlist?)
+                        animtmp = @animlist[@animnum]
+                        animtime = animtmp[0]
+                        animpattern = animtmp[1]
+                        if (LAPSEDTIME * 1000 > @_animTime + animtime)
+                            @sprite.frameIndex = animpattern[@_dispframe]
+                            @sprite.frame = animpattern[@_dispframe]
+                            @_animTime = LAPSEDTIME * 1000
+                            @_dispframe++
+                            if (@_dispframe >= animpattern.length)
+                                if (@_endflag == true)
+                                    @_endflag = false
+                                    removeObject(@)
+                                    return
+                                else if (@_returnflag == true)
+                                    @_returnflag = false
+                                    @animnum = @_beforeAnimnum
+                                    @_dispframe = 0
+                                else
+                                    @_dispframe = 0
 
-            @sprite.x = Math.floor(@sprite._x_)
-            @sprite.y = Math.floor(@sprite._y_ - @sprite._z_)
-            @sprite.z = Math.floor(@sprite._z_)
+                when WEBGL
+                    @sprite.x = @x
+                    @sprite.y = @y
+                    @sprite.z = @z
 
-            @sprite.xback = @sprite.x
-            @sprite.yback = @sprite.y
-            @sprite.zback = @sprite.z
+                    if (@rotX > 360)
+                        @rotX -= 360
+                    if (@rotZ > 360)
+                        @rotZ -= 360
+                    if (@rotY > 360)
+                        @rotY -= 360
+                    if (@rotX < 0)
+                        @rotX += 360
+                    if (@rotY < 0)
+                        @rotY += 360
+                    if (@rotZ < 0)
+                        @rotZ += 360
 
-        if (@_type_ < 5)
-            # 画面外に出たら自動的に消滅する
-            if (@sprite.x < -@sprite.width || @sprite.x > SCREEN_WIDTH || @sprite.y < -@sprite.height || @sprite.y > SCREEN_HEIGHT || @_autoRemove == true)
-                if (typeof(@autoRemove) == 'function')
-                    @autoRemove()
-                    removeObject(@)
 
-            if (@sprite.animlist?)
-                animpattern = @sprite.animlist[@sprite.animnum]
-                @sprite.frame = animpattern[@_dispframe++]
-                if (@_dispframe >= animpattern.length)
-                    if (@_endflag == true)
-                        @_endflag = false
-                        removeObject(@)
-                        return
-                    else if (@_returnflag == true)
-                        @_returnflag = false
-                        @sprite.animnum = @_beforeAnimnum
-                        @_dispframe = 0
-                    else
-                        @_dispframe = 0
+                    @sprite.rotationSet(new Quat(1, 0, 0, @rotX * RAD))
+                    @sprite.rotationSet(new Quat(0, 1, 0, @rotZ * RAD))
+                    @sprite.rotationSet(new Quat(0, 0, 1, @rotY * RAD))
+
+                    #JSLog("rotX=%@, rotZ=%@, rotY=%@", @rotX, @rotZ, @rotY)
+
+                    @ys += @gravity
+                    @x += @xs
+                    @y += @ys
+                    @z += @zs
 
         if (@_waittime > 0 && LAPSEDTIME > @_waittime)
             @_waittime = 0
@@ -139,7 +197,7 @@ class _stationary
             return false
         if (range < 0)
             range = motionObj.sprite.width / 2
-        if (@sprite.intersectFlag == true && motionObj.sprite.intersectFlag == true)
+        if (@intersectFlag == true && motionObj.intersectFlag == true)
             ret = @sprite.within(motionObj.sprite, range)
         else
             ret = false
@@ -148,10 +206,10 @@ class _stationary
     #***************************************************************
     # スプライト同士の衝突判定(intersect)
     #***************************************************************
-    isIntersect:(motionObj, method = undefined)->
+    isIntersect:(motionObj)->
         if (!motionObj.sprite?)
             return false
-        if (@sprite.intersectFlag == true && motionObj.sprite.intersectFlag == true)
+        if (@intersectFlag == true && motionObj.intersectFlag == true)
             ret = @sprite.intersect(motionObj.sprite)
         else
             ret = false
@@ -161,7 +219,7 @@ class _stationary
     # 指定されたアニメーションを再生した後オブジェクト削除
     #***************************************************************
     setAnimationToRemove:(animnum)->
-        @sprite.animnum = animnum
+        @animnum = animnum
         @_dispframe = 0
         @_endflag = true
 
@@ -170,14 +228,56 @@ class _stationary
     #***************************************************************
     setAnimationToOnce:(animnum, animnum2)->
         @_beforeAnimnum = animnum2
-        @sprite.animnum = animnum
+        @animnum = animnum
         @_dispframe = 0
         @_returnflag = true
 
     #***************************************************************
     # 3DスプライトにColladaモデルを設定する
     #***************************************************************
-    setModel:(num)->
-        model = MEDIALIST[num]
+    setModel:(name)->
+        model = MEDIALIST[name]
         @set(core.assets[model])
+
+    #***************************************************************
+    # 角度を設定する
+    #***************************************************************
+    setRotate:(rad)->
+        @sprite.rotation = rad
+
+    #***************************************************************
+    # スプライトを回転させる
+    #***************************************************************
+    spriteRotation:(rad)->
+        @sprite.rotate(rad)
+
+#*******************************************************************
+# TimeLine 制御
+#*******************************************************************
+
+    #***************************************************************
+    # スプライトをfadeInさせる
+    #***************************************************************
+    fadeIn:(time)->
+        @sprite.tl.fadeIn(time)
+        return @
+
+    #***************************************************************
+    # スプライトをフェイドアウトする
+    #***************************************************************
+    fadeOut:(time)->
+        @sprite.tl.fadeOut(time)
+        return @
+
+    #***************************************************************
+    # タイムラインをループさせる
+    #***************************************************************
+    loop:->
+        @sprite.tl.loop()
+
+    #***************************************************************
+    # ライムラインをクリアする
+    #***************************************************************
+    clear:->
+        @sprite.tl.clear()
 

@@ -1,5 +1,12 @@
 #!/bin/bash
 
+OPT=$1
 CWD=`pwd`
 
-coffee -b -w  -o $CWD/usrobject -c $CWD/src/*.coffee
+echo ${OPT}
+
+if [ -z "$OPT" ]; then
+    coffee -b -o $CWD/usrobject -c $CWD/src/
+elif [ "$OPT" = "-w" ]; then
+    coffee -b -w -o $CWD/usrobject -c $CWD/src/
+fi
