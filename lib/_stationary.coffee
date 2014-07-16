@@ -33,12 +33,11 @@ class _stationary
             @animnum = initparam['animnum']
             @opacity = initparam['opacity']
             @_type = initparam['_type']
+            @rotation = initparam['rotation']
             @sprite.scale(@scaleX, @scaleY, @scaleZ)
 
             if (@_type == WEBGL)
-                @rotX = initparam['rotX']
-                @rotY = initparam['rotY']
-                @rotZ = initparam['rotZ']
+                @setQuaternion(0, -90)
 
             @sprite.ontouchstart = (e)=>
                 pos = {x:e.x, y:e.y}
@@ -58,6 +57,11 @@ class _stationary
                     @touchesCanceled(pos)
 
             @intersectFlag = true
+
+            # 非表示にしてから初期位置に設定する
+            @sprite.visible = false
+            @sprite.x = Math.floor(@x - @diffx)
+            @sprite.y = Math.floor(@y - @diffy - @z)
 
     #***************************************************************
     # デストラクター
@@ -120,26 +124,6 @@ class _stationary
                     @sprite.y = @y
                     @sprite.z = @z
 
-                    if (@rotX > 360)
-                        @rotX -= 360
-                    if (@rotZ > 360)
-                        @rotZ -= 360
-                    if (@rotY > 360)
-                        @rotY -= 360
-                    if (@rotX < 0)
-                        @rotX += 360
-                    if (@rotY < 0)
-                        @rotY += 360
-                    if (@rotZ < 0)
-                        @rotZ += 360
-
-
-                    @sprite.rotationSet(new Quat(1, 0, 0, @rotX * RAD))
-                    @sprite.rotationSet(new Quat(0, 1, 0, @rotZ * RAD))
-                    @sprite.rotationSet(new Quat(0, 0, 1, @rotY * RAD))
-
-                    #JSLog("rotX=%@, rotZ=%@, rotY=%@", @rotX, @rotZ, @rotY)
-
                     @ys += @gravity
                     @x += @xs
                     @y += @ys
@@ -148,6 +132,31 @@ class _stationary
         if (@_waittime > 0 && LAPSEDTIME > @_waittime)
             @_waittime = 0
             @_processnumber = @_nextprocessnum
+
+    #***************************************************************
+    # WebGLオブジェクトにクォータニオンを設定する
+    #***************************************************************
+    setQuaternion:(v, angle)->
+        switch (v)
+            when 0
+                @sprite.rotationSet(new Quat(1, 0, 0, angle * RAD))
+            when 1
+                @sprite.rotationSet(new Quat(0, 1, 0, angle * RAD))
+            when 2
+                @sprite.rotationSet(new Quat(0, 0, 1, angle * RAD))
+                
+    #***************************************************************
+    # WebGLオブジェクトにクォータニオンを合成する
+    #***************************************************************
+    applyQuaternion:(v, angle)->
+        switch (v)
+            when 0
+                @sprite.rotationApply(new Quat(1, 0, 0, angle * RAD))
+            when 1
+                @sprite.rotationApply(new Quat(0, 1, 0, angle * RAD))
+            when 2
+                @sprite.rotationApply(new Quat(0, 0, 1, angle * RAD))
+    
 
     #***************************************************************
     # タッチ開始
@@ -238,18 +247,6 @@ class _stationary
     setModel:(name)->
         model = MEDIALIST[name]
         @set(core.assets[model])
-
-    #***************************************************************
-    # 角度を設定する
-    #***************************************************************
-    setRotate:(rad)->
-        @sprite.rotation = rad
-
-    #***************************************************************
-    # スプライトを回転させる
-    #***************************************************************
-    spriteRotation:(rad)->
-        @sprite.rotate(rad)
 
 #*******************************************************************
 # TimeLine 制御

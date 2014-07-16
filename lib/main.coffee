@@ -21,6 +21,11 @@ SSPRITE_BOX         = 4
 SSPRITE_CIRCLE      = 5
 WEBGL               = 6
 
+# WebGLのプリミティブの種類
+SPHERE              = 0
+CUBE                = 1
+PLANE               = 2
+
 # Sceneの種類
 BGSCENE             = 0
 BGSCENE_SUB1        = 1
@@ -223,9 +228,7 @@ addObject = (param)->
     scaleX = if (param['scaleX']?) then param['scaleX'] else 1.0
     scaleY = if (param['scaleY']?) then param['scaleY'] else 1.0
     scaleZ = if (param['scaleZ']?) then param['scaleZ'] else 1.0
-    rotX = if (param['rotX']?) then param['rotX'] else 0.0
-    rotY = if (param['rotY']?) then param['rotY'] else 0.0
-    rotZ = if (param['rotZ']?) then param['rotZ'] else 0.0
+    rotation = if (param['rotation']?) then param['rotation'] else 0.0
 
     if (motionObj == null)
         motionObj = undefined
@@ -248,7 +251,7 @@ addObject = (param)->
                 motionsprite.x = x - Math.floor(width / 2)
                 motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
                 motionsprite.opacity = opacity
-                motionsprite.rotation = 0.0
+                motionsprite.rotation = rotation
                 motionsprite.scaleX = scaleX
                 motionsprite.scaleY = scaleY
                 motionsprite.visible = visible
@@ -285,40 +288,47 @@ addObject = (param)->
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
+                rotation: rotation
             return retObject
 
         when WEBGL
-            if (MEDIALIST[image]?)
-                motionsprite = new Sprite3D()
-                rootScene3d.addChild(motionsprite)
-                motionsprite.set(core.assets[MEDIALIST[image]].clone())
-                # 動きを定義したオブジェクトを生成する
-                retObject = @setMotionObj
-                    x: x
-                    y: y
-                    z: z
-                    xs: xs
-                    ys: ys
-                    zs: zs
-                    visible: visible
-                    scaleX: scaleX
-                    scaleY: scaleY
-                    scaleZ: scaleZ
-                    gravity: gravity
-                    width: width
-                    height: height
-                    animlist: animlist
-                    animnum: animnum
-                    opacity: opacity
-                    scene: WEBGLSCENE
-                    _type: _type
-                    motionsprite: motionsprite
-                    motionObj: motionObj
-                    rotX: rotX
-                    rotY: rotY
-                    rotZ: rotZ
+            if (isFinite(image))
+                switch (image)
+                    when SPHERE
+                        JSLog('SHPERE')
+                    when CUBE
+                        JSLog('CUBE')
+                    when PLANE
+                        JSLog('PLANE')
             else
-                retObject = undefined
+                if (MEDIALIST[image]?)
+                    motionsprite = new Sprite3D()
+                    rootScene3d.addChild(motionsprite)
+                    motionsprite.set(core.assets[MEDIALIST[image]].clone())
+                    # 動きを定義したオブジェクトを生成する
+                    retObject = @setMotionObj
+                        x: x
+                        y: y
+                        z: z
+                        xs: xs
+                        ys: ys
+                        zs: zs
+                        visible: visible
+                        scaleX: scaleX
+                        scaleY: scaleY
+                        scaleZ: scaleZ
+                        gravity: gravity
+                        width: width
+                        height: height
+                        animlist: animlist
+                        animnum: animnum
+                        opacity: opacity
+                        scene: WEBGLSCENE
+                        _type: _type
+                        motionsprite: motionsprite
+                        motionObj: motionObj
+                else
+                    retObject = undefined
 
             return retObject
 
@@ -343,10 +353,8 @@ setMotionObj = (param)->
     initparam['animnum'] = if (param['animnum']?) then param['animnum'] else 0
     initparam['visible'] = if (param['visible']?) then param['visible'] else true
     initparam['opacity'] = if (param['opacity']?) then param['opacity'] else 0
+    initparam['rotation'] = if (param['rotation']?) then param['rotation'] else 0.0
     initparam['motionsprite'] = if (param['motionsprite']?) then param['motionsprite'] else 0
-    initparam['rotX'] = if (param['rotX']?) then param['rotX'] else 0
-    initparam['rotY'] = if (param['rotY']?) then param['rotY'] else 0
-    initparam['rotZ'] = if (param['rotZ']?) then param['rotZ'] else 0
     initparam['diffx'] = Math.floor(initparam['width'] / 2)
     initparam['diffy'] = Math.floor(initparam['height'] / 2)
     scene = if (param['scene']?) then param['scene'] else GAMESCENE
