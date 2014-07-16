@@ -37,7 +37,7 @@ class _stationary
             @sprite.scale(@scaleX, @scaleY, @scaleZ)
 
             if (@_type == WEBGL)
-                @setQuaternion(0, -90)
+                @setQuaternion(0, 0)
 
             @sprite.ontouchstart = (e)=>
                 pos = {x:e.x, y:e.y}
