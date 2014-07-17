@@ -22,9 +22,13 @@ SSPRITE_CIRCLE      = 5
 WEBGL               = 6
 
 # WebGLのプリミティブの種類
-SPHERE              = 0
+BOX                 = 0
 CUBE                = 1
-PLANE               = 2
+SPHERE              = 2
+CYLINDER            = 3
+TORUS               = 4
+PLANE               = 5
+FLOOR               = 6
 
 # Sceneの種類
 BGSCENE             = 0
@@ -233,6 +237,8 @@ addObject = (param)->
     if (motionObj == null)
         motionObj = undefined
 
+    retObject = undefined
+
     # スプライトを生成
     switch (_type)
         when CONTROL, SPRITE
@@ -292,44 +298,54 @@ addObject = (param)->
             return retObject
 
         when WEBGL
+            # imageが数字だったら
             if (isFinite(image))
                 switch (image)
-                    when SPHERE
-                        JSLog('SHPERE')
+                    when BOX
+                        motionsprite = new Box()
                     when CUBE
-                        JSLog('CUBE')
+                        motionsprite = new Cube()
+                    when SPHERE
+                        motionsprite = new Sphere()
+                    when CYLINDER
+                        motionsprite = new Cylinder()
+                    when TORUS
+                        motionsprite = new Torus()
                     when PLANE
-                        JSLog('PLANE')
+                        motionsprite = new Plane()
+                    else
+                        return undefined
             else
+            # imageがColladaデータだったら
                 if (MEDIALIST[image]?)
                     motionsprite = new Sprite3D()
-                    rootScene3d.addChild(motionsprite)
                     motionsprite.set(core.assets[MEDIALIST[image]].clone())
-                    # 動きを定義したオブジェクトを生成する
-                    retObject = @setMotionObj
-                        x: x
-                        y: y
-                        z: z
-                        xs: xs
-                        ys: ys
-                        zs: zs
-                        visible: visible
-                        scaleX: scaleX
-                        scaleY: scaleY
-                        scaleZ: scaleZ
-                        gravity: gravity
-                        width: width
-                        height: height
-                        animlist: animlist
-                        animnum: animnum
-                        opacity: opacity
-                        scene: WEBGLSCENE
-                        _type: _type
-                        motionsprite: motionsprite
-                        motionObj: motionObj
                 else
-                    retObject = undefined
+                    return undefined
 
+            # 動きを定義したオブジェクトを生成する
+            rootScene3d.addChild(motionsprite)
+            retObject = @setMotionObj
+                x: x
+                y: y
+                z: z
+                xs: xs
+                ys: ys
+                zs: zs
+                visible: visible
+                scaleX: scaleX
+                scaleY: scaleY
+                scaleZ: scaleZ
+                gravity: gravity
+                width: width
+                height: height
+                animlist: animlist
+                animnum: animnum
+                opacity: opacity
+                scene: WEBGLSCENE
+                _type: _type
+                motionsprite: motionsprite
+                motionObj: motionObj
             return retObject
 
 setMotionObj = (param)->
