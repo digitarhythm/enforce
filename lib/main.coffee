@@ -46,6 +46,9 @@ DEG                 = (180.0 / Math.PI)
 
 # グローバル初期化
 
+# Frame Per Seconds
+FPS = 30
+
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
 MOTION_GRAVITY      = [x:0, y:0, z:0]
