@@ -147,20 +147,20 @@ window.onload = ->
         rootScene3d = new Scene3D()
 
         # スポットライト生成
-        dlight = new DirectionalLight()
-        dlight.directionX = 0
-        dlight.directionY = 100
-        dlight.directionZ = 100
-        dlight.color = [1.0, 1.0, 1.0]
-        rootScene3d.setDirectionalLight(dlight)
+        #dlight = new DirectionalLight()
+        #dlight.directionX = 0
+        #dlight.directionY = 100
+        #dlight.directionZ = 100
+        #dlight.color = [1.0, 1.0, 1.0]
+        #rootScene3d.setDirectionalLight(dlight)
 
         # 環境光ライト生成
-        alight = new AmbientLight()
-        alight.directionX = 0
-        alight.directionY = 1000
-        alight.directionZ = 0
-        alight.color = [1.0, 1.0, 1.0]
-        rootScene3d.setAmbientLight(alight)
+        #alight = new AmbientLight()
+        #alight.directionX = 0
+        #alight.directionY = 1000
+        #alight.directionZ = 0
+        #alight.color = [1.0, 1.0, 1.0]
+        #rootScene3d.setAmbientLight(alight)
 
         # カメラ生成
         CAMERA = new Camera3D()
