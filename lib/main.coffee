@@ -64,7 +64,7 @@ else
 # ゲーム起動時からの経過時間（秒）
 LAPSEDTIME          = 0
 # ゲーム起動時のUNIXTIME
-BEGINNINGTIME       = parseFloat((new Date) / 1000).toFixed(2)
+BEGINNINGTIME       = parseFloat((new Date) / 1000)
 
 # 3D系
 WEBGL               = undefined
@@ -187,7 +187,7 @@ window.onload = ->
         _main = new enforceMain()
         rootScene.addEventListener 'enterframe', (e)->
             box2dworld.step(core.fps)
-            LAPSEDTIME = parseFloat((new Date) / 1000).toFixed(2) - @BEGINNINGTIME
+            LAPSEDTIME = (parseFloat((new Date) / 1000) - BEGINNINGTIME).toFixed(2)
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
