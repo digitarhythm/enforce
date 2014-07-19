@@ -28,7 +28,6 @@ SPHERE              = 2
 CYLINDER            = 3
 TORUS               = 4
 PLANE               = 5
-FLOOR               = 6
 
 # Sceneの種類
 BGSCENE             = 0
@@ -65,7 +64,7 @@ else
 # ゲーム起動時からの経過時間（秒）
 LAPSEDTIME          = 0
 # ゲーム起動時のUNIXTIME
-BEGINNINGTIME       = ~~(new Date()/1000)
+BEGINNINGTIME       = parseFloat((new Date) / 1000).toFixed(2)
 
 # 3D系
 WEBGL               = undefined
@@ -152,6 +151,7 @@ window.onload = ->
     if (WEBGL && isWebGL())
         # 3Dシーンを生成
         rootScene3d = new Scene3D()
+        _scenes[WEBGLSCENE] = rootScene3d
 
         # スポットライト生成
         #dlight = new DirectionalLight()
@@ -173,7 +173,7 @@ window.onload = ->
         CAMERA = new Camera3D()
         CAMERA.x = 0
         CAMERA.y = 0
-        CAMERA.z = 300
+        CAMERA.z = 400
         CAMERA.centerX = 0
         CAMERA.centerY = 0
         CAMERA.centerZ = 0
@@ -187,8 +187,7 @@ window.onload = ->
         _main = new enforceMain()
         rootScene.addEventListener 'enterframe', (e)->
             box2dworld.step(core.fps)
-            #LAPSEDTIME = parseFloat((core.frame / FPS).toFixed(2))
-            LAPSEDTIME = ((~~(new Date()/1000)) - @BEGINNINGTIME).toFixed(2)
+            LAPSEDTIME = parseFloat((new Date) / 1000).toFixed(2) - @BEGINNINGTIME
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
@@ -423,7 +422,7 @@ removeObject = (motionObj)->
 
     if (motionObj._type == DSPRITE_BOX || motionObj._type == DSPRITE_CIRCLE || motionObj._type == SSPRITE_BOX || motionObj._type == SSPRITE_CIRCLE)
         object.motionObj.sprite.destroy()
-    else
+    else if (motionObj._type == SPRITE || motionObj._type == WEBGL)
         _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
     object.motionObj.sprite = undefined
 
