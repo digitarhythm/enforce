@@ -36,8 +36,8 @@ class _stationary
             @rotation = initparam['rotation']
             @sprite.scale(@scaleX, @scaleY, @scaleZ)
 
-            if (@_type == WEBGL)
-                @setQuaternion(0, 0)
+            #if (@_type == WEBGL)
+            #    @setQuaternion(0, 0)
 
             @sprite.ontouchstart = (e)=>
                 pos = {x:e.x, y:e.y}
@@ -85,6 +85,10 @@ class _stationary
                     @y += @ys
                     @z += @zs
 
+                    if (@rotation > 359)
+                        @rotation = @rotation % 360
+                    @sprite.rotation = @rotation
+
                     if (@opacity != @sprite.opacity)
                         if (@sprite.opacity == @opacity_back)
                             @sprite.opacity = @opacity
@@ -123,6 +127,9 @@ class _stationary
                     @sprite.x = @x
                     @sprite.y = @y
                     @sprite.z = @z
+                    @sprite.scaleX  = @scaleX
+                    @sprite.scaleY  = @scaleY
+                    @sprite.scaleZ  = @scaleZ
 
                     @ys += @gravity
                     @x += @xs

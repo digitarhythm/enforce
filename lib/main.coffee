@@ -113,6 +113,8 @@ window.onload = ->
     #core.rootScene.backgroundColor = BGCOLOR
     core.fps = FPS
 
+    core.keybind( 90, 'a' );
+
     if (MEDIALIST?)
         MEDIALIST['_notice'] = 'lib/notice.png'
         MEDIALIST['_execbutton'] = 'lib/execbutton.png'
@@ -157,14 +159,14 @@ window.onload = ->
         #dlight = new DirectionalLight()
         #dlight.directionX = 0
         #dlight.directionY = 100
-        #dlight.directionZ = 100
+        #dlight.directionZ = 0
         #dlight.color = [1.0, 1.0, 1.0]
         #rootScene3d.setDirectionalLight(dlight)
 
         # 環境光ライト生成
         #alight = new AmbientLight()
         #alight.directionX = 0
-        #alight.directionY = 1000
+        #alight.directionY = 100
         #alight.directionZ = 0
         #alight.color = [1.0, 1.0, 1.0]
         #rootScene3d.setAmbientLight(alight)
@@ -172,8 +174,8 @@ window.onload = ->
         # カメラ生成
         CAMERA = new Camera3D()
         CAMERA.x = 0
-        CAMERA.y = 0
-        CAMERA.z = 400
+        CAMERA.y = 20
+        CAMERA.z = 100
         CAMERA.centerX = 0
         CAMERA.centerY = 0
         CAMERA.centerZ = 0
@@ -424,8 +426,8 @@ removeObject = (motionObj)->
         object.motionObj.sprite.destroy()
     else if (motionObj._type == SPRITE || motionObj._type == WEBGL)
         _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
-    object.motionObj.sprite = undefined
 
+    object.motionObj.sprite = undefined
     object.motionObj = undefined
     object.active = false
 
