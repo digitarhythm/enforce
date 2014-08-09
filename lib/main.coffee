@@ -103,27 +103,32 @@ rootScene           = undefined
 
 # enchantのオマジナイ
 enchant()
-enchant.Sound.enabledInMobileSafari = true
 enchant.ENV.MOUSE_ENABLED = false
+enchant.ENV.SOUND_ENABLED_ON_MOBILE_SAFARI = false
 
 # ゲーム起動時の処理
 window.onload = ->
     # enchant初期化
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
-    #core.rootScene.backgroundColor = BGCOLOR
+    # FPS設定
     core.fps = FPS
-
+    # 「A」ボタンの定義
     core.keybind( 90, 'a' );
 
+    # メディアファイルのプリロード
     if (MEDIALIST?)
         MEDIALIST['_notice'] = 'lib/notice.png'
         MEDIALIST['_execbutton'] = 'lib/execbutton.png'
-        imagearr = []
+        mediaarr = []
         i = 0
         for obj of MEDIALIST
-            imagearr[i++] = MEDIALIST[obj]
-        core.preload(imagearr)
+            mediaarr[i++] = MEDIALIST[obj]
+        core.preload(mediaarr)
+
+    # rootSceneをグローバルに保存
     rootScene = core.rootScene
+
+    # モーションセンサーのイベント登録
     window.addEventListener 'devicemotion', (e)=>
         MOTION_ACCEL = e.acceleration
         MOTION_GRAVITY = e.accelerationIncludingGravity
@@ -459,9 +464,9 @@ getObject = (id)->
 #**********************************************************************
 playSound = (name)->
     soundfile = MEDIALIST[name]
-    soundassets = core.assets[soundfile].clone()
-    soundassets.play()
-    return soundassets
+    sound = core.assets[soundfile].clone()
+    sound.play()
+    return sound
 
 #**********************************************************************
 # オブジェクトリストの中で未使用のものの配列番号を返す。

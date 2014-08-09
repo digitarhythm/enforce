@@ -195,7 +195,8 @@ class _stationary
     # 指定した秒数だけ待って次のプロセスへ
     #***************************************************************
     waitjob:(wtime)->
-        @_waittime = LAPSEDTIME + wtime
+        @_waittime = parseFloat(LAPSEDTIME) + wtime
+        JSLog("waittime=%@, LAPSEDTIME=%@", @_waittime, LAPSEDTIME)
         @_nextprocessnum = @_processnumber + 1
         @_processnumber = -1
     
@@ -254,6 +255,15 @@ class _stationary
     setModel:(name)->
         model = MEDIALIST[name]
         @set(core.assets[model])
+
+    #***************************************************************
+    # タッチイベント登録
+    #***************************************************************
+    addTarget:(func)->
+        @sprite.addEventListener('touchend', func)
+
+    spriteRotation:(ang)->
+        @sprite.rotate(ang * DEG)
 
 #*******************************************************************
 # TimeLine 制御

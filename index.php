@@ -7,7 +7,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="IE=Edge">
-    <script type="text/javascript" src="extlib/enchant.0.8.0-enforce.js"></script>
+    <script type="text/javascript" src="extlib/enchant.0.8.1-enforce.js"></script>
     <meta name="viewport" content="width=device-width, user-scalable=no, minimal-ui">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <script type="text/javascript" src="extlib/jquery-2.1.0.min.js"></script>
