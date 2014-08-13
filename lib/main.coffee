@@ -15,11 +15,12 @@
 # オブジェクトの種類
 CONTROL             = 0
 SPRITE              = 1
-DSPRITE_BOX         = 2
-DSPRITE_CIRCLE      = 3
-SSPRITE_BOX         = 4
-SSPRITE_CIRCLE      = 5
-WEBGL               = 6
+LABEL               = 2
+DSPRITE_BOX         = 3
+DSPRITE_CIRCLE      = 4
+SSPRITE_BOX         = 5
+SSPRITE_CIRCLE      = 6
+WEBGL               = 7
 
 # WebGLのプリミティブの種類
 BOX                 = 0
@@ -46,7 +47,7 @@ DEG                 = (180.0 / Math.PI)
 # グローバル初期化
 
 # Frame Per Seconds
-FPS = 30
+FPS = 60
 
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
@@ -179,8 +180,8 @@ window.onload = ->
         # カメラ生成
         CAMERA = new Camera3D()
         CAMERA.x = 0
-        CAMERA.y = 20
-        CAMERA.z = 100
+        CAMERA.y = 0
+        CAMERA.z = 1000
         CAMERA.centerX = 0
         CAMERA.centerY = 0
         CAMERA.centerZ = 0
@@ -242,6 +243,11 @@ addObject = (param)->
     scaleY = if (param['scaleY']?) then param['scaleY'] else 1.0
     scaleZ = if (param['scaleZ']?) then param['scaleZ'] else 1.0
     rotation = if (param['rotation']?) then param['rotation'] else 0.0
+    texture = if (param['texture']?) then param['texture'] else undefined
+    font = if (param['font']?) then param['font'] else 'normal large/100% "Times New Roman"'
+    color = if (param['color']?) then param['color'] else 'white'
+    labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
+    textalign = if (param['textalign']?) then param['textalign'] else 'left'
 
     if (motionObj == null)
         motionObj = undefined
@@ -306,6 +312,57 @@ addObject = (param)->
                 rotation: rotation
             return retObject
 
+        when LABEL
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+            if (width == 0)
+                width = 120
+            if (height == 0)
+                height = 64
+            # ラベルを生成
+            motionsprite = new Label(labeltext)
+            # ラベルを表示
+            _scenes[scene].addChild(motionsprite)
+            # 値を代入
+            motionsprite.backgroundColor = "transparent"
+            motionsprite.x = x - Math.floor(width / 2)
+            motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
+            motionsprite.opacity = opacity
+            motionsprite.rotation = rotation
+            motionsprite.scaleX = scaleX
+            motionsprite.scaleY = scaleY
+            motionsprite.visible = visible
+            motionsprite.width = width
+            motionsprite.height = height
+            motionsprite.color = color
+            motionsprite.text = labeltext
+            motionsprite.textAlign = textalign
+            motionsprite.font = font
+            # 動きを定義したオブジェクトを生成する
+            retObject = @setMotionObj
+                x: x
+                y: y
+                z: z
+                xs: xs
+                ys: ys
+                zs: zs
+                visible: visible
+                scaleX: scaleX
+                scaleY: scaleY
+                scaleZ: scaleZ
+                width: width
+                height: height
+                opacity: opacity
+                scene: scene
+                _type: _type
+                motionsprite: motionsprite
+                motionObj: motionObj
+                font: font
+                color: color
+                labeltext: labeltext
+                textalign: textalign
+            return retObject
+
         when WEBGL
             # imageが数字だったら
             if (isFinite(image))
@@ -324,6 +381,11 @@ addObject = (param)->
                         motionsprite = new Plane()
                     else
                         return undefined
+
+                if (texture?)
+                    imagefile = MEDIALIST[texture]
+                    tx = new Texture(imagefile)
+                    motionsprite.mesh.texture = tx
             else
             # imageがColladaデータだったら
                 if (MEDIALIST[image]?)
@@ -380,6 +442,10 @@ setMotionObj = (param)->
     initparam['opacity'] = if (param['opacity']?) then param['opacity'] else 0
     initparam['rotation'] = if (param['rotation']?) then param['rotation'] else 0.0
     initparam['motionsprite'] = if (param['motionsprite']?) then param['motionsprite'] else 0
+    initparam['font'] = if (param['font']?) then param['font'] else 'normal large/100% "Times New Roman"'
+    initparam['color'] = if (param['color']?) then param['color'] else 'white'
+    initparam['labeltext'] = if (param['labeltext']?) then param['labeltext'] else 'text'
+    initparam['textalign'] = if (param['textalign']?) then param['textalign'] else 'left'
     initparam['diffx'] = Math.floor(initparam['width'] / 2)
     initparam['diffy'] = Math.floor(initparam['height'] / 2)
     scene = if (param['scene']?) then param['scene'] else GAMESCENE
@@ -450,6 +516,7 @@ getObject = (id)->
             ret = _objects[i].motionObj
             break
     return ret
+
 
 #**********************************************************************
 #**********************************************************************

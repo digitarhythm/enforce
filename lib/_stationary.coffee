@@ -34,6 +34,10 @@ class _stationary
             @opacity = initparam['opacity']
             @_type = initparam['_type']
             @rotation = initparam['rotation']
+            @font = initparam['font']
+            @color = initparam['color']
+            @labeltext = initparam['labeltext']
+            @textalign = initparam['textalign']
             @sprite.scale(@scaleX, @scaleY, @scaleZ)
 
             #if (@_type == WEBGL)
@@ -123,6 +127,31 @@ class _stationary
                                 else
                                     @_dispframe = 0
 
+                when LABEL
+                    @sprite.x = Math.floor(@x - @diffx)
+                    @sprite.y = Math.floor(@y - @diffy - @z)
+
+                    @x += @xs
+                    @y += @ys
+                    @z += @zs
+
+                    if (@opacity != @sprite.opacity)
+                        if (@sprite.opacity == @opacity_back)
+                            @sprite.opacity = @opacity
+                        else
+                            @opacity = @sprite.opacity
+                    @opacity_back = @sprite.opacity
+
+                    @sprite.visible = @visible
+                    @sprite.scaleX  = @scaleX
+                    @sprite.scaleY  = @scaleY
+                    @sprite.width = @width
+                    @sprite.height = @height
+                    @sprite.font = @font
+                    @sprite.color = @color
+                    @sprite.text = @labeltext
+                    @sprite.textAlign = @textalign
+
                 when WEBGL
                     @sprite.x = @x
                     @sprite.y = @y
@@ -164,6 +193,14 @@ class _stationary
             when 2
                 @sprite.rotationApply(new Quat(0, 0, 1, angle * RAD))
     
+    #***************************************************************
+    # 3Dオブジェクトにテクスチャーをマッピングする
+    #***************************************************************
+    setTexture:(image)->
+        if (@_type != WEBGL)
+            return
+        texture = MEDIALIST[image]
+        @sprite.texture = new Texture(texture)
 
     #***************************************************************
     # タッチ開始
@@ -196,7 +233,6 @@ class _stationary
     #***************************************************************
     waitjob:(wtime)->
         @_waittime = parseFloat(LAPSEDTIME) + wtime
-        JSLog("waittime=%@, LAPSEDTIME=%@", @_waittime, LAPSEDTIME)
         @_nextprocessnum = @_processnumber + 1
         @_processnumber = -1
     
@@ -262,6 +298,9 @@ class _stationary
     addTarget:(func)->
         @sprite.addEventListener('touchend', func)
 
+    #***************************************************************
+    # 2Dスプライト回転
+    #***************************************************************
     spriteRotation:(ang)->
         @sprite.rotate(ang * DEG)
 
