@@ -46,6 +46,8 @@ DEG                 = (180.0 / Math.PI)
 
 # グローバル初期化
 
+GLOBAL              = []
+
 # Frame Per Seconds
 FPS = 60
 
@@ -181,7 +183,7 @@ window.onload = ->
         CAMERA = new Camera3D()
         CAMERA.x = 0
         CAMERA.y = 0
-        CAMERA.z = 1000
+        CAMERA.z = 8
         CAMERA.centerX = 0
         CAMERA.centerY = 0
         CAMERA.centerZ = 0
@@ -244,7 +246,7 @@ addObject = (param)->
     scaleZ = if (param['scaleZ']?) then param['scaleZ'] else 1.0
     rotation = if (param['rotation']?) then param['rotation'] else 0.0
     texture = if (param['texture']?) then param['texture'] else undefined
-    font = if (param['font']?) then param['font'] else 'normal large/100% "Times New Roman"'
+    fontsize = if (param['fontsize']?) then param['fontsize'] else '16px'
     color = if (param['color']?) then param['color'] else 'white'
     labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
@@ -337,7 +339,7 @@ addObject = (param)->
             motionsprite.color = color
             motionsprite.text = labeltext
             motionsprite.textAlign = textalign
-            motionsprite.font = font
+            motionsprite.font = fontsize+"px 'Arial'"
             # 動きを定義したオブジェクトを生成する
             retObject = @setMotionObj
                 x: x
@@ -357,7 +359,7 @@ addObject = (param)->
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
-                font: font
+                fontsize: fontsize
                 color: color
                 labeltext: labeltext
                 textalign: textalign
@@ -442,7 +444,7 @@ setMotionObj = (param)->
     initparam['opacity'] = if (param['opacity']?) then param['opacity'] else 0
     initparam['rotation'] = if (param['rotation']?) then param['rotation'] else 0.0
     initparam['motionsprite'] = if (param['motionsprite']?) then param['motionsprite'] else 0
-    initparam['font'] = if (param['font']?) then param['font'] else 'normal large/100% "Times New Roman"'
+    initparam['fontsize'] = if (param['fontsize']?) then param['fontsize'] else '16px'
     initparam['color'] = if (param['color']?) then param['color'] else 'white'
     initparam['labeltext'] = if (param['labeltext']?) then param['labeltext'] else 'text'
     initparam['textalign'] = if (param['textalign']?) then param['textalign'] else 'left'
@@ -517,6 +519,15 @@ getObject = (id)->
             break
     return ret
 
+#**********************************************************************
+# サウンド再生
+#**********************************************************************
+playSound = (name, flag = false)->
+    soundfile = MEDIALIST[name]
+    sound = core.assets[soundfile].clone()
+    sound.play()
+    sound.src.loop = flag
+    return sound
 
 #**********************************************************************
 #**********************************************************************
@@ -525,15 +536,6 @@ getObject = (id)->
 #**********************************************************************
 #**********************************************************************
 #**********************************************************************
-
-#**********************************************************************
-# サウンド再生
-#**********************************************************************
-playSound = (name)->
-    soundfile = MEDIALIST[name]
-    sound = core.assets[soundfile].clone()
-    sound.play()
-    return sound
 
 #**********************************************************************
 # オブジェクトリストの中で未使用のものの配列番号を返す。

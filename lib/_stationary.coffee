@@ -34,7 +34,7 @@ class _stationary
             @opacity = initparam['opacity']
             @_type = initparam['_type']
             @rotation = initparam['rotation']
-            @font = initparam['font']
+            @fontsize = initparam['fontsize']
             @color = initparam['color']
             @labeltext = initparam['labeltext']
             @textalign = initparam['textalign']
@@ -147,7 +147,7 @@ class _stationary
                     @sprite.scaleY  = @scaleY
                     @sprite.width = @width
                     @sprite.height = @height
-                    @sprite.font = @font
+                    @sprite.font = @fontsize+"px 'Arial'"
                     @sprite.color = @color
                     @sprite.text = @labeltext
                     @sprite.textAlign = @textalign
@@ -260,9 +260,9 @@ class _stationary
     # スプライト同士の衝突判定(intersect)
     #***************************************************************
     isIntersect:(motionObj)->
-        if (!motionObj.sprite?)
-            return false
-        if (@intersectFlag == true && motionObj.intersectFlag == true)
+        if (!motionObj? || !motionObj.sprite? || !motionObj.sprite?)
+            ret = false
+        else if (@intersectFlag == true && motionObj.intersectFlag == true)
             ret = @sprite.intersect(motionObj.sprite)
         else
             ret = false
