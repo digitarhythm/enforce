@@ -27,6 +27,10 @@ class _stationary
             @intersectFlag = initparam['intersectFlag']
             @width = initparam['width']
             @height = initparam['height']
+            @depth = initparam['depth']
+            @size = initparam['size']
+            @radius = initparam['radius']
+            @radius2 = initparam['radius2']
             @diffx = initparam['diffx']
             @diffy = initparam['diffy']
             @animlist = initparam['animlist']
@@ -38,10 +42,12 @@ class _stationary
             @color = initparam['color']
             @labeltext = initparam['labeltext']
             @textalign = initparam['textalign']
-            @sprite.scale(@scaleX, @scaleY, @scaleZ)
 
-            #if (@_type == WEBGL)
-            #    @setQuaternion(0, 0)
+            @lastvisible = @visible
+
+            @sprite.scaleX = @scaleX
+            @sprite.scaleY = @scaleY
+            @sprite.scaleZ = @scaleZ
 
             @sprite.ontouchstart = (e)=>
                 pos = {x:e.x, y:e.y}
@@ -152,13 +158,24 @@ class _stationary
                     @sprite.text = @labeltext
                     @sprite.textAlign = @textalign
 
-                when WEBGL
+                when PRIMITIVE, COLLADA
+                    if (@lastvisible != @visible)
+                        if (@visible)
+                            rootScene3d.addChild(@sprite)
+                        else
+                            rootScene3d.removeChild(@sprite)
+                        @lastvisible = @visible
+                                
                     @sprite.x = @x
                     @sprite.y = @y
                     @sprite.z = @z
-                    @sprite.scaleX  = @scaleX
-                    @sprite.scaleY  = @scaleY
-                    @sprite.scaleZ  = @scaleZ
+
+                    if (@scaleX != @sprite.scaleX)
+                        @sprite.scaleX = @scaleX
+                    if (@scaleY != @sprite.scaleY)
+                        @sprite.scaleY = @scaleY
+                    if (@scaleZ != @sprite.scaleZ)
+                        @sprite.scaleZ = @scaleZ
 
                     @ys += @gravity
                     @x += @xs
@@ -197,7 +214,7 @@ class _stationary
     # 3Dオブジェクトにテクスチャーをマッピングする
     #***************************************************************
     setTexture:(image)->
-        if (@_type != WEBGL)
+        if (@_type != PRIMITIVE && @_type != COLLADA)
             return
         texture = MEDIALIST[image]
         @sprite.texture = new Texture(texture)

@@ -20,7 +20,8 @@ DSPRITE_BOX         = 3
 DSPRITE_CIRCLE      = 4
 SSPRITE_BOX         = 5
 SSPRITE_CIRCLE      = 6
-WEBGL               = 7
+PRIMITIVE           = 7
+COLLADA             = 8
 
 # WebGLのプリミティブの種類
 BOX                 = 0
@@ -49,7 +50,7 @@ DEG                 = (180.0 / Math.PI)
 GLOBAL              = []
 
 # Frame Per Seconds
-FPS = 60
+FPS = 30
 
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
@@ -183,7 +184,7 @@ window.onload = ->
         CAMERA = new Camera3D()
         CAMERA.x = 0
         CAMERA.y = 0
-        CAMERA.z = 8
+        CAMERA.z = 160
         CAMERA.centerX = 0
         CAMERA.centerY = 0
         CAMERA.centerZ = 0
@@ -201,7 +202,10 @@ window.onload = ->
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
-    core.start()
+    if (DEBUG)
+        core.debug()
+    else
+        core.start()
 
 debugwrite = (param)->
     str = _DEBUGLABEL.text += if (param.str?) then param.str else ""
@@ -229,8 +233,9 @@ addObject = (param)->
     zs = if (param['zs']?) then param['zs'] else 0.0
     gravity = if (param['gravity']?) then param['gravity'] else 0.0
     image = if (param['image']?) then param['image'] else undefined
-    width = if (param['width']?) then param['width'] else 0.0
-    height = if (param['height']?) then param['height'] else 0.0
+    width = if (param['width']?) then param['width'] else 100.0
+    height = if (param['height']?) then param['height'] else 100.0
+    depth = if (param['depth']?) then param['depth'] else 100.0
     opacity = if (param['opacity']?) then param['opacity'] else 1.0
     animlist = if (param['animlist']?) then param['animlist'] else undefined
     animnum = if (param['animnum']?) then param['animnum'] else 0
@@ -241,6 +246,9 @@ addObject = (param)->
     friction = if (param['friction']?) then param['friction'] else 0.5
     restitution = if (param['restitution']?) then param['restitution'] else 0.1
     move = if (param['move']?) then param['move'] else false
+    radius = if (param['radius']?) then param['radius'] else 100.0
+    radius2 = if (param['radius2']?) then param['radius2'] else 100.0
+    size = if (param['size']?) then param['size'] else 100.0
     scaleX = if (param['scaleX']?) then param['scaleX'] else 1.0
     scaleY = if (param['scaleY']?) then param['scaleY'] else 1.0
     scaleZ = if (param['scaleZ']?) then param['scaleZ'] else 1.0
@@ -365,39 +373,31 @@ addObject = (param)->
                 textalign: textalign
             return retObject
 
-        when WEBGL
-            # imageが数字だったら
-            if (isFinite(image))
-                switch (image)
-                    when BOX
-                        motionsprite = new Box()
-                    when CUBE
-                        motionsprite = new Cube()
-                    when SPHERE
-                        motionsprite = new Sphere()
-                    when CYLINDER
-                        motionsprite = new Cylinder()
-                    when TORUS
-                        motionsprite = new Torus()
-                    when PLANE
-                        motionsprite = new Plane()
-                    else
-                        return undefined
-
-                if (texture?)
-                    imagefile = MEDIALIST[texture]
-                    tx = new Texture(imagefile)
-                    motionsprite.mesh.texture = tx
-            else
-            # imageがColladaデータだったら
-                if (MEDIALIST[image]?)
-                    motionsprite = new Sprite3D()
-                    motionsprite.set(core.assets[MEDIALIST[image]].clone())
+        when PRIMITIVE
+            switch (image)
+                when BOX
+                    motionsprite = new Box(width, height, depth)
+                when CUBE
+                    motionsprite = new Cube(size)
+                when SPHERE
+                    motionsprite = new Sphere(size)
+                when CYLINDER
+                    motionsprite = new Cylinder(radius, height)
+                when TORUS
+                    motionsprite = new Torus(radius, radius2)
+                when PLANE
+                    motionsprite = new Plane(size)
                 else
                     return undefined
 
+            if (texture?)
+                imagefile = MEDIALIST[texture]
+                tx = new Texture(imagefile)
+                motionsprite.mesh.texture = tx
+
             # 動きを定義したオブジェクトを生成する
-            rootScene3d.addChild(motionsprite)
+            if (visible)
+                rootScene3d.addChild(motionsprite)
             retObject = @setMotionObj
                 x: x
                 y: y
@@ -409,9 +409,50 @@ addObject = (param)->
                 scaleX: scaleX
                 scaleY: scaleY
                 scaleZ: scaleZ
+                radius: radius
+                radius2: radius2
+                size: size
                 gravity: gravity
                 width: width
                 height: height
+                depth: depth
+                animlist: animlist
+                animnum: animnum
+                opacity: opacity
+                scene: WEBGLSCENE
+                _type: _type
+                motionsprite: motionsprite
+                motionObj: motionObj
+            return retObject
+
+        when COLLADA
+            if (MEDIALIST[image]?)
+                motionsprite = new Sprite3D()
+                motionsprite.set(core.assets[MEDIALIST[image]].clone())
+            else
+                return undefined
+
+            # 動きを定義したオブジェクトを生成する
+            if (visible)
+                rootScene3d.addChild(motionsprite)
+            retObject = @setMotionObj
+                x: x
+                y: y
+                z: z
+                xs: xs
+                ys: ys
+                zs: zs
+                visible: visible
+                scaleX: scaleX
+                scaleY: scaleY
+                scaleZ: scaleZ
+                radius: radius
+                radius2: radius2
+                size: size
+                gravity: gravity
+                width: width
+                height: height
+                depth: depth
                 animlist: animlist
                 animnum: animnum
                 opacity: opacity
@@ -434,6 +475,9 @@ setMotionObj = (param)->
     initparam['scaleX'] = if (param['scaleX']?) then param['scaleX'] else 1.0
     initparam['scaleY'] = if (param['scaleY']?) then param['scaleY'] else 1.0
     initparam['scaleZ'] = if (param['scaleZ']?) then param['scaleZ'] else 1.0
+    initparam['radius'] = if (param['radius']?) then param['radius'] else 1.0
+    initparam['radius2'] = if (param['radius2']?) then param['radius2'] else 1.0
+    initparam['size'] = if (param['size']?) then param['size'] else 1.0
     initparam['gravity'] = if (param['gravity']?) then param['gravity'] else 0
     initparam['intersectFlag'] = if (param['intersectFlag']?) then param['intersectFlag'] else true
     initparam['width'] = if (param['width']?) then param['width'] else 0
@@ -497,7 +541,7 @@ removeObject = (motionObj)->
 
     if (motionObj._type == DSPRITE_BOX || motionObj._type == DSPRITE_CIRCLE || motionObj._type == SSPRITE_BOX || motionObj._type == SSPRITE_CIRCLE)
         object.motionObj.sprite.destroy()
-    else if (motionObj._type == SPRITE || motionObj._type == WEBGL)
+    else if (motionObj._type == SPRITE || motionObj._type == PRIMITIVE || motionObj._type == COLLADA)
         _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
 
     object.motionObj.sprite = undefined
