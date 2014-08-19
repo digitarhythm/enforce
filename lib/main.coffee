@@ -118,6 +118,8 @@ window.onload = ->
     core.fps = FPS
     # 「A」ボタンの定義
     core.keybind( 90, 'a' );
+    core.keybind( 88, 'b' );
+    core.keybind( 32, 'space' );
 
     # メディアファイルのプリロード
     if (MEDIALIST?)
@@ -202,7 +204,8 @@ window.onload = ->
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
-    if (DEBUG)
+
+    if (DEBUG == true)
         core.debug()
     else
         core.start()
@@ -233,6 +236,7 @@ addObject = (param)->
     zs = if (param['zs']?) then param['zs'] else 0.0
     gravity = if (param['gravity']?) then param['gravity'] else 0.0
     image = if (param['image']?) then param['image'] else undefined
+    model = if (param['model']?) then param['model'] else undefined
     width = if (param['width']?) then param['width'] else 100.0
     height = if (param['height']?) then param['height'] else 100.0
     depth = if (param['depth']?) then param['depth'] else 100.0
@@ -374,7 +378,7 @@ addObject = (param)->
             return retObject
 
         when PRIMITIVE
-            switch (image)
+            switch (model)
                 when BOX
                     motionsprite = new Box(width, height, depth)
                 when CUBE
@@ -396,8 +400,6 @@ addObject = (param)->
                 motionsprite.mesh.texture = tx
 
             # 動きを定義したオブジェクトを生成する
-            if (visible)
-                rootScene3d.addChild(motionsprite)
             retObject = @setMotionObj
                 x: x
                 y: y
@@ -423,12 +425,16 @@ addObject = (param)->
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
+
+            if (visible)
+                rootScene3d.addChild(motionsprite)
+
             return retObject
 
         when COLLADA
-            if (MEDIALIST[image]?)
+            if (MEDIALIST[model]?)
                 motionsprite = new Sprite3D()
-                motionsprite.set(core.assets[MEDIALIST[image]].clone())
+                motionsprite.set(core.assets[MEDIALIST[model]].clone())
             else
                 return undefined
 
@@ -541,7 +547,7 @@ removeObject = (motionObj)->
 
     if (motionObj._type == DSPRITE_BOX || motionObj._type == DSPRITE_CIRCLE || motionObj._type == SSPRITE_BOX || motionObj._type == SSPRITE_CIRCLE)
         object.motionObj.sprite.destroy()
-    else if (motionObj._type == SPRITE || motionObj._type == PRIMITIVE || motionObj._type == COLLADA)
+    else if (motionObj._type == LABEL || motionObj._type == SPRITE || motionObj._type == PRIMITIVE || motionObj._type == COLLADA)
         _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
 
     object.motionObj.sprite = undefined
@@ -572,6 +578,25 @@ playSound = (name, flag = false)->
     sound.play()
     sound.src.loop = flag
     return sound
+
+#**********************************************************************
+# サウンド一時停止
+#**********************************************************************
+pauseSound = (obj)->
+    obj.pause()
+
+#**********************************************************************
+# サウンド再開
+#**********************************************************************
+replaySound = (obj, flag = false)->
+    obj.play()
+    obj.src.loop = flag
+
+#**********************************************************************
+# サウンド停止
+#**********************************************************************
+stopSound = (obj)->
+    obj.stop()
 
 #**********************************************************************
 #**********************************************************************
