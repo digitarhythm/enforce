@@ -46,8 +46,14 @@ RAD                 = (Math.PI / 180.0)
 DEG                 = (180.0 / Math.PI)
 
 # グローバル初期化
-
 GLOBAL              = []
+
+# ゲームパッド情報格納変数
+_GAMEPADSINFO       = []
+PADBUTTONS          = []
+PADAXES             = []
+HORIZONTAL          = 0
+VERTICAL            = 1
 
 # Frame Per Seconds
 FPS = 30
@@ -143,6 +149,10 @@ window.onload = ->
         MOTION_ROTATE.beta = e.beta
         MOTION_ROTATE.gamma = e.gamma
 
+    # ゲームコントローラー
+    window.addEventListener("gamepadconnected", gamePadConnected, false);
+    window.addEventListener("gamepaddisconnected", gamePadDisconnected, false);
+
     # box2d初期化
     box2dworld = new PhysicsWorld(0, GRAVITY)
 
@@ -199,6 +209,17 @@ window.onload = ->
             _objects[i] = new _originObject()
         _main = new enforceMain()
         rootScene.addEventListener 'enterframe', (e)->
+            if (_GAMEPADSINFO.length > 0)
+                padnum = 0
+                for pad in _GAMEPADSINFO
+                    PADBUTTONS[padnum] = []
+                    PADAXES[padnum] = []
+                    num = 0
+                    for bt in pad.buttons
+                        PADBUTTONS[padnum][num++] = bt.pressed
+                    PADAXES[padnum][HORIZONTAL] = pad.axes[0]
+                    PADAXES[padnum][VERTICAL] = pad.axes[1]
+                    padnum++
             box2dworld.step(core.fps)
             LAPSEDTIME = (parseFloat((new Date) / 1000) - BEGINNINGTIME).toFixed(2)
             for obj in _objects
@@ -588,7 +609,7 @@ pauseSound = (obj)->
 #**********************************************************************
 # サウンド再開
 #**********************************************************************
-replaySound = (obj, flag = false)->
+resumeSound = (obj, flag = false)->
     obj.play()
     obj.src.loop = flag
 
@@ -605,6 +626,19 @@ stopSound = (obj)->
 #**********************************************************************
 #**********************************************************************
 #**********************************************************************
+
+#**********************************************************************
+# ゲームパッド接続処理
+#**********************************************************************
+gamePadConnected =(e)->
+    gamepad = e.gamepad
+    _GAMEPADSINFO.push(gamepad)
+
+#**********************************************************************
+# ゲームパッド切断処理
+#**********************************************************************
+gamePadDisconnected =(e)->
+    JSLog('disconnected')
 
 #**********************************************************************
 # オブジェクトリストの中で未使用のものの配列番号を返す。
