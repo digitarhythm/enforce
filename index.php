@@ -73,6 +73,6 @@ $webgl = $ini['ENVIRON']['WEBGL'];
         }
     </style>
 </head>
-<body bgcolor="gray">
+<body bgcolor="black">
 </body>
 </html>

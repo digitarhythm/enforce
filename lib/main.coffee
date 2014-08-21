@@ -50,10 +50,15 @@ GLOBAL              = []
 
 # ゲームパッド情報格納変数
 _GAMEPADSINFO       = []
+BUTTONNUM           = 0
 PADBUTTONS          = []
 PADAXES             = []
 HORIZONTAL          = 0
 VERTICAL            = 1
+PADBUTTONS[0]       = [false, false]
+PADAXES[0]          = []
+PADAXES[0][HORIZONTAL] = 0
+PADAXES[0][VERTICAL] = 0
 
 # Frame Per Seconds
 FPS = 30
@@ -212,15 +217,57 @@ window.onload = ->
             if (_GAMEPADSINFO.length > 0)
                 padnum = 0
                 for pad in _GAMEPADSINFO
-                    PADBUTTONS[padnum] = []
-                    PADAXES[padnum] = []
+                    if (padnum > 0)
+                        PADBUTTONS[padnum] = []
+                        PADAXES[padnum] = []
+
                     num = 0
                     for bt in pad.buttons
                         PADBUTTONS[padnum][num++] = bt.pressed
-                    PADAXES[padnum][HORIZONTAL] = pad.axes[0]
-                    PADAXES[padnum][VERTICAL] = pad.axes[1]
+
+                    if (pad.buttons[11].pressed)
+                        JSLog("11")
+
+                    PADAXES[padnum][HORIZONTAL] = pad.axes[HORIZONTAL]
+                    PADAXES[padnum][VERTICAL] = pad.axes[VERTICAL]
+
+                    if (pad.buttons[11]? && pad.buttons[11].pressed)
+                        PADAXES[padnum][VERTICAL] = -1
+                    if (pad.buttons[12]? && pad.buttons[12].pressed)
+                        PADAXES[padnum][VERTICAL] = 1
+                    if (pad.buttons[13]? && pad.buttons[13].pressed)
+                        PADAXES[padnum][HORIZONTAL] = -1
+                    if (pad.buttons[14]? && pad.buttons[14].pressed)
+                        PADAXES[padnum][HORIZONTAL] = 1
+
                     padnum++
+
+            if (core.input.a || core.input.space)
+                PADBUTTONS[0][0] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][0] = false
+
+            if (core.input.b)
+                PADBUTTONS[0][1] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][1] = false
+
+            if (core.input.left)
+                PADAXES[0][HORIZONTAL] = -1
+            else if (core.input.right)
+                PADAXES[0][HORIZONTAL] = 1
+            else if (!_GAMEPADSINFO[0]?)
+                PADAXES[0][HORIZONTAL] = 0
+
+            if (core.input.up)
+                PADAXES[0][VERTICAL] = -1
+            else if (core.input.down)
+                PADAXES[0][VERTICAL] = 1
+            else if (!_GAMEPADSINFO[0]?)
+                PADAXES[0][VERTICAL] = 0
+
             box2dworld.step(core.fps)
+
             LAPSEDTIME = (parseFloat((new Date) / 1000) - BEGINNINGTIME).toFixed(2)
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
@@ -620,6 +667,18 @@ stopSound = (obj)->
     obj.stop()
 
 #**********************************************************************
+# ゲーム一時停止
+#**********************************************************************
+pauseGame:->
+    core.pause()
+
+#**********************************************************************
+# ゲーム再開
+#**********************************************************************
+resumeGame:->
+    core.resume()
+
+#**********************************************************************
 #**********************************************************************
 #**********************************************************************
 # 以下は内部使用ライブラリ関数
@@ -632,6 +691,7 @@ stopSound = (obj)->
 #**********************************************************************
 gamePadConnected =(e)->
     gamepad = e.gamepad
+    JSLog(gamepad)
     _GAMEPADSINFO.push(gamepad)
 
 #**********************************************************************
