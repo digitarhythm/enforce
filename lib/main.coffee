@@ -88,6 +88,9 @@ RENDERER            = undefined
 CAMERA              = undefined
 LIGHT               = undefined
 
+# 動作状況
+ACTIVATE            = true
+
 # オブジェクトが入っている配列
 _objects            = []
 
@@ -155,8 +158,8 @@ window.onload = ->
         MOTION_ROTATE.gamma = e.gamma
 
     # ゲームコントローラー
-    window.addEventListener("gamepadconnected", gamePadConnected, false);
-    window.addEventListener("gamepaddisconnected", gamePadDisconnected, false);
+    window.addEventListener("gamepadconnected", gamePadConnected, false)
+    window.addEventListener("gamepaddisconnected", gamePadDisconnected, false)
 
     # box2d初期化
     box2dworld = new PhysicsWorld(0, GRAVITY)
@@ -224,9 +227,6 @@ window.onload = ->
                     num = 0
                     for bt in pad.buttons
                         PADBUTTONS[padnum][num++] = bt.pressed
-
-                    if (pad.buttons[11].pressed)
-                        JSLog("11")
 
                     PADAXES[padnum][HORIZONTAL] = pad.axes[HORIZONTAL]
                     PADAXES[padnum][VERTICAL] = pad.axes[VERTICAL]
@@ -669,13 +669,15 @@ stopSound = (obj)->
 #**********************************************************************
 # ゲーム一時停止
 #**********************************************************************
-pauseGame:->
+pauseGame =->
+    ACTIVATE = false
     core.pause()
 
 #**********************************************************************
 # ゲーム再開
 #**********************************************************************
-resumeGame:->
+resumeGame =->
+    ACTIVATE = true
     core.resume()
 
 #**********************************************************************
