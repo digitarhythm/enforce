@@ -49,16 +49,15 @@ DEG                 = (180.0 / Math.PI)
 GLOBAL              = []
 
 # ゲームパッド情報格納変数
-_GAMEPADSINFO       = []
-BUTTONNUM           = 0
-PADBUTTONS          = []
-PADAXES             = []
 HORIZONTAL          = 0
 VERTICAL            = 1
+ANALOG01            = 2
+ANALOG02            = 3
+_GAMEPADSINFO       = []
+PADBUTTONS          = []
 PADBUTTONS[0]       = [false, false]
-PADAXES[0]          = []
-PADAXES[0][HORIZONTAL] = 0
-PADAXES[0][VERTICAL] = 0
+PADAXES             = []
+PADAXES[0]          = [0, 0]
 
 # Frame Per Seconds
 FPS = 30
@@ -157,10 +156,6 @@ window.onload = ->
         MOTION_ROTATE.beta = e.beta
         MOTION_ROTATE.gamma = e.gamma
 
-    # ゲームコントローラー
-    window.addEventListener("gamepadconnected", gamePadConnected, false)
-    window.addEventListener("gamepaddisconnected", gamePadDisconnected, false)
-
     # box2d初期化
     box2dworld = new PhysicsWorld(0, GRAVITY)
 
@@ -217,30 +212,49 @@ window.onload = ->
             _objects[i] = new _originObject()
         _main = new enforceMain()
         rootScene.addEventListener 'enterframe', (e)->
-            if (_GAMEPADSINFO.length > 0)
-                padnum = 0
-                for pad in _GAMEPADSINFO
-                    if (padnum > 0)
-                        PADBUTTONS[padnum] = []
-                        PADAXES[padnum] = []
+            _GAMEPADSINFO = if (navigator.getGamepads) then navigator.getGamepads() else (if (navigator.webkitGetGamepads) then navigator.webkitGetGamepads else [])
+            if (_GAMEPADSINFO?)
+                for padnum in [0..._GAMEPADSINFO.length]
+                    gamepad = _GAMEPADSINFO[padnum]
+                    if (!gamepad?)
+                        continue
+                    # 各種ボタン情報取得
+                    buttons = gamepad.buttons
+                    axes = gamepad.axes
 
-                    num = 0
-                    for bt in pad.buttons
-                        PADBUTTONS[padnum][num++] = bt.pressed
+                    # ゲームパッドボタン情報取得
+                    # 各種ゲームパッドで共通の情報が取れるがボタンが6つなので、それ以降のボタン情報は破棄する
+                    max = (if (buttons.length < 6) then buttons.length else 6)
+                    for btnum in [0...max]
+                        bt = buttons[btnum]
+                        PADBUTTONS[padnum][btnum] = bt.pressed
 
-                    PADAXES[padnum][HORIZONTAL] = pad.axes[HORIZONTAL]
-                    PADAXES[padnum][VERTICAL] = pad.axes[VERTICAL]
-
-                    if (pad.buttons[11]? && pad.buttons[11].pressed)
-                        PADAXES[padnum][VERTICAL] = -1
-                    if (pad.buttons[12]? && pad.buttons[12].pressed)
-                        PADAXES[padnum][VERTICAL] = 1
-                    if (pad.buttons[13]? && pad.buttons[13].pressed)
+                    # 方向キー情報を取得
+                    if (gamepad.axes[HORIZONTAL] < -0.5)
                         PADAXES[padnum][HORIZONTAL] = -1
-                    if (pad.buttons[14]? && pad.buttons[14].pressed)
+                    else if (gamepad.axes[HORIZONTAL] > 0.5)
                         PADAXES[padnum][HORIZONTAL] = 1
+                    else PADAXES[padnum][HORIZONTAL] = 0
 
-                    padnum++
+                    if (gamepad.axes[VERTICAL] < -0.5)
+                        PADAXES[padnum][VERTICAL] = -1
+                    else if (gamepad.axes[VERTICAL] > 0.5)
+                        PADAXES[padnum][VERTICAL] = 1
+                    else
+                        PADAXES[padnum][VERTICAL] = 0
+                    #PADAXES[padnum][HORIZONTAL] = gamepad.axes[HORIZONTAL]
+                    #PADAXES[padnum][VERTICAL] = gamepad.axes[VERTICAL]
+
+                    # XBOX360コントローラーの方向キーはボタンとして情報が返るので変換する（Chrome準拠）
+                    # Firefoxではボタン番号が違うので動きがおかしくなる
+                    if (gamepad.buttons[12]? && gamepad.buttons[12].pressed)
+                        PADAXES[padnum][VERTICAL] = -1
+                    if (gamepad.buttons[13]? && gamepad.buttons[13].pressed)
+                        PADAXES[padnum][VERTICAL] = 1
+                    if (gamepad.buttons[14]? && gamepad.buttons[14].pressed)
+                        PADAXES[padnum][HORIZONTAL] = -1
+                    if (gamepad.buttons[15]? && gamepad.buttons[15].pressed)
+                        PADAXES[padnum][HORIZONTAL] = 1
 
             if (core.input.a || core.input.space)
                 PADBUTTONS[0][0] = true
@@ -687,20 +701,6 @@ resumeGame =->
 #**********************************************************************
 #**********************************************************************
 #**********************************************************************
-
-#**********************************************************************
-# ゲームパッド接続処理
-#**********************************************************************
-gamePadConnected =(e)->
-    gamepad = e.gamepad
-    JSLog(gamepad)
-    _GAMEPADSINFO.push(gamepad)
-
-#**********************************************************************
-# ゲームパッド切断処理
-#**********************************************************************
-gamePadDisconnected =(e)->
-    JSLog('disconnected')
 
 #**********************************************************************
 # オブジェクトリストの中で未使用のものの配列番号を返す。

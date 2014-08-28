@@ -19,8 +19,8 @@ class enforceMain
 
         droidobj = addObject
             motionObj: droid
-            type: WEBGL
-            image: 'droid'
+            type: COLLADA
+            model: 'droid'
             x: 0
             y: 10
             z: 0
