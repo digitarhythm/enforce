@@ -230,20 +230,18 @@ window.onload = ->
                         PADBUTTONS[padnum][btnum] = bt.pressed
 
                     # 方向キー情報を取得
-                    if (gamepad.axes[HORIZONTAL] < -0.5)
+                    if (gamepad.axes[HORIZONTAL] < -0.3)
                         PADAXES[padnum][HORIZONTAL] = -1
-                    else if (gamepad.axes[HORIZONTAL] > 0.5)
+                    else if (gamepad.axes[HORIZONTAL] > 0.3)
                         PADAXES[padnum][HORIZONTAL] = 1
                     else PADAXES[padnum][HORIZONTAL] = 0
 
-                    if (gamepad.axes[VERTICAL] < -0.5)
+                    if (gamepad.axes[VERTICAL] < -0.3)
                         PADAXES[padnum][VERTICAL] = -1
-                    else if (gamepad.axes[VERTICAL] > 0.5)
+                    else if (gamepad.axes[VERTICAL] > 0.3)
                         PADAXES[padnum][VERTICAL] = 1
                     else
                         PADAXES[padnum][VERTICAL] = 0
-                    #PADAXES[padnum][HORIZONTAL] = gamepad.axes[HORIZONTAL]
-                    #PADAXES[padnum][VERTICAL] = gamepad.axes[VERTICAL]
 
                     # XBOX360コントローラーの方向キーはボタンとして情報が返るので変換する（Chrome準拠）
                     # Firefoxではボタン番号が違うので動きがおかしくなる
