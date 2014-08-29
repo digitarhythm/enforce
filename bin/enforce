@@ -18,7 +18,7 @@ if [ -z "$opt" ]; then
 	echo "update : update system library"
 	echo "derive : create a new object class(require option is new class name)"
 	echo "static : project to static mode"
-	echo "static : project to develop mode"
+	echo "develop: project to develop mode"
 	exit
 fi
 
