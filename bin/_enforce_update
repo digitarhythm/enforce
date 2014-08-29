@@ -13,4 +13,4 @@ fi
 cp -af $ENF/index.php $PROJ/
 cp -af $ENF/extlib/* $PROJ/extlib/
 cp -af $ENF/lib/*.png $PROJ/lib/
-coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.coffee $ENF/lib/library.coffee $ENF/lib/main.coffee
+coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.coffee $ENF/lib/library.coffee $ENF/lib/main.coffee $ENF/plugins/*.coffee

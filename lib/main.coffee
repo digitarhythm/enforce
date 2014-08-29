@@ -51,13 +51,18 @@ GLOBAL              = []
 # ゲームパッド情報格納変数
 HORIZONTAL          = 0
 VERTICAL            = 1
-ANALOG01            = 2
-ANALOG02            = 3
+HORIZONTAL2         = 2
+VERTICAL2           = 3
 _GAMEPADSINFO       = []
 PADBUTTONS          = []
 PADBUTTONS[0]       = [false, false]
 PADAXES             = []
 PADAXES[0]          = [0, 0]
+ANALOGSTICK         = []
+ANALOGSTICK[0]      = [0, 0, 0, 0]
+
+# ブラウザ毎のゲームパッド処理メソッド定義用配列
+GAMEPADPROCEDURE    = []
 
 # Frame Per Seconds
 FPS = 30
@@ -71,9 +76,18 @@ MOTION_ROTATE       = [alpha:0, beta:0, gamma:0]
 _useragent = window.navigator.userAgent.toLowerCase()
 # 標準ブラウザ
 if (_useragent.match(/^.*android.*?mobile safari.*$/i) != null && _useragent.match(/^.*\) chrome.*/i) == null)
-    _standardbrowser = true
+    _defaultbrowser = true
 else
-    _standardbrowser = false
+    _defaultbrowser = false
+# ブラウザ大分類
+if (_useragent.match(/.* firefox\/.*/))
+    _browserMajorClass = "firefox"
+else if (_useragent.match(/.*version\/.* safari\/.*/))
+    _browserMajorClass = "safari"
+else if (_useragent.match(/.*chrome\/.* safari\/.*/))
+    _browserMajorClass = "chrome"
+else
+    _browserMajorClass = "unknown"
 
 # ゲーム起動時からの経過時間（秒）
 LAPSEDTIME          = 0
@@ -133,6 +147,8 @@ window.onload = ->
     core.keybind( 90, 'a' );
     core.keybind( 88, 'b' );
     core.keybind( 32, 'space' );
+
+    #window.addEventListener "gamepaddisconnected", gamepaddisconnected, false
 
     # メディアファイルのプリロード
     if (MEDIALIST?)
@@ -214,45 +230,11 @@ window.onload = ->
         rootScene.addEventListener 'enterframe', (e)->
             _GAMEPADSINFO = if (navigator.getGamepads) then navigator.getGamepads() else (if (navigator.webkitGetGamepads) then navigator.webkitGetGamepads else [])
             if (_GAMEPADSINFO?)
-                for padnum in [0..._GAMEPADSINFO.length]
-                    gamepad = _GAMEPADSINFO[padnum]
-                    if (!gamepad?)
-                        continue
-                    # 各種ボタン情報取得
-                    buttons = gamepad.buttons
-                    axes = gamepad.axes
-
-                    # ゲームパッドボタン情報取得
-                    # 各種ゲームパッドで共通の情報が取れるがボタンが6つなので、それ以降のボタン情報は破棄する
-                    max = (if (buttons.length < 6) then buttons.length else 6)
-                    for btnum in [0...max]
-                        bt = buttons[btnum]
-                        PADBUTTONS[padnum][btnum] = bt.pressed
-
-                    # 方向キー情報を取得
-                    if (gamepad.axes[HORIZONTAL] < -0.3)
-                        PADAXES[padnum][HORIZONTAL] = -1
-                    else if (gamepad.axes[HORIZONTAL] > 0.3)
-                        PADAXES[padnum][HORIZONTAL] = 1
-                    else PADAXES[padnum][HORIZONTAL] = 0
-
-                    if (gamepad.axes[VERTICAL] < -0.3)
-                        PADAXES[padnum][VERTICAL] = -1
-                    else if (gamepad.axes[VERTICAL] > 0.3)
-                        PADAXES[padnum][VERTICAL] = 1
-                    else
-                        PADAXES[padnum][VERTICAL] = 0
-
-                    # XBOX360コントローラーの方向キーはボタンとして情報が返るので変換する（Chrome準拠）
-                    # Firefoxではボタン番号が違うので動きがおかしくなる
-                    if (gamepad.buttons[12]? && gamepad.buttons[12].pressed)
-                        PADAXES[padnum][VERTICAL] = -1
-                    if (gamepad.buttons[13]? && gamepad.buttons[13].pressed)
-                        PADAXES[padnum][VERTICAL] = 1
-                    if (gamepad.buttons[14]? && gamepad.buttons[14].pressed)
-                        PADAXES[padnum][HORIZONTAL] = -1
-                    if (gamepad.buttons[15]? && gamepad.buttons[15].pressed)
-                        PADAXES[padnum][HORIZONTAL] = 1
+                browserGamepadFunctionName = _browserMajorClass+"_gamepad"
+                if (typeof GAMEPADPROCEDURE[browserGamepadFunctionName] == 'function')
+                    GAMEPADPROCEDURE[browserGamepadFunctionName]()
+                else
+                    _GAMEPADSINFO = []
 
             if (core.input.a || core.input.space)
                 PADBUTTONS[0][0] = true
@@ -700,6 +682,9 @@ resumeGame =->
 #**********************************************************************
 #**********************************************************************
 
+gamepaddisconnected =(e)->
+    JSLog(e)
+
 #**********************************************************************
 # オブジェクトリストの中で未使用のものの配列番号を返す。
 # 無かった場合は-1を返す
@@ -716,7 +701,7 @@ _getNullObject = ->
 # 標準ブラウザは非推奨というダイアログ表示
 #**********************************************************************
 dispDefaultBrowserCheck = (func)->
-    if (_standardbrowser)
+    if (_defaultbrowser)
         cautionscale = SCREEN_WIDTH / 320
         caution = addObject
             image: '_notice'
@@ -746,4 +731,5 @@ dispDefaultBrowserCheck = (func)->
             func()
     else
         func()
+
 
