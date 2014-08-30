@@ -61,11 +61,8 @@ PADAXES[0]          = [0, 0]
 ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
 
-# ブラウザ毎のゲームパッド処理メソッド定義用配列
-GAMEPADPROCEDURE    = []
-
 # Frame Per Seconds
-FPS = 30
+FPS = 60
 
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
@@ -228,13 +225,15 @@ window.onload = ->
             _objects[i] = new _originObject()
         _main = new enforceMain()
         rootScene.addEventListener 'enterframe', (e)->
-            _GAMEPADSINFO = if (navigator.getGamepads) then navigator.getGamepads() else (if (navigator.webkitGetGamepads) then navigator.webkitGetGamepads else [])
-            if (_GAMEPADSINFO?)
-                browserGamepadFunctionName = _browserMajorClass+"_gamepad"
-                if (typeof GAMEPADPROCEDURE[browserGamepadFunctionName] == 'function')
-                    GAMEPADPROCEDURE[browserGamepadFunctionName]()
-                else
-                    _GAMEPADSINFO = []
+            ###
+            browserGamepadFunctionName = _browserMajorClass+"_gamepad"
+            if (typeof GAMEPADPROCEDURE[browserGamepadFunctionName] == 'function')
+                GAMEPADPROCEDURE[browserGamepadFunctionName]()
+            else
+                _GAMEPADSINFO = []
+            ###
+            if (typeof gamePadProcedure == 'function')
+                gamePadProcedure()
 
             if (core.input.a || core.input.space)
                 PADBUTTONS[0][0] = true
