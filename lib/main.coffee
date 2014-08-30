@@ -51,8 +51,6 @@ GLOBAL              = []
 # ゲームパッド情報格納変数
 HORIZONTAL          = 0
 VERTICAL            = 1
-HORIZONTAL2         = 2
-VERTICAL2           = 3
 _GAMEPADSINFO       = []
 PADBUTTONS          = []
 PADBUTTONS[0]       = [false, false]
@@ -145,8 +143,6 @@ window.onload = ->
     core.keybind( 88, 'b' );
     core.keybind( 32, 'space' );
 
-    #window.addEventListener "gamepaddisconnected", gamepaddisconnected, false
-
     # メディアファイルのプリロード
     if (MEDIALIST?)
         MEDIALIST['_notice'] = 'lib/notice.png'
@@ -225,15 +221,15 @@ window.onload = ->
             _objects[i] = new _originObject()
         _main = new enforceMain()
         rootScene.addEventListener 'enterframe', (e)->
-            ###
-            browserGamepadFunctionName = _browserMajorClass+"_gamepad"
-            if (typeof GAMEPADPROCEDURE[browserGamepadFunctionName] == 'function')
-                GAMEPADPROCEDURE[browserGamepadFunctionName]()
-            else
-                _GAMEPADSINFO = []
-            ###
-            if (typeof gamePadProcedure == 'function')
-                gamePadProcedure()
+            if (typeof gamepadProcedure == 'function')
+                _GAMEPADSINFO = gamepadProcedure()
+                for num in [0..._GAMEPADSINFO.length]
+                    if (!_GAMEPADSINFO[num]?)
+                        continue
+                    padobj = _GAMEPADSINFO[num]
+                    PADBUTTONS[num] = _GAMEPADSINFO[num].padbuttons
+                    PADAXES[num] = _GAMEPADSINFO[num].padaxes
+                    ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
 
             if (core.input.a || core.input.space)
                 PADBUTTONS[0][0] = true
