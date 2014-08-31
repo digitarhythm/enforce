@@ -43,6 +43,8 @@ class _stationary
             @labeltext = initparam['labeltext']
             @textalign = initparam['textalign']
 
+            @collider = @sprite
+
             @lastvisible = @visible
 
             @sprite.scaleX = @scaleX
@@ -280,7 +282,7 @@ class _stationary
         if (!motionObj? || !motionObj.sprite? || !motionObj.sprite?)
             ret = false
         else if (@intersectFlag == true && motionObj.intersectFlag == true)
-            ret = @sprite.intersect(motionObj.sprite)
+            ret = @sprite.intersect(motionObj.collider)
         else
             ret = false
         return ret
