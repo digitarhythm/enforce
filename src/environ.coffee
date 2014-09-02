@@ -17,5 +17,4 @@ GRAVITY         = 9.8                       # 重力（box2dで使用）
 # preloading image list ***********************************************************************************
 MEDIALIST       = {
     bear    : 'media/picture/chara1.png'
-    droid   : 'media/collada/droid.dae'
 }

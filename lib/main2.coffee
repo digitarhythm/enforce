@@ -1,5 +1,5 @@
 #***********************************************************************
-# enforce game engine(enchant)
+# enforce game engine(tmlib)
 #
 # 2014.04.04 ver2.0
 #
@@ -96,6 +96,9 @@ RENDERER            = undefined
 CAMERA              = undefined
 LIGHT               = undefined
 
+# メディアデータ用配列
+ASSETS              = []
+
 # 動作状況
 ACTIVATE            = true
 
@@ -127,100 +130,71 @@ rootScene           = undefined
 # 起動時の処理
 #******************************************************************************
 
-# enchantのオマジナイ
-enchant()
-enchant.ENV.MOUSE_ENABLED = false
-enchant.ENV.SOUND_ENABLED_ON_MOBILE_SAFARI = false
-
 # ゲーム起動時の処理
-window.onload = ->
-    # enchant初期化
-    core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
-    # FPS設定
-    core.fps = FPS
-    # 「A」ボタンの定義
-    core.keybind( 90, 'a' );
-    core.keybind( 88, 'b' );
-    core.keybind( 32, 'space' );
+tm.main ->
+    tm.define "customLoadingScene",
+        superClass: "tm.app.Scene"
+        init: (param) ->
+            @superInit()
+            @bg = tm.display.Shape(param.width, param.height).addChildTo(@)
+            @bg.canvas.clearColor "#000000"
+            @bg.setOrigin 0, 0
+            label = tm.display.Label("loading")
+            label.x = param.width / 2
+            label.y = param.height / 2
+            label.width = param.width
+            label.align = "center"
+            label.baseline = "middle"
+            label.fontSize = 24
+            label.setFillStyle "#ffffff"
+            label.counter = 0
+            label.update = (app) ->
+                if app.frame % 30 is 0
+                    @text += "."
+                    @counter += 1
+                    if @counter > 3
+                        @counter = 0
+                        @text = "loading"
+                return
+            label.addChildTo @bg
+            @bg.tweener.clear().fadeIn(100).call (->
+                if param.assets
+                    loader = tm.asset.Loader()
+                    loader.onload = (->
+                        @bg.tweener.clear().wait(300).fadeOut(300).call (->
+                            core.replaceScene param.nextScene()  if param.nextScene
+                            e = tm.event.Event("load")
+                            @fire e
+                            return
+                        ).bind(@)
+                        return
+                    ).bind(@)
+                    loader.onprogress = ((e) ->
+                        event = tm.event.Event("progress")
+                        event.progress = e.progress
+                        @fire event
+                        return
+                    ).bind(@)
+                    loader.load param.assets
+                return
+            ).bind(@)
+            return
 
-    # メディアファイルのプリロード
-    if (MEDIALIST?)
-        MEDIALIST['_notice'] = 'lib/notice.png'
-        MEDIALIST['_execbutton'] = 'lib/execbutton.png'
-        mediaarr = []
-        i = 0
-        for obj of MEDIALIST
-            mediaarr[i++] = MEDIALIST[obj]
-        core.preload(mediaarr)
+    tm.define "mainScene",
+        superClass: "tm.app.Scene"
+        init: ->
+            @superInit()
+            rootScene = @
+            maxscene = TOPSCENE + 1
+            for i in [0...maxscene]
+                scene = tm.display.CanvasElement().addChildTo(rootScene)
+                _scenes[i] = scene
+            for i in [0...OBJECTNUM]
+                _objects[i] = new _originObject()
+            _main = new enforceMain()
+            return
 
-    # rootSceneをグローバルに保存
-    rootScene = core.rootScene
-
-    # モーションセンサーのイベント登録
-    window.addEventListener 'devicemotion', (e)=>
-        MOTION_ACCEL = e.acceleration
-        MOTION_GRAVITY = e.accelerationIncludingGravity
-    window.addEventListener 'deviceorientation', (e)=>
-        MOTION_ROTATE.alpha = e.alpha
-        MOTION_ROTATE.beta = e.beta
-        MOTION_ROTATE.gamma = e.gamma
-
-    # box2d初期化
-    box2dworld = new PhysicsWorld(0, GRAVITY)
-
-    # シーングループを生成
-    for i in [0..TOPSCENE]
-        scene = new Group()
-        scene.backgroundColor = "black"
-        _scenes[i] = scene
-        rootScene.addChild(scene)
-
-    if (DEBUG == true)
-        _DEBUGLABEL = new Label()
-        _DEBUGLABEL.x = 0
-        _DEBUGLABEL.y = 0
-        _DEBUGLABEL.color = "white"
-        _DEBUGLABEL.font = "10px 'Arial'"
-        _scenes[TOPSCENE].addChild(_DEBUGLABEL)
-
-    if (WEBGL && isWebGL())
-        # 3Dシーンを生成
-        rootScene3d = new Scene3D()
-        _scenes[WEBGLSCENE] = rootScene3d
-
-        # スポットライト生成
-        #dlight = new DirectionalLight()
-        #dlight.directionX = 0
-        #dlight.directionY = 100
-        #dlight.directionZ = 0
-        #dlight.color = [1.0, 1.0, 1.0]
-        #rootScene3d.setDirectionalLight(dlight)
-
-        # 環境光ライト生成
-        #alight = new AmbientLight()
-        #alight.directionX = 0
-        #alight.directionY = 100
-        #alight.directionZ = 0
-        #alight.color = [1.0, 1.0, 1.0]
-        #rootScene3d.setAmbientLight(alight)
-
-        # カメラ生成
-        CAMERA = new Camera3D()
-        CAMERA.x = 0
-        CAMERA.y = 0
-        CAMERA.z = 160
-        CAMERA.centerX = 0
-        CAMERA.centerY = 0
-        CAMERA.centerZ = 0
-        rootScene3d.setCamera(CAMERA)
-    else
-        WEBGL = false
-
-    core.onload = ->
-        for i in [0...OBJECTNUM]
-            _objects[i] = new _originObject()
-        _main = new enforceMain()
-        rootScene.addEventListener 'enterframe', (e)->
+        onenterframe: ->
             if (typeof gamepadProcedure == 'function')
                 _GAMEPADSINFO = gamepadProcedure()
                 for num in [0..._GAMEPADSINFO.length]
@@ -231,52 +205,63 @@ window.onload = ->
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
 
-            if (core.input.a || core.input.space)
+            key = core.keyboard
+                
+            #if (core.input.a || core.input.space)
+            if (key.getKey("z"))
                 PADBUTTONS[0][0] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][0] = false
 
-            if (core.input.b)
+            #if (core.input.b)
+            if (key.getKey("x"))
                 PADBUTTONS[0][1] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][1] = false
 
-            if (core.input.left)
+            #if (core.input.left)
+            if (key.getKey("left"))
                 PADAXES[0][HORIZONTAL] = -1
-            else if (core.input.right)
+            #else if (core.input.right)
+            else if (key.getKey("right"))
                 PADAXES[0][HORIZONTAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][HORIZONTAL] = 0
 
-            if (core.input.up)
+            #if (core.input.up)
+            if (key.getKey("up"))
                 PADAXES[0][VERTICAL] = -1
-            else if (core.input.down)
+            #else if (core.input.down)
+            else if (key.getKey("down"))
                 PADAXES[0][VERTICAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
-
-            box2dworld.step(core.fps)
-
             LAPSEDTIME = (parseFloat((new Date) / 1000) - BEGINNINGTIME).toFixed(2)
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
 
-    if (DEBUG == true)
-        core.debug()
-    else
-        core.start()
+    core = tm.display.CanvasApp("#stage")
+    core.fps = FPS
+    core.resize SCREEN_WIDTH, SCREEN_HEIGHT
+    core.fitWindow()
+    core.replaceScene customLoadingScene(
+        assets: MEDIALIST
+        nextScene: mainScene
+        width: SCREEN_WIDTH
+        height: SCREEN_HEIGHT
+    )
+    core.run()
 
-debugwrite = (param)->
-    str = _DEBUGLABEL.text += if (param.str?) then param.str else ""
-    fontsize = if (param.fontsize?) then param.fontsize else 10
-    fontcolor = if (param.fontcolor?) then param.fontcolor else "white"
-    if (DEBUG == true)
-        _DEBUGLABEL.font = fontsize+"px 'Arial'"
-        _DEBUGLABEL.text = str
-        _DEBUGLABEL.color = fontcolor
-debugclear =->
-    _DEBUGLABEL.text = ""
+    # モーションセンサーのイベント登録
+    window.addEventListener 'devicemotion', (e)=>
+        MOTION_ACCEL = e.acceleration
+        MOTION_GRAVITY = e.accelerationIncludingGravity
+    window.addEventListener 'deviceorientation', (e)=>
+        MOTION_ROTATE.alpha = e.alpha
+        MOTION_ROTATE.beta = e.beta
+        MOTION_ROTATE.gamma = e.gamma
+
 
 #******************************************************************************
 # 2D/3D共用オブジェクト生成メソッド
@@ -315,7 +300,7 @@ addObject = (param)->
     scaleZ = if (param['scaleZ']?) then param['scaleZ'] else 1.0
     rotation = if (param['rotation']?) then param['rotation'] else 0.0
     texture = if (param['texture']?) then param['texture'] else undefined
-    fontsize = if (param['fontsize']?) then param['fontsize'] else '16'
+    fontsize = if (param['fontsize']?) then param['fontsize'] else '16px'
     color = if (param['color']?) then param['color'] else 'white'
     labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
@@ -328,20 +313,21 @@ addObject = (param)->
     # スプライトを生成
     switch (_type)
         when CONTROL, SPRITE
-            motionsprite = new Sprite()
+            # 画像割り当て
+            motionsprite = tm.display.Sprite(image, width, height)
             if (scene < 0)
                 scene = GAMESCENE_SUB1
 
-            # TimeLineを時間ベースにする
-            motionsprite.tl.setTimeBased()
-
             if (animlist?)
                 animtmp = animlist[animnum]
-                motionsprite.frame = animtmp[1][0]
+                motionsprite.frameIndex = animtmp[1][0]
 
                 motionsprite.backgroundColor = "transparent"
-                motionsprite.x = x - Math.floor(width / 2)
-                motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
+                motionsprite.setOrigin(0.5, 0.5)
+                #motionsprite.x = x - Math.floor(width / 2)
+                #motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
+                motionsprite.x = Math.floor(x)
+                motionsprite.y = Math.floor(y) - Math.floor(z)
                 motionsprite.opacity = opacity
                 motionsprite.rotation = rotation
                 motionsprite.scaleX = scaleX
@@ -350,13 +336,8 @@ addObject = (param)->
                 motionsprite.width = width
                 motionsprite.height = height
 
-                # 画像割り当て
-                if (MEDIALIST[image]? && animlist?)
-                    img = MEDIALIST[image]
-                    motionsprite.image = core.assets[img]
-
                 # スプライトを表示
-                _scenes[scene].addChild(motionsprite)
+                motionsprite.addChildTo(_scenes[scene])
 
             # 動きを定義したオブジェクトを生成する
             retObject = @setMotionObj
@@ -391,13 +372,15 @@ addObject = (param)->
             if (height == 0)
                 height = 64
             # ラベルを生成
-            motionsprite = new Label(labeltext)
-            # ラベルを表示
-            _scenes[scene].addChild(motionsprite)
+            motionsprite = new tm.app.Label(labeltext)
             # 値を代入
             motionsprite.backgroundColor = "transparent"
-            motionsprite.x = x - Math.floor(width / 2)
-            motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
+            motionsprite.setOrigin(0.5, 0.5)
+            motionsprite.setPosition(x, y)
+            #motionsprite.x = x - Math.floor(width / 2)
+            #motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
+            motionsprite.x = Math.floor(x)
+            motionsprite.y = Math.floor(y) - Math.floor(z)
             motionsprite.opacity = opacity
             motionsprite.rotation = rotation
             motionsprite.scaleX = scaleX
@@ -407,8 +390,10 @@ addObject = (param)->
             motionsprite.height = height
             motionsprite.color = color
             motionsprite.text = labeltext
-            motionsprite.textAlign = textalign
             motionsprite.font = fontsize+"px 'Arial'"
+            motionsprite.setAlign(textalign)
+            # スプライトを表示
+            motionsprite.addChildTo(_scenes[scene])
             # 動きを定義したオブジェクトを生成する
             retObject = @setMotionObj
                 x: x
@@ -551,7 +536,7 @@ setMotionObj = (param)->
     initparam['opacity'] = if (param['opacity']?) then param['opacity'] else 0
     initparam['rotation'] = if (param['rotation']?) then param['rotation'] else 0.0
     initparam['motionsprite'] = if (param['motionsprite']?) then param['motionsprite'] else 0
-    initparam['fontsize'] = if (param['fontsize']?) then param['fontsize'] else '16'
+    initparam['fontsize'] = if (param['fontsize']?) then param['fontsize'] else '16px'
     initparam['color'] = if (param['color']?) then param['color'] else 'white'
     initparam['labeltext'] = if (param['labeltext']?) then param['labeltext'] else 'text'
     initparam['textalign'] = if (param['textalign']?) then param['textalign'] else 'left'
@@ -630,10 +615,12 @@ getObject = (id)->
 # サウンド再生
 #**********************************************************************
 playSound = (name, flag = false)->
-    soundfile = MEDIALIST[name]
-    sound = core.assets[soundfile].clone()
+    org = tm.asset.Manager.get(name)
+    sound = org.clone()
+
+    sound.volume = 1.0
     sound.play()
-    sound.src.loop = flag
+    sound.loop = flag
     return sound
 
 #**********************************************************************
@@ -647,7 +634,7 @@ pauseSound = (obj)->
 #**********************************************************************
 resumeSound = (obj, flag = false)->
     obj.play()
-    obj.src.loop = flag
+    obj.loop = flag
 
 #**********************************************************************
 # サウンド停止

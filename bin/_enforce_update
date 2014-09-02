@@ -15,3 +15,5 @@ cp -af $ENF/extlib/* $PROJ/extlib/
 cp -af $ENF/lib/*.png $PROJ/lib/
 # enchantライブラリ生成
 coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.coffee $ENF/lib/library.coffee $ENF/lib/main.coffee $ENF/plugins/*.coffee
+# tmlibライブラリ生成
+coffee -b -j $PROJ/sysobject/enforce.core2.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary2.coffee $ENF/lib/library.coffee $ENF/lib/main2.coffee $ENF/plugins/*.coffee

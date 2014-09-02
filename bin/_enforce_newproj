@@ -8,9 +8,7 @@ PROJ=$CWD/$PACKAGE
 # 必要なディレクトリの作成
 echo "Project Dcirectory:"$PROJ
 mkdir -p $PROJ/lib
-mkdir -p $PROJ/media/picture
-mkdir -p $PROJ/media/sound
-mkdir -p $PROJ/media/collada
+mkdir -p $PROJ/media
 mkdir -p $PROJ/src
 mkdir -p $PROJ/sysobject
 mkdir -p $PROJ/usrobject
@@ -32,6 +30,11 @@ echo '2.0' > $PROJ/lib/version
 # サンプルソースをコピー
 cp -af $ENF/src/sample.coffee $PROJ/src/
 
-# ライブラリをコンパイル
+# enchantライブラリを生成
 coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.coffee $ENF/lib/library.coffee $ENF/lib/main.coffee
+
+# tmlibライブラリを生成
+coffee -b -j $PROJ/sysobject/enforce.core2.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary2.coffee $ENF/lib/library.coffee $ENF/lib/main2.coffee
+
+# ユーザーファイルをコンパイル
 coffee -b -o $PROJ/usrobject -c $PROJ/src/*.coffee
