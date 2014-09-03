@@ -622,11 +622,11 @@ getObject = (id)->
 playSound = (name, flag = false)->
     org = tm.asset.Manager.get(name)
     sound = org.clone()
-
-    sound.volume = 1.0
-    sound.play()
-    sound.loop = flag
-    return sound
+    if (sound.loop?)
+        sound.volume = 1.0
+        sound.play()
+        sound.loop = flag
+        return sound
 
 #**********************************************************************
 # サウンド一時停止

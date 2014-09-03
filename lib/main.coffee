@@ -638,9 +638,10 @@ getObject = (id)->
 playSound = (name, flag = false)->
     soundfile = MEDIALIST[name]
     sound = core.assets[soundfile].clone()
-    sound.play()
-    sound.src.loop = flag
-    return sound
+    if (sound.src?)
+        sound.play()
+        sound.src.loop = flag
+        return sound
 
 #**********************************************************************
 # サウンド一時停止
