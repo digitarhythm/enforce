@@ -155,6 +155,7 @@ window.onload = ->
 
     # rootSceneをグローバルに保存
     rootScene = core.rootScene
+    rootScene.backgroundColor = BGCOLOR
 
     # モーションセンサーのイベント登録
     window.addEventListener 'devicemotion', (e)=>
@@ -281,7 +282,7 @@ debugclear =->
 #******************************************************************************
 # 2D/3D共用オブジェクト生成メソッド
 #******************************************************************************
-addObject = (param)->
+addObject = (param, parent = undefined)->
     # パラメーター
     motionObj = if (param['motionObj']?) then param['motionObj'] else undefined
     _type = if (param['type']?) then param['type'] else SPRITE
@@ -381,6 +382,7 @@ addObject = (param)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 rotation: rotation
+                parent: parent
             return retObject
 
         when LABEL
@@ -432,6 +434,7 @@ addObject = (param)->
                 color: color
                 labeltext: labeltext
                 textalign: textalign
+                parent: parent
             return retObject
 
         when PRIMITIVE
@@ -482,6 +485,7 @@ addObject = (param)->
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
+                parent: parent
 
             if (visible)
                 rootScene3d.addChild(motionsprite)
@@ -523,6 +527,7 @@ addObject = (param)->
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
+                parent: parent
             return retObject
 
 setMotionObj = (param)->
@@ -555,6 +560,7 @@ setMotionObj = (param)->
     initparam['color'] = if (param['color']?) then param['color'] else 'white'
     initparam['labeltext'] = if (param['labeltext']?) then param['labeltext'] else 'text'
     initparam['textalign'] = if (param['textalign']?) then param['textalign'] else 'left'
+    initparam['parent'] = if (param['parent']?) then param['parent'] else undefined
     initparam['diffx'] = Math.floor(initparam['width'] / 2)
     initparam['diffy'] = Math.floor(initparam['height'] / 2)
     scene = if (param['scene']?) then param['scene'] else GAMESCENE

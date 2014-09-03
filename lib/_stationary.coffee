@@ -31,8 +31,8 @@ class _stationary
             @size = initparam['size']
             @radius = initparam['radius']
             @radius2 = initparam['radius2']
-            @diffx = initparam['diffx']
-            @diffy = initparam['diffy']
+            @_diffx = initparam['diffx']
+            @_diffy = initparam['diffy']
             @animlist = initparam['animlist']
             @animnum = initparam['animnum']
             @opacity = initparam['opacity']
@@ -42,6 +42,7 @@ class _stationary
             @color = initparam['color']
             @labeltext = initparam['labeltext']
             @textalign = initparam['textalign']
+            @parent = initparam['parent']
 
             @collider = @sprite
 
@@ -72,8 +73,8 @@ class _stationary
 
             # 非表示にしてから初期位置に設定する
             @sprite.visible = false
-            @sprite.x = Math.floor(@x - @diffx)
-            @sprite.y = Math.floor(@y - @diffy - @z)
+            @sprite.x = Math.floor(@x - @_diffx)
+            @sprite.y = Math.floor(@y - @_diffy - @z)
 
     #***************************************************************
     # デストラクター
@@ -88,8 +89,8 @@ class _stationary
         if (@sprite?)
             switch (@_type)
                 when SPRITE
-                    @sprite.x = Math.floor(@x - @diffx)
-                    @sprite.y = Math.floor(@y - @diffy - @z)
+                    @sprite.x = Math.floor(@x - @_diffx)
+                    @sprite.y = Math.floor(@y - @_diffy - @z)
 
                     @ys += @gravity
 
@@ -136,8 +137,8 @@ class _stationary
                                     @_dispframe = 0
 
                 when LABEL
-                    @sprite.x = Math.floor(@x - @diffx)
-                    @sprite.y = Math.floor(@y - @diffy - @z)
+                    @sprite.x = Math.floor(@x - @_diffx)
+                    @sprite.y = Math.floor(@y - @_diffy - @z)
 
                     @x += @xs
                     @y += @ys

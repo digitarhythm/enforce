@@ -31,8 +31,8 @@ class _stationary
             @size = initparam['size']
             @radius = initparam['radius']
             @radius2 = initparam['radius2']
-            @diffx = initparam['diffx']
-            @diffy = initparam['diffy']
+            @_diffx = initparam['diffx']
+            @_diffy = initparam['diffy']
             @animlist = initparam['animlist']
             @animnum = initparam['animnum']
             @opacity = initparam['opacity']
@@ -42,6 +42,7 @@ class _stationary
             @color = initparam['color']
             @labeltext = initparam['labeltext']
             @textalign = initparam['textalign']
+            @parent = initparam['parent']
 
             @collider = @sprite
 
@@ -51,19 +52,21 @@ class _stationary
             @sprite.scaleY = @scaleY
             @sprite.scaleZ = @scaleZ
 
-            @sprite.ontouchstart = (e)=>
+            @sprite.setInteractive(true)
+
+            @sprite.onpointingstart = (e)=>
                 pos = {x:e.x, y:e.y}
                 if (typeof @touchesBegan == 'function')
                     @touchesBegan(pos)
-            @sprite.ontouchmove = (e)=>
+            @sprite.onpointingmove = (e)=>
                 pos = {x:e.x, y:e.y}
                 if (typeof @touchesMoved == 'function')
                     @touchesMoved(pos)
-            @sprite.ontouchend = (e)=>
+            @sprite.onpointingend = (e)=>
                 pos = {x:e.x, y:e.y}
                 if (typeof @touchesEnded == 'function')
                     @touchesEnded(pos)
-            @sprite.ontouchcancel = (e)=>
+            @sprite.onpointingcancel = (e)=>
                 pos = {x:e.x, y:e.y}
                 if (typeof @touchesCanceled == 'function')
                     @touchesCanceled(pos)
@@ -72,8 +75,8 @@ class _stationary
 
             # 非表示にしてから初期位置に設定する
             @sprite.visible = false
-            @sprite.x = Math.floor(@x - @diffx)
-            @sprite.y = Math.floor(@y - @diffy - @z)
+            @sprite.x = Math.floor(@x)
+            @sprite.y = Math.floor(@y - @z)
 
     #***************************************************************
     # デストラクター
@@ -314,7 +317,7 @@ class _stationary
     # タッチイベント登録
     #***************************************************************
     addTarget:(func)->
-        @sprite.addEventListener('touchend', func)
+        @sprite.addEventListener('pointingend', func)
 
     #***************************************************************
     # 2Dスプライト回転

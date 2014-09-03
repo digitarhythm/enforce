@@ -266,7 +266,7 @@ tm.main ->
 #******************************************************************************
 # 2D/3D共用オブジェクト生成メソッド
 #******************************************************************************
-addObject = (param)->
+addObject = (param, parent = undefined)->
     # パラメーター
     motionObj = if (param['motionObj']?) then param['motionObj'] else undefined
     _type = if (param['type']?) then param['type'] else SPRITE
@@ -314,18 +314,16 @@ addObject = (param)->
     switch (_type)
         when CONTROL, SPRITE
             # 画像割り当て
-            motionsprite = tm.display.Sprite(image, width, height)
             if (scene < 0)
                 scene = GAMESCENE_SUB1
 
             if (animlist?)
+                motionsprite = tm.display.Sprite(image, width, height)
                 animtmp = animlist[animnum]
                 motionsprite.frameIndex = animtmp[1][0]
 
                 motionsprite.backgroundColor = "transparent"
                 motionsprite.setOrigin(0.5, 0.5)
-                #motionsprite.x = x - Math.floor(width / 2)
-                #motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
                 motionsprite.x = Math.floor(x)
                 motionsprite.y = Math.floor(y) - Math.floor(z)
                 motionsprite.opacity = opacity
@@ -335,9 +333,12 @@ addObject = (param)->
                 motionsprite.visible = visible
                 motionsprite.width = width
                 motionsprite.height = height
+            else
+                motionsprite = tm.display.Sprite()
+                motionsprite.visible = true
 
-                # スプライトを表示
-                motionsprite.addChildTo(_scenes[scene])
+            # スプライトを表示
+            motionsprite.addChildTo(_scenes[scene])
 
             # 動きを定義したオブジェクトを生成する
             retObject = @setMotionObj
@@ -362,6 +363,7 @@ addObject = (param)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 rotation: rotation
+                parent: parent
             return retObject
 
         when LABEL
@@ -377,8 +379,6 @@ addObject = (param)->
             motionsprite.backgroundColor = "transparent"
             motionsprite.setOrigin(0.5, 0.5)
             motionsprite.setPosition(x, y)
-            #motionsprite.x = x - Math.floor(width / 2)
-            #motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
             motionsprite.x = Math.floor(x)
             motionsprite.y = Math.floor(y) - Math.floor(z)
             motionsprite.opacity = opacity
@@ -417,6 +417,7 @@ addObject = (param)->
                 color: color
                 labeltext: labeltext
                 textalign: textalign
+                parent: parent
             return retObject
 
         when PRIMITIVE
@@ -467,6 +468,7 @@ addObject = (param)->
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
+                parent: parent
 
             if (visible)
                 rootScene3d.addChild(motionsprite)
@@ -508,6 +510,8 @@ addObject = (param)->
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
+                parent: parent
+
             return retObject
 
 setMotionObj = (param)->
@@ -540,6 +544,7 @@ setMotionObj = (param)->
     initparam['color'] = if (param['color']?) then param['color'] else 'white'
     initparam['labeltext'] = if (param['labeltext']?) then param['labeltext'] else 'text'
     initparam['textalign'] = if (param['textalign']?) then param['textalign'] else 'left'
+    initparam['parent'] = if (param['parent']?) then param['parent'] else undefined
     initparam['diffx'] = Math.floor(initparam['width'] / 2)
     initparam['diffy'] = Math.floor(initparam['height'] / 2)
     scene = if (param['scene']?) then param['scene'] else GAMESCENE

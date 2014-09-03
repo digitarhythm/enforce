@@ -8,6 +8,13 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="IE=Edge">
+<?php
+    if ($library == "enchant") {
+?>
+        <script type="text/javascript" src="extlib/enchant.0.8.1-enforce.js"></script>
+<?php
+    }
+?>
     <meta name="viewport" content="width=device-width, user-scalable=no, minimal-ui">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <script type="text/javascript" src="extlib/jquery-2.1.0.min.js"></script>
@@ -16,7 +23,6 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 <?php
     if ($library == "enchant") {
 ?>
-        <script type="text/javascript" src="extlib/enchant.0.8.1-enforce.js"></script>
         <script type="text/javascript" src="extlib/Box2dWeb-2.1.a.3.min.js"></script>
         <script type="text/javascript" src="extlib/box2d.enchant.js"></script>
         <script type="text/javascript" src="extlib/socket.enchant.js"></script>

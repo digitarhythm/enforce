@@ -16,16 +16,3 @@ class enforceMain
             animlist: [
                 [50, [0, 0, 1, 1, 2, 2, 1, 1]]
             ]
-        ###
-        droidobj = addObject
-            motionObj: droid
-            type: COLLADA
-            model: 'droid'
-            x: 0
-            y: 10
-            z: 0
-            scaleX: 5.0
-            scaleY: 5.0
-            scaleZ: 5.0
-            gravity: -0.1
-        ###
