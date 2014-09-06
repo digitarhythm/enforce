@@ -55,19 +55,20 @@ class _stationary
             @sprite.setInteractive(true)
 
             @sprite.onpointingstart = (e)=>
-                pos = {x:e.x, y:e.y}
+                pos = {x:e.app.pointing.x, y:e.app.pointing.y}
+                #pos = {x:e.target.position.x, y:e.target.position.y}
                 if (typeof @touchesBegan == 'function')
                     @touchesBegan(pos)
             @sprite.onpointingmove = (e)=>
-                pos = {x:e.x, y:e.y}
+                pos = {x:e.app.pointing.x, y:e.app.pointing.y}
                 if (typeof @touchesMoved == 'function')
                     @touchesMoved(pos)
             @sprite.onpointingend = (e)=>
-                pos = {x:e.x, y:e.y}
+                pos = {x:e.app.pointing.x, y:e.app.pointing.y}
                 if (typeof @touchesEnded == 'function')
                     @touchesEnded(pos)
             @sprite.onpointingcancel = (e)=>
-                pos = {x:e.x, y:e.y}
+                pos = {x:e.app.pointing.x, y:e.app.pointing.y}
                 if (typeof @touchesCanceled == 'function')
                     @touchesCanceled(pos)
 
@@ -104,12 +105,12 @@ class _stationary
                         @rotation = @rotation % 360
                     @sprite.rotation = @rotation
 
-                    if (@opacity != @sprite.opacity)
-                        if (@sprite.opacity == @opacity_back)
-                            @sprite.opacity = @opacity
+                    if (@opacity != @sprite.alpha)
+                        if (@sprite.alpha == @opacity_back)
+                            @sprite.alpha = @opacity
                         else
-                            @opacity = @sprite.opacity
-                    @opacity_back = @sprite.opacity
+                            @opacity = @sprite.alpha
+                    @opacity_back = @sprite.alpha
 
                     @sprite.visible = @visible
                     @sprite.scaleX  = @scaleX
@@ -145,19 +146,20 @@ class _stationary
                     @y += @ys
                     @z += @zs
 
-                    if (@opacity != @sprite.opacity)
-                        if (@sprite.opacity == @opacity_back)
-                            @sprite.opacity = @opacity
+                    if (@opacity != @sprite.alpha)
+                        if (@sprite.alpha == @opacity_back)
+                            @sprite.alpha = @opacity
                         else
-                            @opacity = @sprite.opacity
-                    @opacity_back = @sprite.opacity
+                            @opacity = @sprite.alpha
+                    @opacity_back = @sprite.alpha
 
                     @sprite.visible = @visible
                     @sprite.scaleX  = @scaleX
                     @sprite.scaleY  = @scaleY
                     @sprite.width = @width
                     @sprite.height = @height
-                    @sprite.font = @fontsize+"px 'Arial'"
+                    @sprite.fontSize = @fontsize
+                    @sprite.fontFamily = 'Arial'
                     @sprite.color = @color
                     @sprite.text = @labeltext
                     @sprite.textAlign = @textalign

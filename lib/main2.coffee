@@ -326,7 +326,7 @@ addObject = (param, parent = undefined)->
                 motionsprite.setOrigin(0.5, 0.5)
                 motionsprite.x = Math.floor(x)
                 motionsprite.y = Math.floor(y) - Math.floor(z)
-                motionsprite.opacity = opacity
+                motionsprite.alpha = opacity
                 motionsprite.rotation = rotation
                 motionsprite.scaleX = scaleX
                 motionsprite.scaleY = scaleY
@@ -381,7 +381,7 @@ addObject = (param, parent = undefined)->
             motionsprite.setPosition(x, y)
             motionsprite.x = Math.floor(x)
             motionsprite.y = Math.floor(y) - Math.floor(z)
-            motionsprite.opacity = opacity
+            motionsprite.alpha = opacity
             motionsprite.rotation = rotation
             motionsprite.scaleX = scaleX
             motionsprite.scaleY = scaleY
@@ -390,7 +390,8 @@ addObject = (param, parent = undefined)->
             motionsprite.height = height
             motionsprite.color = color
             motionsprite.text = labeltext
-            motionsprite.font = fontsize+"px 'Arial'"
+            motionsprite.fontSize = fontsize
+            motionsprite.fontFamily = 'Arial'
             motionsprite.setAlign(textalign)
             # スプライトを表示
             motionsprite.addChildTo(_scenes[scene])
