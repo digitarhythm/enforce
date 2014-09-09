@@ -42,10 +42,13 @@ class _stationary
             @color = initparam['color']
             @labeltext = initparam['labeltext']
             @textalign = initparam['textalign']
+            @density = initparam['density']
+            @friction = initparam['friction']
+            @restitution = initparam['restitution']
+            @active = initparam['active']
+
             @parent = initparam['parent']
-
             @collider = @sprite
-
             @lastvisible = @visible
 
             @sprite.scaleX = @scaleX
@@ -88,15 +91,16 @@ class _stationary
         # スプライトの座標等パラメータを更新する
         if (@sprite?)
             switch (@_type)
-                when SPRITE
-                    @sprite.x = Math.floor(@x - @_diffx)
-                    @sprite.y = Math.floor(@y - @_diffy - @z)
+                when SPRITE, PSPRITE_CIRCLE, PSPRITE_BOX
+                    if (@_type == SPRITE)
+                        @sprite.x = Math.floor(@x - @_diffx)
+                        @sprite.y = Math.floor(@y - @_diffy - @z)
 
-                    @ys += @gravity
+                        @ys += @gravity
 
-                    @x += @xs
-                    @y += @ys
-                    @z += @zs
+                        @x += @xs
+                        @y += @ys
+                        @z += @zs
 
                     if (@rotation > 359)
                         @rotation = @rotation % 360
@@ -114,8 +118,13 @@ class _stationary
                     @sprite.scaleY  = @scaleY
                     @sprite.width = @width
                     @sprite.height = @height
+                    if (@_type == PSPRITE_CIRCLE || @_type == PSPRITE_BOX)
+                        @sprite.radius = @radius
+                        @sprite.density = @density
+                        @sprite.friction = @friction
+                        @sprite.restitution = @restitution
 
-                    if (@_type == SPRITE && @animlist?)
+                    if (@animlist?)
                         animtmp = @animlist[@animnum]
                         animtime = animtmp[0]
                         animpattern = animtmp[1]

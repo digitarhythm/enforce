@@ -16,12 +16,9 @@
 CONTROL             = 0
 SPRITE              = 1
 LABEL               = 2
-DSPRITE_BOX         = 3
-DSPRITE_CIRCLE      = 4
-SSPRITE_BOX         = 5
-SSPRITE_CIRCLE      = 6
-PRIMITIVE           = 7
-COLLADA             = 8
+PSPRITE             = 3
+PRIMITIVE           = 4
+COLLADA             = 5
 
 # WebGLのプリミティブの種類
 BOX                 = 0
@@ -167,7 +164,7 @@ window.onload = ->
         MOTION_ROTATE.gamma = e.gamma
 
     # box2d初期化
-    box2dworld = new PhysicsWorld(0, GRAVITY)
+    box2dworld = new PhysicsWorld(GRAVITY_H, GRAVITY)
 
     # シーングループを生成
     for i in [0..TOPSCENE]
@@ -303,11 +300,9 @@ addObject = (param, parent = undefined)->
     animnum = if (param['animnum']?) then param['animnum'] else 0
     visible = if (param['visible']?) then param['visible'] else true
     scene = if (param['scene']?) then param['scene'] else -1
-    model = if (param['model']?) then param['model'] else undefined
     density = if (param['density']?) then param['density'] else 1.0
     friction = if (param['friction']?) then param['friction'] else 0.5
     restitution = if (param['restitution']?) then param['restitution'] else 0.1
-    move = if (param['move']?) then param['move'] else false
     radius = if (param['radius']?) then param['radius'] else 100.0
     radius2 = if (param['radius2']?) then param['radius2'] else 100.0
     size = if (param['size']?) then param['size'] else 100.0
@@ -320,6 +315,8 @@ addObject = (param, parent = undefined)->
     color = if (param['color']?) then param['color'] else 'white'
     labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
+    active = if (param['active']?) then param['active'] else true
+    kind = if (param['kind']?) then param['kind'] else 'DYNAMIC_CIRCLE'
 
     if (motionObj == null)
         motionObj = undefined
@@ -328,8 +325,19 @@ addObject = (param, parent = undefined)->
 
     # スプライトを生成
     switch (_type)
-        when CONTROL, SPRITE
-            motionsprite = new Sprite()
+        when CONTROL, SPRITE, PSPRITE_DCIRCLE, PSPRITE_DBOX, PSPRITE_SCIRCLE, PSPRITE_SBOX
+            switch (_type)
+                when SPRITE
+                    motionsprite = new Sprite()
+                when PSPRITE
+                    when PSPRITE_DBOX
+                        motionsprite = new PhyBoxSprite(width, height, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, active)
+                    when PSPRITE_DCIRCLE
+                        motionsprite = new PhyCircleSprite(radius, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, active)
+                    when PSPRITE_SBOX
+                        motionsprite = new PhyBoxSprite(width, height, enchant.box2d.STATIC_SPRITE, density, friction, restitution, active)
+                    when PSPRITE_SCIRCLE
+                        motionsprite = new PhyCircleSprite(radius, enchant.box2d.STATIC_SPRITE, density, friction, restitution, active)
             if (scene < 0)
                 scene = GAMESCENE_SUB1
 
@@ -383,6 +391,11 @@ addObject = (param, parent = undefined)->
                 motionObj: motionObj
                 rotation: rotation
                 parent: parent
+                radius: radius
+                density: density
+                friction: friction
+                restitution: restitution
+                active: active
             return retObject
 
         when LABEL
@@ -561,6 +574,11 @@ setMotionObj = (param)->
     initparam['labeltext'] = if (param['labeltext']?) then param['labeltext'] else 'text'
     initparam['textalign'] = if (param['textalign']?) then param['textalign'] else 'left'
     initparam['parent'] = if (param['parent']?) then param['parent'] else undefined
+    initparam['density'] = if (param['density']?) then param['density'] else 1.0
+    initparam['friction'] = if (param['friction']?) then param['friction'] else 0.5
+    initparam['restitution'] = if (param['restitution']?) then param['restitution'] else 0.1
+    initparam['active'] = if (param['active']?) then param['active'] else true
+
     initparam['diffx'] = Math.floor(initparam['width'] / 2)
     initparam['diffy'] = Math.floor(initparam['height'] / 2)
     scene = if (param['scene']?) then param['scene'] else GAMESCENE
@@ -608,7 +626,7 @@ removeObject = (motionObj)->
     if (typeof(motionObj.destructor) == 'function')
         motionObj.destructor()
 
-    if (motionObj._type == DSPRITE_BOX || motionObj._type == DSPRITE_CIRCLE || motionObj._type == SSPRITE_BOX || motionObj._type == SSPRITE_CIRCLE)
+    if (motionObj._type == PSPRITE_DBOX || motionObj._type == PSPRITE_DCIRCLE || motionObj._type == PSPRITE_SBOX || motionObj._type == PSPRITE_SCIRCLE)
         object.motionObj.sprite.destroy()
     else if (motionObj._type == LABEL || motionObj._type == SPRITE || motionObj._type == PRIMITIVE || motionObj._type == COLLADA)
         _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
