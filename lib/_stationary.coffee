@@ -94,7 +94,7 @@ class _stationary
         if (@sprite?)
             switch (@_type)
                 when SPRITE
-                    if (!@rigid)
+                    if (!@rigid || @kind == STATIC_BOX || @kind == STATIC_CIRCLE)
                         @sprite.x = Math.floor(@x - @_diffx)
                         @sprite.y = Math.floor(@y - @_diffy - @z)
 
@@ -107,6 +107,9 @@ class _stationary
                         if (@rotation > 359)
                             @rotation = @rotation % 360
                         @sprite.rotation = @rotation
+                    else
+                        @x = @sprite.x
+                        @y = @sprite.y
 
                     if (@opacity != @sprite.opacity)
                         if (@sprite.opacity == @opacity_back)

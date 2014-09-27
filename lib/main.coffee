@@ -20,8 +20,10 @@ PRIMITIVE           = 3
 COLLADA             = 4
 
 # 物理スプライトの種類
-RIGID_BOX           = 0
-RIGID_CIRCLE        = 1
+DYNAMIC_BOX         = 0
+DYNAMIC_CIRCLE      = 1
+STATIC_BOX          = 2
+STATIC_CIRCLE       = 3
 
 # WebGLのプリミティブの種類
 BOX                 = 0
@@ -311,8 +313,8 @@ addObject = (param, parent = undefined)->
     scene = if (param['scene']?) then param['scene'] else -1
     rigid = if (param['rigid']?) then param['rigid'] else false
     density = if (param['density']?) then param['density'] else 1.0
-    friction = if (param['friction']?) then param['friction'] else 0.5
-    restitution = if (param['restitution']?) then param['restitution'] else 0.1
+    friction = if (param['friction']?) then param['friction'] else 1.0
+    restitution = if (param['restitution']?) then param['restitution'] else 1.0
     radius = if (param['radius']?) then param['radius'] else 100.0
     radius2 = if (param['radius2']?) then param['radius2'] else 100.0
     size = if (param['size']?) then param['size'] else 100.0
@@ -326,7 +328,7 @@ addObject = (param, parent = undefined)->
     labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
     active = if (param['active']?) then param['active'] else true
-    kind = if (param['kind']?) then param['kind'] else RIGID_BOX
+    kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
 
     if (motionObj == null)
         motionObj = undefined
@@ -336,18 +338,19 @@ addObject = (param, parent = undefined)->
     # スプライトを生成
     switch (_type)
         when CONTROL, SPRITE
+            motionsprite = undefined
             if (_type == SPRITE)
                 if (rigid)
-                    if (kind == RIGID_BOX)
-                            motionsprite = new PhyBoxSprite(width, height, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, active)
-                        else
-                            motionsprite = new PhyCircleSprite(radius, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, active)
-                else
-                    if (kind == RIGID_BOX)
-                            motionsprite = new PhyBoxSprite(width, height, enchant.box2d.STATIC_SPRITE, density, friction, restitution, active)
-                        else
-                            motionsprite = new PhyCircleSprite(radius, enchant.box2d.STATIC_SPRITE, density, friction, restitution, active)
-            else
+                    switch (kind)
+                        when DYNAMIC_BOX
+                            motionsprite = new PhyBoxSprite(width, height, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, true)
+                        when DYNAMIC_CIRCLE
+                            motionsprite = new PhyCircleSprite(radius, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, true)
+                        when STATIC_BOX
+                            motionsprite = new PhyBoxSprite(width, height, enchant.box2d.STATIC_SPRITE, density, friction, restitution, true)
+                        when STATIC_CIRCLE
+                            motionsprite = new PhyCircleSprite(radius, enchant.box2d.STATIC_SPRITE, density, friction, restitution, true)
+            if (!motionsprite?)
                 motionsprite = new Sprite()
 
             if (scene < 0)
