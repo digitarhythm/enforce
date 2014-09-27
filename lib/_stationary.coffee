@@ -13,6 +13,7 @@ class _stationary
         @sprite = initparam['motionsprite']
 
         if (@sprite?)
+            @_type = initparam['_type']
             @x = initparam['x']
             @y = initparam['y']
             @z = initparam['z']
@@ -36,7 +37,6 @@ class _stationary
             @animlist = initparam['animlist']
             @animnum = initparam['animnum']
             @opacity = initparam['opacity']
-            @_type = initparam['_type']
             @rotation = initparam['rotation']
             @fontsize = initparam['fontsize']
             @color = initparam['color']
@@ -77,7 +77,7 @@ class _stationary
             # 非表示にしてから初期位置に設定する
             @sprite.visible = false
             @sprite.x = Math.floor(@x - @_diffx)
-            @sprite.y = Math.floor(@y - @_diffy - @z)
+            @sprite.y = Math.floor(@y - @_diffy)
 
     #***************************************************************
     # デストラクター
@@ -91,7 +91,7 @@ class _stationary
         # スプライトの座標等パラメータを更新する
         if (@sprite?)
             switch (@_type)
-                when SPRITE, PSPRITE_CIRCLE, PSPRITE_BOX
+                when SPRITE, PSPRITE
                     if (@_type == SPRITE)
                         @sprite.x = Math.floor(@x - @_diffx)
                         @sprite.y = Math.floor(@y - @_diffy - @z)
@@ -102,9 +102,9 @@ class _stationary
                         @y += @ys
                         @z += @zs
 
-                    if (@rotation > 359)
-                        @rotation = @rotation % 360
-                    @sprite.rotation = @rotation
+                        if (@rotation > 359)
+                            @rotation = @rotation % 360
+                        @sprite.rotation = @rotation
 
                     if (@opacity != @sprite.opacity)
                         if (@sprite.opacity == @opacity_back)
@@ -118,7 +118,7 @@ class _stationary
                     @sprite.scaleY  = @scaleY
                     @sprite.width = @width
                     @sprite.height = @height
-                    if (@_type == PSPRITE_CIRCLE || @_type == PSPRITE_BOX)
+                    if (@_type == PSPRITE)
                         @sprite.radius = @radius
                         @sprite.density = @density
                         @sprite.friction = @friction

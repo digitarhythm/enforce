@@ -20,6 +20,12 @@ PSPRITE             = 3
 PRIMITIVE           = 4
 COLLADA             = 5
 
+# 物理スプライトの種類
+DYNAMIC_BOX         = 0
+DYNAMIC_CIRCLE      = 1
+STATIC_BOX          = 2
+STATIC_CIRCLE       = 3
+
 # WebGLのプリミティブの種類
 BOX                 = 0
 CUBE                = 1
@@ -164,7 +170,13 @@ window.onload = ->
         MOTION_ROTATE.gamma = e.gamma
 
     # box2d初期化
-    box2dworld = new PhysicsWorld(GRAVITY_H, GRAVITY)
+    ###
+    if (!GRAVITY_Y?)
+        GRAVITY_Y = 0.0
+    if (!GRAVITY_X?)
+        GRAVITY_X = 0.0
+    ###
+    box2dworld = new PhysicsWorld(GRAVITY_X, GRAVITY_Y)
 
     # シーングループを生成
     for i in [0..TOPSCENE]
@@ -292,8 +304,8 @@ addObject = (param, parent = undefined)->
     gravity = if (param['gravity']?) then param['gravity'] else 0.0
     image = if (param['image']?) then param['image'] else undefined
     model = if (param['model']?) then param['model'] else undefined
-    width = if (param['width']?) then param['width'] else 100.0
-    height = if (param['height']?) then param['height'] else 100.0
+    width = if (param['width']?) then param['width'] else SCREEN_WIDTH
+    height = if (param['height']?) then param['height'] else SCREEN_HEIGHT
     depth = if (param['depth']?) then param['depth'] else 100.0
     opacity = if (param['opacity']?) then param['opacity'] else 1.0
     animlist = if (param['animlist']?) then param['animlist'] else undefined
@@ -316,7 +328,7 @@ addObject = (param, parent = undefined)->
     labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
     active = if (param['active']?) then param['active'] else true
-    kind = if (param['kind']?) then param['kind'] else 'DYNAMIC_CIRCLE'
+    kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
 
     if (motionObj == null)
         motionObj = undefined
@@ -325,19 +337,20 @@ addObject = (param, parent = undefined)->
 
     # スプライトを生成
     switch (_type)
-        when CONTROL, SPRITE, PSPRITE_DCIRCLE, PSPRITE_DBOX, PSPRITE_SCIRCLE, PSPRITE_SBOX
+        when CONTROL, SPRITE, PSPRITE
             switch (_type)
                 when SPRITE
                     motionsprite = new Sprite()
                 when PSPRITE
-                    when PSPRITE_DBOX
-                        motionsprite = new PhyBoxSprite(width, height, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, active)
-                    when PSPRITE_DCIRCLE
-                        motionsprite = new PhyCircleSprite(radius, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, active)
-                    when PSPRITE_SBOX
-                        motionsprite = new PhyBoxSprite(width, height, enchant.box2d.STATIC_SPRITE, density, friction, restitution, active)
-                    when PSPRITE_SCIRCLE
-                        motionsprite = new PhyCircleSprite(radius, enchant.box2d.STATIC_SPRITE, density, friction, restitution, active)
+                    switch (kind)
+                        when DYNAMIC_BOX
+                            motionsprite = new PhyBoxSprite(width, height, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, active)
+                        when DYNAMIC_CIRCLE
+                            motionsprite = new PhyCircleSprite(radius, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, active)
+                        when STATIC_BOX
+                            motionsprite = new PhyBoxSprite(width, height, enchant.box2d.STATIC_SPRITE, density, friction, restitution, active)
+                        when STATIC_CIRCLE
+                            motionsprite = new PhyCircleSprite(radius, enchant.box2d.STATIC_SPRITE, density, friction, restitution, active)
             if (scene < 0)
                 scene = GAMESCENE_SUB1
 
@@ -561,8 +574,8 @@ setMotionObj = (param)->
     initparam['size'] = if (param['size']?) then param['size'] else 1.0
     initparam['gravity'] = if (param['gravity']?) then param['gravity'] else 0
     initparam['intersectFlag'] = if (param['intersectFlag']?) then param['intersectFlag'] else true
-    initparam['width'] = if (param['width']?) then param['width'] else 0
-    initparam['height'] = if (param['height']?) then param['height'] else 0
+    initparam['width'] = if (param['width']?) then param['width'] else SCREEN_WIDTH
+    initparam['height'] = if (param['height']?) then param['height'] else SCREEN_HEIGHT
     initparam['animlist'] = if (param['animlist']?) then param['animlist'] else 0
     initparam['animnum'] = if (param['animnum']?) then param['animnum'] else 0
     initparam['visible'] = if (param['visible']?) then param['visible'] else true
