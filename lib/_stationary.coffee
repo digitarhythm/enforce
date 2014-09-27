@@ -46,6 +46,8 @@ class _stationary
             @friction = initparam['friction']
             @restitution = initparam['restitution']
             @active = initparam['active']
+            @kind = initparam['kind']
+            @rigid = initparam['rigid']
 
             @parent = initparam['parent']
             @collider = @sprite
@@ -91,8 +93,8 @@ class _stationary
         # スプライトの座標等パラメータを更新する
         if (@sprite?)
             switch (@_type)
-                when SPRITE, PSPRITE
-                    if (@_type == SPRITE)
+                when SPRITE
+                    if (!@rigid)
                         @sprite.x = Math.floor(@x - @_diffx)
                         @sprite.y = Math.floor(@y - @_diffy - @z)
 
@@ -118,7 +120,7 @@ class _stationary
                     @sprite.scaleY  = @scaleY
                     @sprite.width = @width
                     @sprite.height = @height
-                    if (@_type == PSPRITE)
+                    if (@rigid)
                         @sprite.radius = @radius
                         @sprite.density = @density
                         @sprite.friction = @friction

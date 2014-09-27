@@ -16,15 +16,12 @@
 CONTROL             = 0
 SPRITE              = 1
 LABEL               = 2
-PSPRITE             = 3
-PRIMITIVE           = 4
-COLLADA             = 5
+PRIMITIVE           = 3
+COLLADA             = 4
 
 # 物理スプライトの種類
-DYNAMIC_BOX         = 0
-DYNAMIC_CIRCLE      = 1
-STATIC_BOX          = 2
-STATIC_CIRCLE       = 3
+RIGID_BOX           = 0
+RIGID_CIRCLE        = 1
 
 # WebGLのプリミティブの種類
 BOX                 = 0
@@ -312,6 +309,7 @@ addObject = (param, parent = undefined)->
     animnum = if (param['animnum']?) then param['animnum'] else 0
     visible = if (param['visible']?) then param['visible'] else true
     scene = if (param['scene']?) then param['scene'] else -1
+    rigid = if (param['rigid']?) then param['rigid'] else false
     density = if (param['density']?) then param['density'] else 1.0
     friction = if (param['friction']?) then param['friction'] else 0.5
     restitution = if (param['restitution']?) then param['restitution'] else 0.1
@@ -328,7 +326,7 @@ addObject = (param, parent = undefined)->
     labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
     active = if (param['active']?) then param['active'] else true
-    kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
+    kind = if (param['kind']?) then param['kind'] else RIGID_BOX
 
     if (motionObj == null)
         motionObj = undefined
@@ -337,20 +335,21 @@ addObject = (param, parent = undefined)->
 
     # スプライトを生成
     switch (_type)
-        when CONTROL, SPRITE, PSPRITE
-            switch (_type)
-                when SPRITE
-                    motionsprite = new Sprite()
-                when PSPRITE
-                    switch (kind)
-                        when DYNAMIC_BOX
+        when CONTROL, SPRITE
+            if (_type == SPRITE)
+                if (rigid)
+                    if (kind == RIGID_BOX)
                             motionsprite = new PhyBoxSprite(width, height, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, active)
-                        when DYNAMIC_CIRCLE
+                        else
                             motionsprite = new PhyCircleSprite(radius, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, active)
-                        when STATIC_BOX
+                else
+                    if (kind == RIGID_BOX)
                             motionsprite = new PhyBoxSprite(width, height, enchant.box2d.STATIC_SPRITE, density, friction, restitution, active)
-                        when STATIC_CIRCLE
+                        else
                             motionsprite = new PhyCircleSprite(radius, enchant.box2d.STATIC_SPRITE, density, friction, restitution, active)
+            else
+                motionsprite = new Sprite()
+
             if (scene < 0)
                 scene = GAMESCENE_SUB1
 
@@ -409,6 +408,8 @@ addObject = (param, parent = undefined)->
                 friction: friction
                 restitution: restitution
                 active: active
+                rigid: rigid
+                kind: kind
             return retObject
 
         when LABEL
@@ -591,6 +592,8 @@ setMotionObj = (param)->
     initparam['friction'] = if (param['friction']?) then param['friction'] else 0.5
     initparam['restitution'] = if (param['restitution']?) then param['restitution'] else 0.1
     initparam['active'] = if (param['active']?) then param['active'] else true
+    initparam['kind'] = if (param['kind']?) then param['kind'] else undefined
+    initparam['rigid'] = if (param['rigid']?) then param['rigid'] else undefined
 
     initparam['diffx'] = Math.floor(initparam['width'] / 2)
     initparam['diffy'] = Math.floor(initparam['height'] / 2)
@@ -639,7 +642,8 @@ removeObject = (motionObj)->
     if (typeof(motionObj.destructor) == 'function')
         motionObj.destructor()
 
-    if (motionObj._type == PSPRITE_DBOX || motionObj._type == PSPRITE_DCIRCLE || motionObj._type == PSPRITE_SBOX || motionObj._type == PSPRITE_SCIRCLE)
+    #if (motionObj._type == PSPRITE_DBOX || motionObj._type == PSPRITE_DCIRCLE || motionObj._type == PSPRITE_SBOX || motionObj._type == PSPRITE_SCIRCLE)
+    if (motionObj.rigid)
         object.motionObj.sprite.destroy()
     else if (motionObj._type == LABEL || motionObj._type == SPRITE || motionObj._type == PRIMITIVE || motionObj._type == COLLADA)
         _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)

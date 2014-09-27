@@ -12,6 +12,8 @@ SCREEN_WIDTH    = 600                       # 画面の幅
 SCREEN_HEIGHT   = 864                       # 画面の高さ
 BGCOLOR         = "black"                   # 背景色
 OBJECTNUM       = 256                       # キャラの最大数
+GRAVITY_X       = 0.0                       # box2d用水平方向重力
+GRAVITY_Y       = 9.8                       # box2d用垂直方向重力
 
 # preloading image list ***********************************************************************************
 MEDIALIST       = {
