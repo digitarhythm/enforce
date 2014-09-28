@@ -31,7 +31,7 @@ cp -af $ENF/lib/htaccess.noindexes $PROJ/sysobject/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/usrobject/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/plugins/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/extlib/.htaccess
-cp -af $ENF/lib/htaccess.noaccess $PROJ/lib/.htaccess
+cp -af $ENF/lib/htaccess.noindexes $PROJ/lib/.htaccess
 cp -af $ENF/lib/htaccess.noaccess $PROJ/src/.htaccess
 
 # ver2.0を示すファイルを生成

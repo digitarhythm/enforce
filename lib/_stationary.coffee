@@ -309,7 +309,10 @@ class _stationary
         if (!motionObj? || !motionObj.sprite? || !motionObj.sprite?)
             ret = false
         else if (@intersectFlag == true && motionObj.intersectFlag == true)
-            ret = @sprite.intersect(motionObj.collider)
+            if (@rigid)
+                ret = @sprite.contact(motionObj.collider)
+            else
+                ret = @sprite.intersect(motionObj.collider)
         else
             ret = false
         return ret
