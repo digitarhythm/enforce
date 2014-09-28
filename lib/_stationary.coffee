@@ -14,11 +14,11 @@ class _stationary
 
         if (@sprite?)
             @_type = initparam['_type']
-            @x = initparam['x']
-            @y = initparam['y']
+            @xback = @x = initparam['x']
+            @yback = @y = initparam['y']
             @z = initparam['z']
-            @xs = initparam['xs']
-            @ys = initparam['ys']
+            @xsback = @xs = initparam['xs']
+            @ysback = @ys = initparam['ys']
             @zs = initparam['zs']
             @visible = initparam['visible']
             @scaleX = initparam['scaleX']
@@ -108,8 +108,20 @@ class _stationary
                             @rotation = @rotation % 360
                         @sprite.rotation = @rotation
                     else
-                        @x = @sprite.x
-                        @y = @sprite.y
+                        if (@xsback != @xs)
+                            @sprite.vx = @xs
+                        if (@ysback != @ys)
+                            @sprite.vy = @ys
+
+                        if (@xback != @x)
+                            @sprite.x = @x - @_diffx
+                        if (@yback != @y)
+                            @sprite.y = @y - @_diffy - @z
+
+                        @xback = @x = @sprite.x + @_diffx
+                        @yback = @y = @sprite.y + @_diffy + @z
+                        @xsback = @xs = @sprite.vx
+                        @ysback = @ys = @sprite.vy
 
                     if (@opacity != @sprite.opacity)
                         if (@sprite.opacity == @opacity_back)

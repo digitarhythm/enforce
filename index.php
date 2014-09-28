@@ -89,7 +89,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
         }
     </style>
 </head>
-<body bgcolor="black">
+<body bgcolor="#303030">
 <?php
     if ($library == "tmlib") {
 ?>
