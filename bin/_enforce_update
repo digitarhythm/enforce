@@ -18,8 +18,6 @@ cp -af $ENF/lib/htaccess.noindexes $PROJ/media/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/media/picture/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/media/sound/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/media/model/.htaccess
-cp -af $ENF/lib/htaccess.noindexes $PROJ/sysobject/.htaccess
-cp -af $ENF/lib/htaccess.noindexes $PROJ/usrobject/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/plugins/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/extlib/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/lib/.htaccess
