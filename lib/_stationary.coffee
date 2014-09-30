@@ -123,7 +123,16 @@ class _stationary
                         @xsback = @xs = @sprite.vx
                         @ysback = @ys = @sprite.vy
 
+                        @sprite.radius = @radius
+                        @sprite.density = @density
+                        @sprite.friction = @friction
+                        @sprite.restitution = @restitution
+
                     if (@opacity != @sprite.opacity)
+                        if (@opacity < 0.0)
+                            @opacity = 0.0
+                        if (@opacity > 1.0)
+                            @opacity = 1.0
                         if (@sprite.opacity == @opacity_back)
                             @sprite.opacity = @opacity
                         else
@@ -135,11 +144,6 @@ class _stationary
                     @sprite.scaleY  = @scaleY
                     @sprite.width = @width
                     @sprite.height = @height
-                    if (@rigid)
-                        @sprite.radius = @radius
-                        @sprite.density = @density
-                        @sprite.friction = @friction
-                        @sprite.restitution = @restitution
 
                     if (@animlist?)
                         animtmp = @animlist[@animnum]
