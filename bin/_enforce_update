@@ -13,6 +13,9 @@ fi
 cp -af $ENF/index.php $PROJ/
 cp -af $ENF/extlib/* $PROJ/extlib/
 cp -af $ENF/lib/*.png $PROJ/lib/
+cp -af $ENF/media/picture/* $PROJ/media/picture/
+cp -af $ENF/media/sound/* $PROJ/media/sound/
+cp -af $ENF/media/model/* $PROJ/media/model/
 
 cp -af $ENF/lib/htaccess.noindexes $PROJ/media/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/media/picture/.htaccess

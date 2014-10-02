@@ -49,6 +49,8 @@ class _stationary
             @kind = initparam['kind']
             @rigid = initparam['rigid']
 
+            @hitflag = false
+
             @parent = initparam['parent']
             @collider = @sprite
             @lastvisible = @visible
@@ -311,11 +313,10 @@ class _stationary
     #***************************************************************
     isIntersect:(motionObj)->
         if (!motionObj? || !motionObj.sprite? || !motionObj.sprite?)
+            JSLog('motionObj is undefined.')
             ret = false
         else if (@intersectFlag == true && motionObj.intersectFlag == true)
-            if (@rigid)
-                ret = @sprite.contact(motionObj.collider)
-            else
+            if (!@rigid)
                 ret = @sprite.intersect(motionObj.collider)
         else
             ret = false

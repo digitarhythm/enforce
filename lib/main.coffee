@@ -350,6 +350,7 @@ addObject = (param, parent = undefined)->
                             motionsprite = new PhyBoxSprite(width, height, enchant.box2d.STATIC_SPRITE, density, friction, restitution, true)
                         when STATIC_CIRCLE
                             motionsprite = new PhyCircleSprite(radius, enchant.box2d.STATIC_SPRITE, density, friction, restitution, true)
+
             if (!motionsprite?)
                 motionsprite = new Sprite()
 
