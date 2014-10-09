@@ -60,7 +60,7 @@ ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
 
 # Frame Per Seconds
-FPS = 60
+FPS = 30
 
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]

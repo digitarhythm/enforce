@@ -47,13 +47,13 @@ $webgl = $ini['ENVIRON']['WEBGL'];
     }
     if ($webgl == true) {
 ?>
-        <script type/javascript">
+        <script type="text/javascript">
             WEBGL = true;
         </script>
 <?php
     } else {
 ?>
-        <script type/javascript">
+        <script type="text/javascript">
             WEBGL = false;
         </script>
 <?php

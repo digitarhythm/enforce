@@ -62,7 +62,7 @@ ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
 
 # Frame Per Seconds
-FPS = 60
+FPS = 30
 
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
@@ -140,6 +140,7 @@ window.onload = ->
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
     # FPS設定
     core.fps = FPS
+
     # 「A」ボタンの定義
     core.keybind( 90, 'a' );
     core.keybind( 88, 'b' );
@@ -157,7 +158,6 @@ window.onload = ->
 
     # rootSceneをグローバルに保存
     rootScene = core.rootScene
-    rootScene.backgroundColor = BGCOLOR
 
     # モーションセンサーのイベント登録
     window.addEventListener 'devicemotion', (e)=>
@@ -169,13 +169,12 @@ window.onload = ->
         MOTION_ROTATE.gamma = e.gamma
 
     # box2d初期化
-    ###
     if (!GRAVITY_Y?)
         GRAVITY_Y = 0.0
     if (!GRAVITY_X?)
         GRAVITY_X = 0.0
-    ###
-    box2dworld = new PhysicsWorld(GRAVITY_X, GRAVITY_Y)
+    #box2dworld = new PhysicsWorld(GRAVITY_X, GRAVITY_Y)
+    box2dworld = new PhysicsWorld(0.0, 9.8)
 
     # シーングループを生成
     for i in [0..TOPSCENE]
@@ -223,6 +222,7 @@ window.onload = ->
         CAMERA.centerZ = 0
         rootScene3d.setCamera(CAMERA)
     else
+        rootScene.backgroundColor = BGCOLOR
         WEBGL = false
 
     core.onload = ->
@@ -315,8 +315,8 @@ addObject = (param, parent = undefined)->
     density = if (param['density']?) then param['density'] else 1.0
     friction = if (param['friction']?) then param['friction'] else 1.0
     restitution = if (param['restitution']?) then param['restitution'] else 1.0
-    radius = if (param['radius']?) then param['radius'] else 100.0
-    radius2 = if (param['radius2']?) then param['radius2'] else 100.0
+    radius = if (param['radius']?) then param['radius'] else 0.0
+    radius2 = if (param['radius2']?) then param['radius2'] else 0.0
     size = if (param['size']?) then param['size'] else 100.0
     scaleX = if (param['scaleX']?) then param['scaleX'] else 1.0
     scaleY = if (param['scaleY']?) then param['scaleY'] else 1.0
@@ -574,8 +574,8 @@ setMotionObj = (param)->
     initparam['scaleX'] = if (param['scaleX']?) then param['scaleX'] else 1.0
     initparam['scaleY'] = if (param['scaleY']?) then param['scaleY'] else 1.0
     initparam['scaleZ'] = if (param['scaleZ']?) then param['scaleZ'] else 1.0
-    initparam['radius'] = if (param['radius']?) then param['radius'] else 1.0
-    initparam['radius2'] = if (param['radius2']?) then param['radius2'] else 1.0
+    initparam['radius'] = if (param['radius']?) then param['radius'] else 0.0
+    initparam['radius2'] = if (param['radius2']?) then param['radius2'] else 0.0
     initparam['size'] = if (param['size']?) then param['size'] else 1.0
     initparam['gravity'] = if (param['gravity']?) then param['gravity'] else 0
     initparam['intersectFlag'] = if (param['intersectFlag']?) then param['intersectFlag'] else true

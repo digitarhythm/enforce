@@ -312,14 +312,18 @@ class _stationary
     # スプライト同士の衝突判定(intersect)
     #***************************************************************
     isIntersect:(motionObj)->
-        if (!motionObj? || !motionObj.sprite? || !motionObj.sprite?)
-            JSLog('motionObj is undefined.')
-            ret = false
-        else if (@intersectFlag == true && motionObj.intersectFlag == true)
-            if (!@rigid)
-                ret = @sprite.intersect(motionObj.collider)
+        if (@_type == SPRITE)
+            if (!motionObj? || !motionObj.sprite? || !motionObj.sprite?)
+                ret = false
+            else if (@intersectFlag == true && motionObj.intersectFlag == true)
+                if (!@rigid)
+                    ret = @sprite.intersect(motionObj.collider)
+            else
+                ret = false
         else
-            ret = false
+            motionObj.sprite.type = 'AABB'
+            @sprite.type = 'AABB'
+            ret = @sprite.intersect(motionObj.sprite)
         return ret
 
     #***************************************************************
