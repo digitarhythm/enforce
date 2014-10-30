@@ -269,15 +269,7 @@ class _stationary
     # スプライト同士の衝突判定(withIn)
     #***************************************************************
     isWithIn:(motionObj, range = -1)->
-        if (!motionObj?)
-            return false
-        if (range < 0)
-            range = motionObj.sprite.width / 2
-        if (@intersectFlag == true && motionObj.intersectFlag == true)
-            ret = @sprite.within(motionObj.sprite, range)
-        else
-            ret = false
-        return ret
+        return false
 
     #***************************************************************
     # スプライト同士の衝突判定(intersect)
@@ -286,7 +278,7 @@ class _stationary
         if (!motionObj? || !motionObj.sprite? || !motionObj.sprite?)
             ret = false
         else if (@intersectFlag == true && motionObj.intersectFlag == true)
-            ret = @sprite.intersect(motionObj.collider)
+            ret = @sprite.isHitElement(motionObj.collider)
         else
             ret = false
         return ret

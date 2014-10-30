@@ -62,7 +62,8 @@ ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
 
 # Frame Per Seconds
-FPS = 30
+if (FPS?)
+    FPS = 30
 
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
@@ -169,12 +170,7 @@ window.onload = ->
         MOTION_ROTATE.gamma = e.gamma
 
     # box2d初期化
-    if (!GRAVITY_Y?)
-        GRAVITY_Y = 0.0
-    if (!GRAVITY_X?)
-        GRAVITY_X = 0.0
-    #box2dworld = new PhysicsWorld(GRAVITY_X, GRAVITY_Y)
-    box2dworld = new PhysicsWorld(0.0, 9.8)
+    box2dworld = new PhysicsWorld(GRAVITY_X, GRAVITY_Y)
 
     # シーングループを生成
     for i in [0..TOPSCENE]
@@ -226,10 +222,28 @@ window.onload = ->
         WEBGL = false
 
     core.onload = ->
+        # ゲーム用オブジェクトを指定された数だけ確保
         for i in [0...OBJECTNUM]
             _objects[i] = new _originObject()
         _main = new enforceMain()
+
+        __total = 0
+        __count = 0
+        __limittimefps = parseFloat(LAPSEDTIME) + 1.0
+        # フレーム処理（enchant任せ）
         rootScene.addEventListener 'enterframe', (e)->
+
+            # FPS表示（デバッグモード時のみ）
+            if (DEBUG)
+                __total += parseFloat(core.actualFps.toFixed(2))
+                __count++
+                if (__limittimefps < LAPSEDTIME)
+                    fpsnum = (__total / __count).toFixed(2)
+                    __total = 0
+                    __count = 0
+                    __limittimefps = parseFloat(LAPSEDTIME) + 1.0
+
+            # ジョイパッド処理
             if (typeof gamepadProcedure == 'function')
                 _GAMEPADSINFO = gamepadProcedure()
                 for num in [0..._GAMEPADSINFO.length]
@@ -239,24 +253,20 @@ window.onload = ->
                     PADBUTTONS[num] = _GAMEPADSINFO[num].padbuttons
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
-
             if (core.input.a || core.input.space)
                 PADBUTTONS[0][0] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][0] = false
-
             if (core.input.b)
                 PADBUTTONS[0][1] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][1] = false
-
             if (core.input.left)
                 PADAXES[0][HORIZONTAL] = -1
             else if (core.input.right)
                 PADAXES[0][HORIZONTAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][HORIZONTAL] = 0
-
             if (core.input.up)
                 PADAXES[0][VERTICAL] = -1
             else if (core.input.down)
@@ -264,9 +274,13 @@ window.onload = ->
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
 
+            # box2dの時間を進める
             box2dworld.step(core.fps)
 
+            # 経過時間を計算
             LAPSEDTIME = (parseFloat((new Date) / 1000) - BEGINNINGTIME).toFixed(2)
+
+            # 全てのオブジェクトの「behavior」を呼ぶ
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()

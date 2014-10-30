@@ -60,7 +60,7 @@ ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
 
 # Frame Per Seconds
-FPS = 30
+FPS = 60
 
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
@@ -207,35 +207,30 @@ tm.main ->
 
             key = core.keyboard
                 
-            #if (core.input.a || core.input.space)
             if (key.getKey("z"))
                 PADBUTTONS[0][0] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][0] = false
 
-            #if (core.input.b)
             if (key.getKey("x"))
                 PADBUTTONS[0][1] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][1] = false
 
-            #if (core.input.left)
             if (key.getKey("left"))
                 PADAXES[0][HORIZONTAL] = -1
-            #else if (core.input.right)
             else if (key.getKey("right"))
                 PADAXES[0][HORIZONTAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][HORIZONTAL] = 0
 
-            #if (core.input.up)
             if (key.getKey("up"))
                 PADAXES[0][VERTICAL] = -1
-            #else if (core.input.down)
             else if (key.getKey("down"))
                 PADAXES[0][VERTICAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
+
             LAPSEDTIME = (parseFloat((new Date) / 1000) - BEGINNINGTIME).toFixed(2)
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')

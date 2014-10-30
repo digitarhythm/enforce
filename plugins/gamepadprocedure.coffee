@@ -119,7 +119,7 @@ gamepadProcedure =->
     browserGamepadFunctionName = _browserMajorClass+"_gamepad"
     if (typeof _GAMEPADPROCEDURE_[browserGamepadFunctionName] == 'function')
         gamepadsinfo = if (navigator.getGamepads) then navigator.getGamepads() else (if (navigator.webkitGetGamepads) then navigator.webkitGetGamepads else [])
-        if (gamepadsinfo.length > 0)
+        if (gamepadsinfo? && gamepadsinfo.length > 0)
             padresult = _GAMEPADPROCEDURE_[browserGamepadFunctionName](gamepadsinfo)
 
     return padresult
