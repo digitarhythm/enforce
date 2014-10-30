@@ -62,8 +62,14 @@ ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
 
 # Frame Per Seconds
-if (FPS?)
+if (!FPS?)
     FPS = 30
+
+# box2dの重力値
+if (!GRAVITY_X?)
+    GRAVITY_X = 0.0
+if (!GRAVITY_Y?)
+    GRAVITY_Y = 0.0
 
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
