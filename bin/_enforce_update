@@ -11,6 +11,7 @@ if [ ! -f $PROJ/index.php ]; then
 fi
 
 cp -af $ENF/index.php $PROJ/
+cp -af $ENF/codit $PROJ/
 cp -af $ENF/extlib/* $PROJ/extlib/
 cp -af $ENF/lib/*.png $PROJ/lib/
 cp -af $ENF/media/picture/* $PROJ/media/picture/

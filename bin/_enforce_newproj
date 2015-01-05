@@ -17,6 +17,7 @@ mkdir -p $PROJ/extlib
 
 # フレームワークファイルのコピー
 cp -af $ENF/index.php $PROJ/
+cp -af $ENF/codit $PROJ/
 cp -af $ENF/media/* $PROJ/media/
 cp -af $ENF/src/*.coffee $PROJ/src/
 cp -af $ENF/extlib/* $PROJ/extlib/

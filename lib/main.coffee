@@ -143,6 +143,9 @@ enchant.ENV.SOUND_ENABLED_ON_MOBILE_SAFARI = false
 
 # ゲーム起動時の処理
 window.onload = ->
+    $(window).on "gamepadconnected", =>
+        JSLog("joypad connected.")
+
     # enchant初期化
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
     # FPS設定
@@ -255,7 +258,6 @@ window.onload = ->
                 for num in [0..._GAMEPADSINFO.length]
                     if (!_GAMEPADSINFO[num]?)
                         continue
-                    padobj = _GAMEPADSINFO[num]
                     PADBUTTONS[num] = _GAMEPADSINFO[num].padbuttons
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
