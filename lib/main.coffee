@@ -299,7 +299,10 @@ window.onload = ->
         core.start()
 
 debugwrite = (param)->
-    str = _DEBUGLABEL.text += if (param.str?) then param.str else ""
+    if (param.clear)
+        str = if (param.str?) then param.str else ""
+    else
+        str = _DEBUGLABEL.text += if (param.str?) then param.str else ""
     fontsize = if (param.fontsize?) then param.fontsize else 10
     fontcolor = if (param.fontcolor?) then param.fontcolor else "white"
     if (DEBUG == true)
