@@ -10,16 +10,24 @@ _GAMEPADPROCEDURE_['firefox_gamepad'] =(gamepadsinfo)->
         buttons = gamepad.buttons
         axes = gamepad.axes
         index = gamepad.index
+        id = gamepad.id
 
         # ゲームパッドボタン情報取得
         # 各種ゲームパッドで共通の情報が取れるがボタンが6つなので、それ以降のボタン情報は破棄する
         max = (if (buttons.length < 6) then buttons.length else 6)
+        #max = buttons.length
 
         # ボタン情報を取得する
         padbuttons = []
         for btnum in [0...max]
             bt = buttons[btnum]
             padbuttons[btnum] = bt.pressed
+        if (id.match(/.*45e.*?28e.*/))
+            padbuttons[6] = buttons[9].pressed
+            padbuttons[7] = buttons[8].pressed
+        else
+            padbuttons[6] = buttons[6].pressed
+            padbuttons[7] = buttons[7].pressed
 
         # アナログスティック情報取得
         analogstick = []
@@ -44,7 +52,7 @@ _GAMEPADPROCEDURE_['firefox_gamepad'] =(gamepadsinfo)->
             padaxes[1] = 0
 
         padresult[index] = []
-        padresult[index].id = gamepad.id
+        padresult[index].id = id
         padresult[index].padbuttons = padbuttons
         padresult[index].padaxes = padaxes
         padresult[index].analogstick = analogstick
@@ -62,6 +70,7 @@ _GAMEPADPROCEDURE_['chrome_gamepad'] =(gamepadsinfo)->
         buttons = gamepad.buttons
         axes = gamepad.axes
         index = gamepad.index
+        id = gamepad.id
 
         # ゲームパッドボタン情報取得
         # 各種ゲームパッドで共通の情報が取れるがボタンが6つなので、それ以降のボタン情報は破棄する
@@ -72,6 +81,12 @@ _GAMEPADPROCEDURE_['chrome_gamepad'] =(gamepadsinfo)->
         for btnum in [0...max]
             bt = buttons[btnum]
             padbuttons[btnum] = bt.pressed
+        if (id.match(/.*45e.*?28e.*/))
+            padbuttons[6] = buttons[8].pressed
+            padbuttons[7] = buttons[9].pressed
+        else
+            padbuttons[6] = buttons[6].pressed
+            padbuttons[7] = buttons[7].pressed
 
         # アナログスティック情報取得
         analogstick = []
@@ -96,7 +111,7 @@ _GAMEPADPROCEDURE_['chrome_gamepad'] =(gamepadsinfo)->
             padaxes[1] = 0
 
         padresult[index] = []
-        padresult[index].id = gamepad.id
+        padresult[index].id = id
         padresult[index].padbuttons = padbuttons
         padresult[index].padaxes = padaxes
         padresult[index].analogstick = analogstick

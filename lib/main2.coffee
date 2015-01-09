@@ -257,6 +257,8 @@ tm.main ->
         MOTION_ROTATE.beta = e.beta
         MOTION_ROTATE.gamma = e.gamma
 
+debugwrite =->
+debugclear =->
 
 #******************************************************************************
 # 2D/3D共用オブジェクト生成メソッド
