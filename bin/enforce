@@ -1,0 +1,137 @@
+#!/bin/bash
+
+opt=$1
+opt2=$2
+LIB=`pwd`"/lib"
+ENF=$(cd $(dirname $0)/..;pwd)
+cwd=$(cd $(dirname $0);pwd)
+
+##################################################
+# process codejs
+##################################################
+
+if [ -z "$opt" ]; then
+	echo "<Usage>"
+	echo "enforce2 function [option]"
+	echo "<function>"
+	echo "new    : create new project(require option is package name)"
+	echo "update : update system library"
+	echo "derive : create a new object class(require option is new class name)"
+	echo "static : project to static mode"
+	echo "develop: project to develop mode"
+	exit
+fi
+
+##################################################
+# enforce version check
+##################################################
+if [ "$opt" != "new" ]; then
+    if [ ! -f "./lib/version" ]; then
+        echo "Please perform in a package directory."
+        exit
+    fi
+
+    OLDIFS=$IFS
+    IFS=
+    exec < $LIB/version
+    echo ${version}
+
+    while read DATA
+    do
+        version=$DATA
+    done
+
+    IFS=$OLDIFS
+
+    if [ "$version" != "2.0" ]; then
+        echo "version unmatched."
+        exit
+    fi
+fi
+
+echo "Execute directory ["$(pwd)"]"
+
+##################################################
+# verify package
+##################################################
+
+# PHP
+which php > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo "PHP（cli） is not found."
+	exit
+fi
+
+# CoffeeScript
+which coffee > /dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo "coffee-script is not found."
+	exit
+fi
+
+case ${opt} in
+new)
+    pkg=$3
+	if [ -z "$opt2" ]; then
+		echo "Please specify an option."
+		exit
+	fi
+	${cwd}/_enforce_newproj ${opt2} ${pkg}
+;;
+
+build)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	${cwd}/_enforce_build ${opt2}
+;;
+
+update)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	${cwd}/_enforce_update ${opt2}
+;;
+
+derive)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	if [ -z "$opt2" ]; then
+		echo "Please specify an option."
+		exit
+	fi
+	${cwd}/_enforce_derive ${opt2}
+;;
+
+static)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	if [ -f "./index.php" ]; then
+        rm -rf ./codit
+		${cwd}/_enforce_static > ./index.html
+		rm -rf ./index.php
+	fi
+;;
+
+develop)
+	if [ ! -d "./usrobject" ]; then
+		echo "Please perform in a package directory."
+		exit
+	fi
+	if [ -f "./index.html" ]; then
+		rm -f ./index.html
+		cp -af ${ENF}/index.php $(pwd)/index.php
+	fi
+;;
+
+*)
+	echo "parameter error."
+;;
+
+esac
