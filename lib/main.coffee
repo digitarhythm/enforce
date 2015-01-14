@@ -16,8 +16,9 @@
 CONTROL             = 0
 SPRITE              = 1
 LABEL               = 2
-PRIMITIVE           = 3
-COLLADA             = 4
+SURFACE             = 3
+PRIMITIVE           = 4
+COLLADA             = 5
 
 # 物理スプライトの種類
 DYNAMIC_BOX         = 0
@@ -144,7 +145,6 @@ enchant.ENV.SOUND_ENABLED_ON_MOBILE_SAFARI = false
 # ゲーム起動時の処理
 window.onload = ->
     $(window).on "gamepadconnected", =>
-        JSLog("joypad connected.")
 
     # enchant初期化
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
@@ -362,6 +362,9 @@ addObject = (param, parent = undefined)->
 
     # スプライトを生成
     switch (_type)
+        #*****************************************************************
+        # CONTROL、SPRITE
+        #*****************************************************************
         when CONTROL, SPRITE
             motionsprite = undefined
             if (_type == SPRITE)
@@ -441,6 +444,9 @@ addObject = (param, parent = undefined)->
                 kind: kind
             return retObject
 
+        #*****************************************************************
+        # LABEL
+        #*****************************************************************
         when LABEL
             if (scene < 0)
                 scene = GAMESCENE_SUB1
@@ -493,6 +499,9 @@ addObject = (param, parent = undefined)->
                 parent: parent
             return retObject
 
+        #*****************************************************************
+        # プリミティブ
+        #*****************************************************************
         when PRIMITIVE
             switch (model)
                 when BOX
@@ -548,6 +557,9 @@ addObject = (param, parent = undefined)->
 
             return retObject
 
+        #*****************************************************************
+        # COLLADAモデル
+        #*****************************************************************
         when COLLADA
             if (MEDIALIST[model]?)
                 motionsprite = new Sprite3D()
