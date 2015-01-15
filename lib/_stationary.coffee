@@ -10,8 +10,8 @@ class _stationary
         @_returnflag = false
         @_autoRemove = false
         @_animTime = LAPSEDTIME * 1000
-        @sprite = initparam['motionsprite']
 
+        @sprite = initparam['motionsprite']
         if (@sprite?)
             @_type = initparam['_type']
             @xback = @x = initparam['x']
@@ -48,6 +48,8 @@ class _stationary
             @active = initparam['active']
             @kind = initparam['kind']
             @rigid = initparam['rigid']
+            @context = initparam['context']
+            @surface = initparam['surface']
 
             @hitflag = false
 
@@ -354,7 +356,8 @@ class _stationary
     # タッチイベント登録
     #***************************************************************
     addTarget:(func)->
-        @sprite.addEventListener('touchend', func)
+        @sprite.addEventListener 'touchend', (e)=>
+            func(e.x, e.y)
 
     #***************************************************************
     # 2Dスプライト回転

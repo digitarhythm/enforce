@@ -598,6 +598,46 @@ addObject = (param, parent = undefined)->
                 parent: parent
             return retObject
 
+        #*****************************************************************
+        # Surface
+        #*****************************************************************
+        when SURFACE
+            if (scene < 0)
+                scene = GAMESCENE_SUB1
+            motionsprite = new Sprite(SCREEN_WIDTH, SCREEN_HEIGHT)
+            surface = new Surface(SCREEN_WIDTH, SCREEN_HEIGHT)
+            motionsprite.image = surface
+            context = surface.context
+
+            ###
+            # パスの描画の初期化
+            context.beginPath()
+            # 描画開始位置の移動
+            context.moveTo(10, 10)
+            # 指定座標まで直線を描画
+            context.lineTo(100, 100)
+            # 線の色を指定 (指定しないと黒)
+            context.strokeStyle = "rgba(0, 255, 255, 0.5)";      
+            # 描画を行う
+            context.stroke()
+            ###
+
+            retObject = @setMotionObj
+                width: SCREEN_WIDTH
+                height: SCREEN_HEIGHT
+                opacity: opacity
+                scene: scene
+                _type: _type
+                motionsprite: motionsprite
+                motionObj: motionObj
+                parent: parent
+                context: context
+                surface: surface
+            _scenes[scene].addChild(motionsprite)
+
+
+            return retObject
+
 setMotionObj = (param)->
     # 動きを定義したオブジェクトを生成する
     initparam = []
@@ -635,10 +675,12 @@ setMotionObj = (param)->
     initparam['active'] = if (param['active']?) then param['active'] else true
     initparam['kind'] = if (param['kind']?) then param['kind'] else undefined
     initparam['rigid'] = if (param['rigid']?) then param['rigid'] else undefined
+    initparam['context'] = if (param['context']?) then param['context'] else undefined
+    initparam['surface'] = if (param['surface']?) then param['surface'] else undefined
 
     initparam['diffx'] = Math.floor(initparam['width'] / 2)
     initparam['diffy'] = Math.floor(initparam['height'] / 2)
-    scene = if (param['scene']?) then param['scene'] else GAMESCENE
+    scene = if (param['scene']?) then param['scene'] else GAMESCENE_SUB1
     _type = if (param['_type']?) then param['_type'] else SPRITE
     initparam['_type'] = _type
     motionObj = if (param['motionObj']?) then param['motionObj'] else undefined
@@ -761,7 +803,6 @@ resumeGame =->
 #**********************************************************************
 
 gamepaddisconnected =(e)->
-    JSLog(e)
 
 #**********************************************************************
 # オブジェクトリストの中で未使用のものの配列番号を返す。
