@@ -56,7 +56,6 @@ class _stationary
 
             @sprite.onpointingstart = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                #pos = {x:e.target.position.x, y:e.target.position.y}
                 if (typeof @touchesBegan == 'function')
                     @touchesBegan(pos)
             @sprite.onpointingmove = (e)=>

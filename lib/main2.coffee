@@ -60,7 +60,7 @@ ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
 
 # Frame Per Seconds
-FPS = 60
+#FPS = 60
 
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
@@ -288,7 +288,6 @@ addObject = (param, parent = undefined)->
     density = if (param['density']?) then param['density'] else 1.0
     friction = if (param['friction']?) then param['friction'] else 0.5
     restitution = if (param['restitution']?) then param['restitution'] else 0.1
-    move = if (param['move']?) then param['move'] else false
     radius = if (param['radius']?) then param['radius'] else 100.0
     radius2 = if (param['radius2']?) then param['radius2'] else 100.0
     size = if (param['size']?) then param['size'] else 100.0
