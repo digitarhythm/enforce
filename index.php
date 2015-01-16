@@ -9,6 +9,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="IE=Edge">
     <meta property="og:title" content="enforce games.">
+    <meta property="og:image" content="lib/enforce_icon.png">
 <?php
     if ($library == "enchant") {
 ?>
