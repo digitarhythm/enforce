@@ -80,7 +80,6 @@ $webgl = $ini['ENVIRON']['WEBGL'];
     </style>
 </head>
 <body bgcolor="#303030">
-<img src="lib/enforce_icon.png" alt="enforce" title="enforce" style="visibility:hidden;" />
 <?php
     if ($library == "tmlib") {
 ?>
