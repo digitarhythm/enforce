@@ -8,6 +8,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="x-ua-compatible" content="IE=Edge">
+    <meta property="og:title" content="enforce games.">
 <?php
     if ($library == "enchant") {
 ?>
@@ -78,6 +79,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
     </style>
 </head>
 <body bgcolor="#303030">
+<img src="lib/enforce_icon.png" alt="enforce" title="enforce" style="visibility:hidden;" />
 <?php
     if ($library == "tmlib") {
 ?>
