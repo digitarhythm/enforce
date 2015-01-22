@@ -342,6 +342,11 @@ class _stationary
                     ret = @sprite.intersect(motionObj.collider)
             else
                 ret = false
+        else if (@_type == MAP)
+            if (@intersectFlag)
+                ret = @sprite.hitTest(motionObj.x, motionObj.y)
+            else
+                ret = false
         else
             motionObj.sprite.type = 'AABB'
             @sprite.type = 'AABB'
