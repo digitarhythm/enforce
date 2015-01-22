@@ -343,10 +343,10 @@ class _stationary
             else
                 ret = false
         else if (@_type == MAP)
-            if (@intersectFlag)
-                ret = @sprite.hitTest(motionObj.x, motionObj.y)
-            else
+            if (!motionObj? || !motionObj.sprite? || !@intersectFlag)
                 ret = false
+            else
+                ret = @sprite.hitTest(motionObj.x, motionObj.y)
         else
             motionObj.sprite.type = 'AABB'
             @sprite.type = 'AABB'
