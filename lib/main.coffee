@@ -19,6 +19,7 @@ LABEL               = 2
 SURFACE             = 3
 PRIMITIVE           = 4
 COLLADA             = 5
+MAP                 = 6
 
 # 物理スプライトの種類
 DYNAMIC_BOX         = 0
@@ -47,6 +48,9 @@ WEBGLSCENE          = 7
 # 数学式
 RAD                 = (Math.PI / 180.0)
 DEG                 = (180.0 / Math.PI)
+
+# マップ用変数
+_MAPSPRITE          = undefined
 
 # グローバル初期化
 GLOBAL              = []
@@ -152,9 +156,13 @@ window.onload = ->
     core.fps = FPS
 
     # 「A」ボタンの定義
-    core.keybind( 90, 'a' );
-    core.keybind( 88, 'b' );
-    core.keybind( 32, 'space' );
+    core.keybind( 90, 'a' )
+    core.keybind( 88, 'b' )
+    core.keybind( 67, 'c' )
+    core.keybind( 86, 'd' )
+    core.keybind( 66, 'e' )
+    core.keybind( 78, 'f' )
+    core.keybind( 32, 'space' )
 
     # メディアファイルのプリロード
     if (MEDIALIST?)
@@ -261,20 +269,44 @@ window.onload = ->
                     PADBUTTONS[num] = _GAMEPADSINFO[num].padbuttons
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
+
             if (core.input.a || core.input.space)
                 PADBUTTONS[0][0] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][0] = false
+
             if (core.input.b)
                 PADBUTTONS[0][1] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][1] = false
+
+            if (core.input.c)
+                PADBUTTONS[0][2] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][2] = false
+
+            if (core.input.d)
+                PADBUTTONS[0][3] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][3] = false
+
+            if (core.input.e)
+                PADBUTTONS[0][4] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][4] = false
+
+            if (core.input.f)
+                PADBUTTONS[0][5] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][5] = false
+
             if (core.input.left)
                 PADAXES[0][HORIZONTAL] = -1
             else if (core.input.right)
                 PADAXES[0][HORIZONTAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][HORIZONTAL] = 0
+
             if (core.input.up)
                 PADAXES[0][VERTICAL] = -1
             else if (core.input.down)
@@ -286,7 +318,7 @@ window.onload = ->
             box2dworld.step(core.fps)
 
             # 経過時間を計算
-            LAPSEDTIME = (parseFloat((new Date) / 1000) - BEGINNINGTIME).toFixed(2)
+            LAPSEDTIME = (parseFloat((new Date) / 1000) - parseFloat(BEGINNINGTIME).toFixed(2))
 
             # 全てのオブジェクトの「behavior」を呼ぶ
             for obj in _objects
@@ -354,6 +386,8 @@ addObject = (param, parent = undefined)->
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
     active = if (param['active']?) then param['active'] else true
     kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
+    map = if (param['map']?) then param['map'] else undefined
+    mapcollision = if (param['mapcollision']?) then param['mapcollision'] else undefined
 
     if (motionObj == null)
         motionObj = undefined
@@ -634,9 +668,36 @@ addObject = (param, parent = undefined)->
                 context: context
                 surface: surface
             _scenes[scene].addChild(motionsprite)
-
-
             return retObject
+
+        #*****************************************************************
+        # Mapオブジェクト
+        #*****************************************************************
+        when MAP
+            if (!map? || image == "")
+                JSLog("parameter not enough.")
+            else
+                if (scene < 0)
+                    scene = BGSCENE
+                motionsprite = new Map(width, height)
+                img = MEDIALIST[image]
+                motionsprite.image = core.assets[img]
+                motionsprite.loadData(map)
+                if (mapcollision?)
+                    motionsprite.collisionData = mapcollision
+                _scenes[scene].addChild(motionsprite)
+            retObject = @setMotionObj
+                visible: visible
+                width: width
+                height: height
+                opacity: opacity
+                scene: scene
+                _type: _type
+                motionsprite: motionsprite
+                motionObj: motionObj
+                parent: parent
+            return retObject
+
 
 setMotionObj = (param)->
     # 動きを定義したオブジェクトを生成する
@@ -779,6 +840,24 @@ resumeSound = (obj, flag = false)->
 #**********************************************************************
 stopSound = (obj)->
     obj.stop()
+
+#**********************************************************************
+# サウンド音量設定
+#**********************************************************************
+setSoundLoudness = (obj, num)->
+    obj.volume = num
+
+#**********************************************************************
+# サウンド再生位置（時間）取得
+#**********************************************************************
+getSoundCurrenttime = (obj)->
+    return obj.currenttime
+
+#**********************************************************************
+# サウンド再生位置（時間）設定
+#**********************************************************************
+setSoundCurrenttime = (obj, num)->
+    obj.currenttime = num
 
 #**********************************************************************
 # ゲーム一時停止

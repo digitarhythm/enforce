@@ -27,7 +27,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 ?>
         <script type="text/javascript" src="extlib/Box2dWeb-2.1.a.3.min.js"></script>
         <script type="text/javascript" src="extlib/box2d.enchant.js"></script>
-        <script type="text/javascript" src="extlib/socket.enchant.js"></script>
+        <script type="text/javascript" src="extlib/socket.io-1.3.0.js"></script>
 <?php
         if ($webgl == true) {
 ?>
@@ -59,6 +59,17 @@ $webgl = $ini['ENVIRON']['WEBGL'];
             WEBGL = false;
         </script>
 <?php
+    }
+    // #################################################################################
+    // プラグインスクリプト読み込み
+    // #################################################################################
+	$srcdir = "./plugins";
+	$dir = opendir($srcdir);
+	while ($fname = readdir($dir)) {
+		if (is_dir($srcdir."/".$fname) || preg_match("/environ.js/", $fname)) {
+			continue;
+		}
+		echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
     }
     // #################################################################################
     // アプリケーションスクリプト読み込み

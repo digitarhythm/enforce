@@ -14,9 +14,11 @@ class _stationary
         @sprite = initparam['motionsprite']
         if (@sprite?)
             @_type = initparam['_type']
-            @xback = @x = initparam['x']
-            @yback = @y = initparam['y']
-            @z = initparam['z']
+            switch (@_type)
+                when SPRITE, CONTROL, LABEL, PRIMITIVE, COLLADA, SURFACE
+                    @xback = @x = initparam['x']
+                    @yback = @y = initparam['y']
+                    @z = initparam['z']
             @xsback = @xs = initparam['xs']
             @ysback = @ys = initparam['ys']
             @zs = initparam['zs']
@@ -61,6 +63,9 @@ class _stationary
             @sprite.scaleY = @scaleY
             @sprite.scaleZ = @scaleZ
 
+            @sprite.visible = @visible
+            @sprite.opacity = @opacity
+
             @sprite.ontouchstart = (e)=>
                 pos = {x:e.x, y:e.y}
                 if (typeof @touchesBegan == 'function')
@@ -81,9 +86,11 @@ class _stationary
             @intersectFlag = true
 
             # 非表示にしてから初期位置に設定する
-            @sprite.visible = false
-            @sprite.x = Math.floor(@x - @_diffx)
-            @sprite.y = Math.floor(@y - @_diffy)
+            switch (@_type)
+                when SPRITE, CONTROL, LABEL, PRIMITIVE, COLLADA, SURFACE
+                    @sprite.visible = false
+                    @sprite.x = Math.floor(@x - @_diffx)
+                    @sprite.y = Math.floor(@y - @_diffy)
 
     #***************************************************************
     # デストラクター
@@ -218,6 +225,19 @@ class _stationary
                     @x += @xs
                     @y += @ys
                     @z += @zs
+
+                when MAP
+                    if (@opacity != @sprite.opacity)
+                        if (@opacity < 0.0)
+                            @opacity = 0.0
+                        if (@opacity > 1.0)
+                            @opacity = 1.0
+                        if (@sprite.opacity == @opacity_back)
+                            @sprite.opacity = @opacity
+                        else
+                            @opacity = @sprite.opacity
+                    @opacity_back = @sprite.opacity
+                    @sprite.visible = @visible
 
         if (@_waittime > 0 && LAPSEDTIME > @_waittime)
             @_waittime = 0
@@ -394,4 +414,5 @@ class _stationary
     #***************************************************************
     clear:->
         @sprite.tl.clear()
+
 

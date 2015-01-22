@@ -10,6 +10,14 @@ if [ ! -f $PROJ/index.php ]; then
 	exit
 fi
 
+mkdir -p $PROJ/lib
+mkdir -p $PROJ/media
+mkdir -p $PROJ/src
+mkdir -p $PROJ/plugins
+mkdir -p $PROJ/extlib
+mkdir -p $PROJ/sysobject
+mkdir -p $PROJ/usrobject
+
 cp -af $ENF/index.php $PROJ/
 cp -af $ENF/codit $PROJ/
 cp -af $ENF/extlib/* $PROJ/extlib/
@@ -23,6 +31,9 @@ cp -af $ENF/lib/htaccess.noindexes $PROJ/media/picture/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/media/sound/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/media/model/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/extlib/.htaccess
+cp -af $ENF/lib/htaccess.noindexes $PROJ/sysobject/.htaccess
+cp -af $ENF/lib/htaccess.noindexes $PROJ/usrobject/.htaccess
+cp -af $ENF/lib/htaccess.noindexes $PROJ/plugins/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/lib/.htaccess
 cp -af $ENF/lib/htaccess.noaccess $PROJ/src/.htaccess
 

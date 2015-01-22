@@ -10,9 +10,10 @@ echo "Project Dcirectory:"$PROJ
 mkdir -p $PROJ/lib
 mkdir -p $PROJ/media
 mkdir -p $PROJ/src
+mkdir -p $PROJ/plugins
+mkdir -p $PROJ/extlib
 mkdir -p $PROJ/sysobject
 mkdir -p $PROJ/usrobject
-mkdir -p $PROJ/extlib
 
 # フレームワークファイルのコピー
 cp -af $ENF/index.php $PROJ/
@@ -27,8 +28,11 @@ cp -af $ENF/lib/htaccess.noindexes $PROJ/media/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/media/picture/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/media/sound/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/media/model/.htaccess
+cp -af $ENF/lib/htaccess.noindexes $PROJ/plugins/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/extlib/.htaccess
 cp -af $ENF/lib/htaccess.noindexes $PROJ/lib/.htaccess
+cp -af $ENF/lib/htaccess.noindexes $PROJ/sysobject/.htaccess
+cp -af $ENF/lib/htaccess.noindexes $PROJ/usrobject/.htaccess
 cp -af $ENF/lib/htaccess.noaccess $PROJ/src/.htaccess
 
 # ver2.0を示すファイルを生成
