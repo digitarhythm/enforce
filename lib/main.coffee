@@ -389,6 +389,8 @@ addObject = (param, parent = undefined)->
     map = if (param['map']?) then param['map'] else undefined
     mapcollision = if (param['mapcollision']?) then param['mapcollision'] else undefined
     collider = if (param['collider']?) then param['collider'] else undefined
+    offsetx = if (param['offsetx']?) then param['offsetx'] else 0
+    offsety = if (param['offsety']?) then param['offsety'] else 0
 
     if (motionObj == null)
         motionObj = undefined
@@ -479,6 +481,8 @@ addObject = (param, parent = undefined)->
                 rigid: rigid
                 kind: kind
                 collider: collider
+                offsetx: offsetx
+                offsety: offsety
             return retObject
 
         #*****************************************************************
@@ -510,6 +514,8 @@ addObject = (param, parent = undefined)->
             motionsprite.text = labeltext
             motionsprite.textAlign = textalign
             motionsprite.font = fontsize+"px 'Arial'"
+            # TimeLineを時間ベースにする
+            motionsprite.tl.setTimeBased()
             # 動きを定義したオブジェクトを生成する
             retObject = @setMotionObj
                 x: x
@@ -689,6 +695,7 @@ addObject = (param, parent = undefined)->
                 if (mapcollision?)
                     motionsprite.collisionData = mapcollision
                 _scenes[scene].addChild(motionsprite)
+                motionsprite.tl.setTimeBased()
             retObject = @setMotionObj
                 visible: visible
                 width: width
@@ -744,6 +751,8 @@ setMotionObj = (param)->
     initparam['context'] = if (param['context']?) then param['context'] else undefined
     initparam['surface'] = if (param['surface']?) then param['surface'] else undefined
     initparam['collider'] = if (param['collider']?) then param['collider'] else undefined
+    initparam['offsetx'] = if (param['offsetx']?) then param['offsetx'] else 0
+    initparam['offsety'] = if (param['offsety']?) then param['offsety'] else 0
 
     initparam['diffx'] = Math.floor(initparam['width'] / 2)
     initparam['diffy'] = Math.floor(initparam['height'] / 2)

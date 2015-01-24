@@ -10,17 +10,18 @@ class _stationary
         @_returnflag = false
         @_autoRemove = false
         @_animTime = LAPSEDTIME * 1000
+        @_reversePosFlag = false
 
         @sprite = initparam['motionsprite']
         if (@sprite?)
             @_type = initparam['_type']
             switch (@_type)
                 when SPRITE, CONTROL, LABEL, PRIMITIVE, COLLADA, SURFACE
-                    @xback = @x = initparam['x']
-                    @yback = @y = initparam['y']
+                    @_xback = @x = initparam['x']
+                    @_yback = @y = initparam['y']
                     @z = initparam['z']
-            @xsback = @xs = initparam['xs']
-            @ysback = @ys = initparam['ys']
+            @_xsback = @xs = initparam['xs']
+            @_ysback = @ys = initparam['ys']
             @zs = initparam['zs']
             @visible = initparam['visible']
             @scaleX = initparam['scaleX']
@@ -54,6 +55,8 @@ class _stationary
             @context = initparam['context']
             @surface = initparam['surface']
             @collider = initparam['collider']
+            @_offsetx = initparam['offsetx']
+            @_offsety = initparam['offsety']
             @parent = initparam['parent']
 
             if (!@collider?)
@@ -122,20 +125,20 @@ class _stationary
                             @rotation = @rotation % 360
                         @sprite.rotation = @rotation
                     else
-                        if (@xsback != @xs)
+                        if (@_xsback != @xs)
                             @sprite.vx = @xs
-                        if (@ysback != @ys)
+                        if (@_ysback != @ys)
                             @sprite.vy = @ys
 
-                        if (@xback != @x)
+                        if (@_xback != @x)
                             @sprite.x = @x - @_diffx
-                        if (@yback != @y)
+                        if (@_yback != @y)
                             @sprite.y = @y - @_diffy - @z
 
-                        @xback = @x = @sprite.x + @_diffx
-                        @yback = @y = @sprite.y + @_diffy + @z
-                        @xsback = @xs = @sprite.vx
-                        @ysback = @ys = @sprite.vy
+                        @_xback = @x = @sprite.x + @_diffx
+                        @_yback = @y = @sprite.y + @_diffy + @z
+                        @_xsback = @xs = @sprite.vx
+                        @_ysback = @ys = @sprite.vy
 
                         @sprite.radius = @radius
                         @sprite.density = @density
@@ -160,10 +163,10 @@ class _stationary
                     @sprite.height = @height
 
                     if (@collider? && @collider.sprite?)
-                        @collider.x = @x
-                        @collider.y = @y
-                        @collider.xback = @sprite.x
-                        @collider.yback = @sprite.y
+                        @collider.x = @x + @collider._offsetx
+                        @collider.y = @y + @collider._offsety
+                        @collider._xback = @sprite.x + @collider._offsetx
+                        @collider._yback = @sprite.y + @collider._offsety
 
                     if (@animlist?)
                         animtmp = @animlist[@animnum]
@@ -190,12 +193,16 @@ class _stationary
 
 
                 when LABEL
-                    @sprite.x = Math.floor(@x - @_diffx)
-                    @sprite.y = Math.floor(@y - @_diffy - @z)
+                    if (@_reversePosFlag)
+                        @x = (@sprite.x + @_diffx)
+                        @y = (@sprite.y + @_diffy + @z)
+                    else
+                        @sprite.x = Math.floor(@x - @_diffx)
+                        @sprite.y = Math.floor(@y - @_diffy - @z)
 
-                    @x += @xs
-                    @y += @ys
-                    @z += @zs
+                        @x += @xs
+                        @y += @ys
+                        @z += @zs
 
                     if (@opacity != @sprite.opacity)
                         if (@sprite.opacity == @opacity_back)
@@ -444,4 +451,35 @@ class _stationary
     clear:->
         @sprite.tl.clear()
 
+    #***************************************************************
+    # 指定した位置へ移動させる
+    #***************************************************************
+    moveTo:(x, y, time, easing = enchant.Easing.QUAD_EASEINOUT)->
+        @_reversePosFlag = true
+        @sprite.tl.moveTo(x - @_diffx, y - @_diffy, time, easing).then =>
+            @_reversePosFlag = false
+        return @
 
+    #***************************************************************
+    # 相対的に移動させる
+    #***************************************************************
+    moveBy:(x, y, time, easing = enchant.Easing.QUAD_EASEINOUT)->
+        @_reversePosFlag = true
+        @sprite.tl.moveBy(x + @_diffx, y + @_diffy, time, easing).then =>
+            @_reversePosFlag = false
+        return @
+
+    #***************************************************************
+    # 指定した時間だけ待つ
+    #***************************************************************
+    delay:(time)->
+        @sprite.tl.delay(time)
+        return @
+
+    #***************************************************************
+    # 指定した処理を実行する
+    #***************************************************************
+    then:(func)->
+        @sprite.tl.then =>
+            func()
+        return @
