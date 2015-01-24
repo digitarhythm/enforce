@@ -388,6 +388,7 @@ addObject = (param, parent = undefined)->
     kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
     map = if (param['map']?) then param['map'] else undefined
     mapcollision = if (param['mapcollision']?) then param['mapcollision'] else undefined
+    collider = if (param['collider']?) then param['collider'] else undefined
 
     if (motionObj == null)
         motionObj = undefined
@@ -464,6 +465,7 @@ addObject = (param, parent = undefined)->
                 animnum: animnum
                 opacity: opacity
                 scene: scene
+                image: image
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
@@ -476,6 +478,7 @@ addObject = (param, parent = undefined)->
                 active: active
                 rigid: rigid
                 kind: kind
+                collider: collider
             return retObject
 
         #*****************************************************************
@@ -678,7 +681,7 @@ addObject = (param, parent = undefined)->
                 JSLog("parameter not enough.")
             else
                 if (scene < 0)
-                    scene = BGSCENE
+                    scene = BGSCENE_SUB1
                 motionsprite = new Map(width, height)
                 img = MEDIALIST[image]
                 motionsprite.image = core.assets[img]
@@ -692,6 +695,7 @@ addObject = (param, parent = undefined)->
                 height: height
                 opacity: opacity
                 scene: scene
+                image: image
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
@@ -721,6 +725,7 @@ setMotionObj = (param)->
     initparam['height'] = if (param['height']?) then param['height'] else SCREEN_HEIGHT
     initparam['animlist'] = if (param['animlist']?) then param['animlist'] else 0
     initparam['animnum'] = if (param['animnum']?) then param['animnum'] else 0
+    initparam['image'] = if (param['image']?) then param['image'] else undefined
     initparam['visible'] = if (param['visible']?) then param['visible'] else true
     initparam['opacity'] = if (param['opacity']?) then param['opacity'] else 0
     initparam['rotation'] = if (param['rotation']?) then param['rotation'] else 0.0
@@ -738,6 +743,7 @@ setMotionObj = (param)->
     initparam['rigid'] = if (param['rigid']?) then param['rigid'] else undefined
     initparam['context'] = if (param['context']?) then param['context'] else undefined
     initparam['surface'] = if (param['surface']?) then param['surface'] else undefined
+    initparam['collider'] = if (param['collider']?) then param['collider'] else undefined
 
     initparam['diffx'] = Math.floor(initparam['width'] / 2)
     initparam['diffy'] = Math.floor(initparam['height'] / 2)
@@ -783,10 +789,12 @@ removeObject = (motionObj)->
     if (ret == false)
         return
 
+    if (motionObj.collider._uniqueID != motionObj._uniqueID)
+        removeObject(motionObj.collider)
+
     if (typeof(motionObj.destructor) == 'function')
         motionObj.destructor()
 
-    #if (motionObj._type == PSPRITE_DBOX || motionObj._type == PSPRITE_DCIRCLE || motionObj._type == PSPRITE_SBOX || motionObj._type == PSPRITE_SCIRCLE)
     if (motionObj.rigid)
         object.motionObj.sprite.destroy()
     else if (motionObj._type == LABEL || motionObj._type == SPRITE || motionObj._type == PRIMITIVE || motionObj._type == COLLADA)

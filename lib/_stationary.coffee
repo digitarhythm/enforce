@@ -31,6 +31,7 @@ class _stationary
             @width = initparam['width']
             @height = initparam['height']
             @depth = initparam['depth']
+            @image = initparam['image']
             @size = initparam['size']
             @radius = initparam['radius']
             @radius2 = initparam['radius2']
@@ -52,11 +53,13 @@ class _stationary
             @rigid = initparam['rigid']
             @context = initparam['context']
             @surface = initparam['surface']
+            @collider = initparam['collider']
+            @parent = initparam['parent']
+
+            if (!@collider?)
+                @collider = @
 
             @hitflag = false
-
-            @parent = initparam['parent']
-            @collider = @sprite
             @lastvisible = @visible
 
             @sprite.scaleX = @scaleX
@@ -156,11 +159,19 @@ class _stationary
                     @sprite.width = @width
                     @sprite.height = @height
 
+                    if (@collider? && @collider.sprite?)
+                        @collider.x = @x
+                        @collider.y = @y
+                        @collider.xback = @sprite.x
+                        @collider.yback = @sprite.y
+
                     if (@animlist?)
                         animtmp = @animlist[@animnum]
                         animtime = animtmp[0]
                         animpattern = animtmp[1]
                         if (LAPSEDTIME * 1000 > @_animTime + animtime)
+                            if (@_dispframe >= animpattern.length)
+                                @_dispframe = 0
                             @sprite.frameIndex = animpattern[@_dispframe]
                             @sprite.frame = animpattern[@_dispframe]
                             @_animTime = LAPSEDTIME * 1000
@@ -176,6 +187,7 @@ class _stationary
                                     @_dispframe = 0
                                 else
                                     @_dispframe = 0
+
 
                 when LABEL
                     @sprite.x = Math.floor(@x - @_diffx)
@@ -335,15 +347,15 @@ class _stationary
     #***************************************************************
     isIntersect:(motionObj)->
         if (@_type == SPRITE)
-            if (!motionObj? || !motionObj.sprite? || !@sprite?)
+            if (!motionObj? || !motionObj.collider? || !motionObj.collider.sprite? || !@sprite?)
                 ret = false
             else if (@intersectFlag == true && motionObj.intersectFlag == true)
                 if (!@rigid)
-                    ret = @sprite.intersect(motionObj.collider)
+                    ret = @collider.sprite.intersect(motionObj.collider.sprite)
             else
                 ret = false
         else if (@_type == MAP)
-            if (!motionObj? || !motionObj.sprite? || !@intersectFlag)
+            if (!motionObj? || !motionObj.collider? || !motionObj.collider.sprite? || !@intersectFlag)
                 ret = false
             else
                 ret = @sprite.hitTest(motionObj.x, motionObj.y)
@@ -352,6 +364,18 @@ class _stationary
             @sprite.type = 'AABB'
             ret = @sprite.intersect(motionObj.sprite)
         return ret
+
+    #***************************************************************
+    # マップオブジェクトの指定した座標での衝突判定
+    #***************************************************************
+    isCollision:(x, y)->
+        if (@_type == MAP)
+            if (!@collider? || !@collider.sprite? || !@intersectFlag)
+                ret = false
+            else
+                ret = @collider.sprite.hitTest(x, y)
+        else
+            ret = false
 
     #***************************************************************
     # 指定されたアニメーションを再生した後オブジェクト削除
