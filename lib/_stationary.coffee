@@ -121,6 +121,15 @@ class _stationary
                         @y += @ys
                         @z += @zs
 
+                        if (@collider? && @collider.sprite?)
+                            if (@collider._uniqueID != @_uniqueID)
+                                @collider.sprite.visible = false
+                                @collider.visible = false
+                            @collider.x = @x + @collider._offsetx
+                            @collider.y = @y + @collider._offsety
+                            @collider._xback = @sprite.x + @collider._offsetx
+                            @collider._yback = @sprite.y + @collider._offsety
+
                         if (@rotation > 359)
                             @rotation = @rotation % 360
                         @sprite.rotation = @rotation
@@ -161,12 +170,6 @@ class _stationary
                     @sprite.scaleY  = @scaleY
                     @sprite.width = @width
                     @sprite.height = @height
-
-                    if (@collider? && @collider.sprite?)
-                        @collider.x = @x + @collider._offsetx
-                        @collider.y = @y + @collider._offsety
-                        @collider._xback = @sprite.x + @collider._offsetx
-                        @collider._yback = @sprite.y + @collider._offsety
 
                     if (@animlist?)
                         animtmp = @animlist[@animnum]
