@@ -20,6 +20,7 @@ SURFACE             = 3
 PRIMITIVE           = 4
 COLLADA             = 5
 MAP                 = 6
+EXMAP               = 7
 
 # 物理スプライトの種類
 DYNAMIC_BOX         = 0
@@ -48,9 +49,6 @@ WEBGLSCENE          = 7
 # 数学式
 RAD                 = (Math.PI / 180.0)
 DEG                 = (180.0 / Math.PI)
-
-# マップ用変数
-_MAPSPRITE          = undefined
 
 # グローバル初期化
 GLOBAL              = []
@@ -387,6 +385,7 @@ addObject = (param, parent = undefined)->
     active = if (param['active']?) then param['active'] else true
     kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
     map = if (param['map']?) then param['map'] else undefined
+    map2 = if (param['map2']?) then param['map2'] else undefined
     mapcollision = if (param['mapcollision']?) then param['mapcollision'] else undefined
     collider = if (param['collider']?) then param['collider'] else undefined
     offsetx = if (param['offsetx']?) then param['offsetx'] else 0
@@ -682,16 +681,20 @@ addObject = (param, parent = undefined)->
         #*****************************************************************
         # Mapオブジェクト
         #*****************************************************************
-        when MAP
+        when MAP, EXMAP
             if (!map? || image == "")
                 JSLog("parameter not enough.")
             else
                 if (scene < 0)
                     scene = BGSCENE_SUB1
-                motionsprite = new Map(width, height)
+                if (_type == MAP)
+                    motionsprite = new Map(width, height)
+                    motionsprite.loadData(map)
+                else
+                    motionsprite = new ExMap(width, height)
+                    motionsprite.loadData(map, map2)
                 img = MEDIALIST[image]
                 motionsprite.image = core.assets[img]
-                motionsprite.loadData(map)
                 if (mapcollision?)
                     motionsprite.collisionData = mapcollision
                 _scenes[scene].addChild(motionsprite)

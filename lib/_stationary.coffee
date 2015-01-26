@@ -112,11 +112,11 @@ class _stationary
             switch (@_type)
                 when SPRITE
                     if (!@rigid || @kind == STATIC_BOX || @kind == STATIC_CIRCLE)
+                        # 通常スプライト
                         @sprite.x = Math.floor(@x - @_diffx)
                         @sprite.y = Math.floor(@y - @_diffy - @z)
 
                         @ys += @gravity
-
                         @x += @xs
                         @y += @ys
                         @z += @zs
@@ -134,6 +134,7 @@ class _stationary
                             @rotation = @rotation % 360
                         @sprite.rotation = @rotation
                     else
+                        # 物理演算スプライト
                         if (@_xsback != @xs)
                             @sprite.vx = @xs
                         if (@_ysback != @ys)
