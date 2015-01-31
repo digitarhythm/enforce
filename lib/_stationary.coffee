@@ -358,7 +358,7 @@ class _stationary
     #***************************************************************
     isIntersect:(motionObj)->
         if (@_type == SPRITE)
-            if (!motionObj? || !motionObj.collider? || !motionObj.collider.sprite? || !@sprite?)
+            if (!motionObj? || !motionObj.collider? || !motionObj.collider.sprite? || !@collider? || !@collider.sprite?)
                 ret = false
             else if (@intersectFlag == true && motionObj.intersectFlag == true)
                 if (!@rigid)

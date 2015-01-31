@@ -300,6 +300,10 @@ addObject = (param, parent = undefined)->
     color = if (param['color']?) then param['color'] else 'white'
     labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
+    active = if (param['active']?) then param['active'] else true
+    collider = if (param['collider']?) then param['collider'] else undefined
+    offsetx = if (param['offsetx']?) then param['offsetx'] else 0
+    offsety = if (param['offsety']?) then param['offsety'] else 0
 
     if (motionObj == null)
         motionObj = undefined
@@ -355,11 +359,16 @@ addObject = (param, parent = undefined)->
                 animnum: animnum
                 opacity: opacity
                 scene: scene
+                image: image
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
                 rotation: rotation
                 parent: parent
+                active: active
+                collider: collider
+                offsetx: offsetx
+                offsety: offsety
             return retObject
 
         when LABEL
@@ -407,6 +416,7 @@ addObject = (param, parent = undefined)->
                 height: height
                 opacity: opacity
                 scene: scene
+                image: image
                 _type: _type
                 motionsprite: motionsprite
                 motionObj: motionObj
@@ -415,6 +425,10 @@ addObject = (param, parent = undefined)->
                 labeltext: labeltext
                 textalign: textalign
                 parent: parent
+                active: active
+                collider: collider
+                offsetx: offsetx
+                offsety: offsety
             return retObject
 
         when PRIMITIVE
@@ -542,6 +556,10 @@ setMotionObj = (param)->
     initparam['labeltext'] = if (param['labeltext']?) then param['labeltext'] else 'text'
     initparam['textalign'] = if (param['textalign']?) then param['textalign'] else 'left'
     initparam['parent'] = if (param['parent']?) then param['parent'] else undefined
+    initparam['active'] = if (param['active']?) then param['active'] else true
+    initparam['collider'] = if (param['collider']?) then param['collider'] else undefined
+    initparam['offsetx'] = if (param['offsetx']?) then param['offsetx'] else 0
+    initparam['offsety'] = if (param['offsety']?) then param['offsety'] else 0
     initparam['diffx'] = Math.floor(initparam['width'] / 2)
     initparam['diffy'] = Math.floor(initparam['height'] / 2)
     scene = if (param['scene']?) then param['scene'] else GAMESCENE

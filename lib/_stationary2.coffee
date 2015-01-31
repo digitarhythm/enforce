@@ -13,11 +13,14 @@ class _stationary
         @sprite = initparam['motionsprite']
 
         if (@sprite?)
-            @x = initparam['x']
-            @y = initparam['y']
-            @z = initparam['z']
-            @xs = initparam['xs']
-            @ys = initparam['ys']
+            @_type = initparam['_type']
+            switch (@_type)
+                when SPRITE, CONTROL, LABEL, PRIMITIVE, COLLADA, SURFACE
+                    @_xback = @x = initparam['x']
+                    @_yback = @y = initparam['y']
+                    @z = initparam['z']
+            @_xsback = @xs = initparam['xs']
+            @_ysback = @ys = initparam['ys']
             @zs = initparam['zs']
             @visible = initparam['visible']
             @scaleX = initparam['scaleX']
@@ -28,6 +31,7 @@ class _stationary
             @width = initparam['width']
             @height = initparam['height']
             @depth = initparam['depth']
+            @image = initparam['image']
             @size = initparam['size']
             @radius = initparam['radius']
             @radius2 = initparam['radius2']
@@ -36,15 +40,19 @@ class _stationary
             @animlist = initparam['animlist']
             @animnum = initparam['animnum']
             @opacity = initparam['opacity']
-            @_type = initparam['_type']
             @rotation = initparam['rotation']
             @fontsize = initparam['fontsize']
             @color = initparam['color']
             @labeltext = initparam['labeltext']
             @textalign = initparam['textalign']
             @parent = initparam['parent']
+            @active = initparam['active']
+            @collider = initparam['collider']
+            @_offsetx = initparam['offsetx']
+            @_offsety = initparam['offsety']
 
-            @collider = @sprite
+            if (!@collider?)
+                @collider = @
 
             @lastvisible = @visible
 
@@ -99,6 +107,15 @@ class _stationary
                     @x += @xs
                     @y += @ys
                     @z += @zs
+
+                    if (@collider? && @collider.sprite?)
+                        if (@collider._uniqueID != @_uniqueID)
+                            @collider.sprite.visible = false
+                            @collider.visible = false
+                        @collider.x = @x + @collider._offsetx
+                        @collider.y = @y + @collider._offsety
+                        @collider._xback = @sprite.x + @collider._offsetx
+                        @collider._yback = @sprite.y + @collider._offsety
 
                     if (@rotation > 359)
                         @rotation = @rotation % 360
@@ -281,6 +298,22 @@ class _stationary
         else
             ret = false
         return ret
+
+
+
+    isIntersect:(motionObj)->
+        if (@_type == SPRITE)
+            if (!motionObj? || !motionObj.collider? || !motionObj.collider.sprite? || !@collider? || @collider.sprite?)
+                ret = false
+            else if (@intersectFlag == true && motionObj.intersectFlag == true)
+                ret = @collider.sprite.isHitElement(motionObj.collider.sprite)
+            else
+                ret = false
+        return ret
+
+
+
+
 
     #***************************************************************
     # 指定されたアニメーションを再生した後オブジェクト削除
