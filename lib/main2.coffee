@@ -59,9 +59,6 @@ PADAXES[0]          = [0, 0]
 ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
 
-# Frame Per Seconds
-#FPS = 60
-
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
 MOTION_GRAVITY      = [x:0, y:0, z:0]
@@ -231,7 +228,7 @@ tm.main ->
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
 
-            LAPSEDTIME = (parseFloat((new Date) / 1000) - BEGINNINGTIME).toFixed(2)
+            LAPSEDTIME = (parseFloat((new Date) / 1000) - parseFloat(BEGINNINGTIME).toFixed(2))
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()

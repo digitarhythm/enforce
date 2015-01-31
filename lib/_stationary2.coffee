@@ -291,29 +291,14 @@ class _stationary
     # スプライト同士の衝突判定(intersect)
     #***************************************************************
     isIntersect:(motionObj)->
-        if (!motionObj? || !motionObj.sprite? || !motionObj.sprite?)
-            ret = false
-        else if (@intersectFlag == true && motionObj.intersectFlag == true)
-            ret = @sprite.isHitElement(motionObj.collider)
-        else
-            ret = false
-        return ret
-
-
-
-    isIntersect:(motionObj)->
         if (@_type == SPRITE)
-            if (!motionObj? || !motionObj.collider? || !motionObj.collider.sprite? || !@collider? || @collider.sprite?)
+            if (!motionObj? || !motionObj.collider? || !motionObj.collider.sprite? || !@collider? || !@collider.sprite?)
                 ret = false
             else if (@intersectFlag == true && motionObj.intersectFlag == true)
                 ret = @collider.sprite.isHitElement(motionObj.collider.sprite)
             else
                 ret = false
         return ret
-
-
-
-
 
     #***************************************************************
     # 指定されたアニメーションを再生した後オブジェクト削除
