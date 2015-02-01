@@ -40,6 +40,7 @@ GAMESCENE_SUB1      = 4
 GAMESCENE_SUB2      = 5
 TOPSCENE            = 6
 WEBGLSCENE          = 7
+DEBUGSCENE          = 8
 
 # 数学式
 RAD                 = (Math.PI / 180.0)
@@ -182,13 +183,23 @@ tm.main ->
         init: ->
             @superInit()
             rootScene = @
-            maxscene = TOPSCENE + 1
-            for i in [0...maxscene]
+            maxscene = (if (DEBUG) then DEBUGSCENE else WEBGLSCENE)
+            for i in [0..maxscene]
                 scene = tm.display.CanvasElement().addChildTo(rootScene)
                 _scenes[i] = scene
+
+            if (DEBUG == true)
+                _DEBUGLABEL = new tm.display.Label()
+                _DEBUGLABEL.originX = 0
+                _DEBUGLABEL.originY = 0
+                _DEBUGLABEL.x = 0
+                _DEBUGLABEL.y = 16
+                _scenes[DEBUGSCENE].addChild(_DEBUGLABEL)
+
             for i in [0...OBJECTNUM]
                 _objects[i] = new _originObject()
             _main = new enforceMain()
+
             return
 
         onenterframe: ->
@@ -254,8 +265,20 @@ tm.main ->
         MOTION_ROTATE.beta = e.beta
         MOTION_ROTATE.gamma = e.gamma
 
-debugwrite =->
+debugwrite = (param)->
+    if (DEBUG == true)
+        if (param.clear)
+            labeltext = if (param.labeltext?) then param.labeltext else ""
+        else
+            labeltext = _DEBUGLABEL.text += if (param.labeltext?) then param.labeltext else ""
+        fontsize = if (param.fontsize?) then param.fontsize else 12
+        fontcolor = if (param.fontcolor?) then param.fontcolor else "red"
+        _DEBUGLABEL.fontSize = fontsize
+        _DEBUGLABEL.text = labeltext
+        _DEBUGLABEL.fontColor = fontcolor
 debugclear =->
+    if (DEBUG == true)
+        _DEBUGLABEL.text = ""
 
 #******************************************************************************
 # 2D/3D共用オブジェクト生成メソッド
@@ -376,7 +399,7 @@ addObject = (param, parent = undefined)->
             if (height == 0)
                 height = 64
             # ラベルを生成
-            motionsprite = new tm.app.Label(labeltext)
+            motionsprite = new tm.display.Label(labeltext)
             # 値を代入
             motionsprite.backgroundColor = "transparent"
             motionsprite.setOrigin(0.5, 0.5)

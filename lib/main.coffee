@@ -45,6 +45,7 @@ GAMESCENE_SUB1      = 4
 GAMESCENE_SUB2      = 5
 TOPSCENE            = 6
 WEBGLSCENE          = 7
+DEBUGSCENE          = 8
 
 # 数学式
 RAD                 = (Math.PI / 180.0)
@@ -188,7 +189,8 @@ window.onload = ->
     box2dworld = new PhysicsWorld(GRAVITY_X, GRAVITY_Y)
 
     # シーングループを生成
-    for i in [0..TOPSCENE]
+    maxscene = (if (DEBUG) then DEBUGSCENE else WEBGLSCENE )
+    for i in [0..maxscene]
         scene = new Group()
         scene.backgroundColor = "black"
         _scenes[i] = scene
@@ -200,7 +202,7 @@ window.onload = ->
         _DEBUGLABEL.y = 0
         _DEBUGLABEL.color = "white"
         _DEBUGLABEL.font = "10px 'Arial'"
-        _scenes[TOPSCENE].addChild(_DEBUGLABEL)
+        _scenes[DEBUGSCENE].addChild(_DEBUGLABEL)
 
     if (WEBGL && isWebGL())
         # 3Dシーンを生成
@@ -329,18 +331,19 @@ window.onload = ->
         core.start()
 
 debugwrite = (param)->
-    if (param.clear)
-        str = if (param.str?) then param.str else ""
-    else
-        str = _DEBUGLABEL.text += if (param.str?) then param.str else ""
-    fontsize = if (param.fontsize?) then param.fontsize else 10
-    fontcolor = if (param.fontcolor?) then param.fontcolor else "white"
-    if (DEBUG == true)
+    if (DEBUG)
+        if (param.clear)
+            labeltext = if (param.labeltext?) then param.labeltext else ""
+        else
+            labeltext = _DEBUGLABEL.text += if (param.labeltext?) then param.labeltext else ""
+        fontsize = if (param.fontsize?) then param.fontsize else 12
+        fontcolor = if (param.fontcolor?) then param.fontcolor else "white"
         _DEBUGLABEL.font = fontsize+"px 'Arial'"
-        _DEBUGLABEL.text = str
+        _DEBUGLABEL.text = labeltext
         _DEBUGLABEL.color = fontcolor
 debugclear =->
-    _DEBUGLABEL.text = ""
+    if (DEBUG)
+        _DEBUGLABEL.text = ""
 
 #******************************************************************************
 # 2D/3D共用オブジェクト生成メソッド
