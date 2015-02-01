@@ -699,11 +699,11 @@ getObject = (id)->
 #**********************************************************************
 # サウンド再生
 #**********************************************************************
-playSound = (name, flag = false)->
+playSound = (name, vol = 1.0, flag = false)->
     org = tm.asset.Manager.get(name)
     sound = org.clone()
     if (sound.loop?)
-        sound.volume = 1.0
+        sound.volume = vol
         sound.play()
         sound.loop = flag
         return sound
@@ -731,6 +731,7 @@ stopSound = (obj)->
 # サウンド音量設定
 #**********************************************************************
 setSoundLoudness = (obj, num)->
+    obj.volume = num
 
 #**********************************************************************
 # ゲーム一時停止

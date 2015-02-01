@@ -837,11 +837,12 @@ getObject = (id)->
 #**********************************************************************
 # サウンド再生
 #**********************************************************************
-playSound = (name, flag = false)->
+playSound = (name, vol = 1.0, flag = false)->
     soundfile = MEDIALIST[name]
     sound = core.assets[soundfile].clone()
     if (sound.src?)
         sound.play()
+        sound.volume = vol
         sound.src.loop = flag
         return sound
 
