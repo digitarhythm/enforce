@@ -60,6 +60,9 @@ class _stationary
             @sprite.scaleY = @scaleY
             @sprite.scaleZ = @scaleZ
 
+            @sprite.visible = @visible
+            @sprite.alpha = @opacity
+
             @sprite.setInteractive(true)
 
             @sprite.onpointingstart = (e)=>
@@ -204,6 +207,19 @@ class _stationary
                     @y += @ys
                     @z += @zs
 
+                when MAP
+                    if (@opacity != @sprite.alpha)
+                        if (@opacity < 0.0)
+                            @opacity = 0.0
+                        if (@opacity > 1.0)
+                            @opacity = 1.0
+                        if (@sprite.alpha == @opacity_back)
+                            @sprite.alpha = @opacity
+                        else
+                            @opacity = @sprite.alpha
+                    @opacity_back = @sprite.alpha
+                    @sprite.visible = @visible
+
         if (@_waittime > 0 && LAPSEDTIME > @_waittime)
             @_waittime = 0
             @_processnumber = @_nextprocessnum
@@ -299,6 +315,15 @@ class _stationary
             else
                 ret = false
         return ret
+
+    #***************************************************************
+    # マップオブジェクトの指定した座標での衝突判定
+    #***************************************************************
+    isCollision:(x, y)->
+        if (@_type == MAP)
+            ret = @sprite.isHitPoint(x, y)
+        else
+            ret = false
 
     #***************************************************************
     # 指定されたアニメーションを再生した後オブジェクト削除

@@ -16,12 +16,11 @@
 CONTROL             = 0
 SPRITE              = 1
 LABEL               = 2
-DSPRITE_BOX         = 3
-DSPRITE_CIRCLE      = 4
-SSPRITE_BOX         = 5
-SSPRITE_CIRCLE      = 6
-PRIMITIVE           = 7
-COLLADA             = 8
+SURFACE             = 3
+PRIMITIVE           = 4
+COLLADA             = 5
+MAP                 = 6
+EXMAP               = 7
 
 # WebGLのプリミティブの種類
 BOX                 = 0
@@ -134,7 +133,7 @@ tm.main ->
         superClass: "tm.app.Scene"
         init: (param) ->
             @superInit()
-            @bg = tm.display.Shape(param.width, param.height).addChildTo(@)
+            @bg = tm.display.Shape().addChildTo(@)
             @bg.canvas.clearColor "#000000"
             @bg.setOrigin 0, 0
             label = tm.display.Label("loading")
@@ -324,6 +323,8 @@ addObject = (param, parent = undefined)->
     collider = if (param['collider']?) then param['collider'] else undefined
     offsetx = if (param['offsetx']?) then param['offsetx'] else 0
     offsety = if (param['offsety']?) then param['offsety'] else 0
+    map = if (param['map']?) then param['map'] else undefined
+    mapcollision = if (param['mapcollision']?) then param['mapcollision'] else undefined
 
     if (motionObj == null)
         motionObj = undefined
@@ -399,7 +400,7 @@ addObject = (param, parent = undefined)->
             if (height == 0)
                 height = 64
             # ラベルを生成
-            motionsprite = new tm.display.Label(labeltext)
+            motionsprite = tm.display.Label(labeltext)
             # 値を代入
             motionsprite.backgroundColor = "transparent"
             motionsprite.setOrigin(0.5, 0.5)
@@ -542,7 +543,53 @@ addObject = (param, parent = undefined)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 parent: parent
+            return retObject
 
+        #*****************************************************************
+        # Mapオブジェクト
+        #*****************************************************************
+        when MAP
+            if (!map? || image == "")
+                JSLog("parameter not enough.")
+            else
+                if (scene < 0)
+                    scene = BGSCENE_SUB1
+
+                img = MEDIALIST[image]
+                mapdata = []
+                wlength = map[0].length
+                hlength = map.length
+                for t in map
+                    for t2 in t
+                        mapdata.push(t2)
+                mapsheet = tm.asset.MapSheet
+                    tilewidth: width
+                    tileheight: height
+                    width: wlength
+                    height: hlength
+                    tilesets: [
+                        {
+                            image: img
+                        }
+                    ]
+                    layers: [
+                        {
+                            data: mapdata
+                        }
+                    ]
+                motionsprite = tm.display.MapSprite(mapsheet, width, height)
+                _scenes[scene].addChild(motionsprite)
+            retObject = @setMotionObj
+                visible: visible
+                width: width
+                height: height
+                opacity: opacity
+                scene: scene
+                image: image
+                _type: _type
+                motionsprite: motionsprite
+                motionObj: motionObj
+                parent: parent
             return retObject
 
 setMotionObj = (param)->
@@ -627,9 +674,7 @@ removeObject = (motionObj)->
     if (typeof(motionObj.destructor) == 'function')
         motionObj.destructor()
 
-    if (motionObj._type == DSPRITE_BOX || motionObj._type == DSPRITE_CIRCLE || motionObj._type == SSPRITE_BOX || motionObj._type == SSPRITE_CIRCLE)
-        object.motionObj.sprite.destroy()
-    else if (motionObj._type == LABEL || motionObj._type == SPRITE || motionObj._type == PRIMITIVE || motionObj._type == COLLADA)
+    if (motionObj._type == LABEL || motionObj._type == SPRITE || motionObj._type == PRIMITIVE || motionObj._type == COLLADA)
         _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
 
     object.motionObj.sprite = undefined
@@ -681,6 +726,11 @@ resumeSound = (obj, flag = false)->
 #**********************************************************************
 stopSound = (obj)->
     obj.stop()
+
+#**********************************************************************
+# サウンド音量設定
+#**********************************************************************
+setSoundLoudness = (obj, num)->
 
 #**********************************************************************
 # ゲーム一時停止

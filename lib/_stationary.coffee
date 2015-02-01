@@ -249,7 +249,7 @@ class _stationary
                     @y += @ys
                     @z += @zs
 
-                when MAP
+                when MAP, EXMAP
                     if (@opacity != @sprite.opacity)
                         if (@opacity < 0.0)
                             @opacity = 0.0
@@ -365,7 +365,7 @@ class _stationary
                     ret = @collider.sprite.intersect(motionObj.collider.sprite)
             else
                 ret = false
-        else if (@_type == MAP)
+        else if (@_type == MAP || @_type == EXMAP)
             if (!motionObj? || !motionObj.collider? || !motionObj.collider.sprite? || !@intersectFlag)
                 ret = false
             else
@@ -380,11 +380,8 @@ class _stationary
     # マップオブジェクトの指定した座標での衝突判定
     #***************************************************************
     isCollision:(x, y)->
-        if (@_type == MAP)
-            if (!@collider? || !@collider.sprite? || !@intersectFlag)
-                ret = false
-            else
-                ret = @collider.sprite.hitTest(x, y)
+        if (@_type == MAP || @_type == EXMAP)
+            ret = @sprite.hitTest(x, y)
         else
             ret = false
 
