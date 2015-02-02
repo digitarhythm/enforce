@@ -354,6 +354,7 @@ addObject = (param, parent = undefined)->
                 motionsprite.visible = visible
                 motionsprite.width = width
                 motionsprite.height = height
+                motionsprite.boundingType = "rect"
             else
                 motionsprite = tm.display.Sprite()
                 motionsprite.visible = true
