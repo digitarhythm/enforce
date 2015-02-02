@@ -244,7 +244,7 @@ class _stationary
                     if (@scaleZ != @sprite.scaleZ)
                         @sprite.scaleZ = @scaleZ
 
-                    @ys += @gravity
+                    @ys -= @gravity
                     @x += @xs
                     @y += @ys
                     @z += @zs
