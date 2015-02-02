@@ -361,9 +361,9 @@ addObject = (param, parent = undefined)->
     gravity = if (param['gravity']?) then param['gravity'] else 0.0
     image = if (param['image']?) then param['image'] else undefined
     model = if (param['model']?) then param['model'] else undefined
-    width = if (param['width']?) then param['width'] else SCREEN_WIDTH
-    height = if (param['height']?) then param['height'] else SCREEN_HEIGHT
-    depth = if (param['depth']?) then param['depth'] else 100.0
+    width = if (param['width']?) then param['width'] else 1
+    height = if (param['height']?) then param['height'] else 1
+    depth = if (param['depth']?) then param['depth'] else 1.0
     opacity = if (param['opacity']?) then param['opacity'] else 1.0
     animlist = if (param['animlist']?) then param['animlist'] else undefined
     animnum = if (param['animnum']?) then param['animnum'] else 0
@@ -373,9 +373,9 @@ addObject = (param, parent = undefined)->
     density = if (param['density']?) then param['density'] else 1.0
     friction = if (param['friction']?) then param['friction'] else 1.0
     restitution = if (param['restitution']?) then param['restitution'] else 1.0
-    radius = if (param['radius']?) then param['radius'] else 0.0
-    radius2 = if (param['radius2']?) then param['radius2'] else 0.0
-    size = if (param['size']?) then param['size'] else 100.0
+    radius = if (param['radius']?) then param['radius'] else 1.0
+    radius2 = if (param['radius2']?) then param['radius2'] else 1.0
+    size = if (param['size']?) then param['size'] else 1.0
     scaleX = if (param['scaleX']?) then param['scaleX'] else 1.0
     scaleY = if (param['scaleY']?) then param['scaleY'] else 1.0
     scaleZ = if (param['scaleZ']?) then param['scaleZ'] else 1.0
