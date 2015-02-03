@@ -42,11 +42,17 @@ getKeyDirection =->
 
 # set cookie value
 setCookie = (name, value, expireValue = 1)->
-    $.cookie(name, value, { expires: expireValue })
+    document.cookie = (name+'='+escape(value)+'; expires=' + expireValue)
 
 # get cookie value
 getCookie = (name)->
-    return $.cookie(name)
+    result = []
+    allcookies = document.cookie.split('; ')
+    if (allcookies.length > 0)
+        for i in [0...(allcookies.length)]
+            cookie = allcookies[i].split('=')
+            result[cookie[0]] = decodeURIComponent(cookie[1])
+    return result[name]
 
 # WebGL check
 isWebGL = ->
