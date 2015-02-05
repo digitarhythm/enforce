@@ -15,11 +15,9 @@ class _stationary
         @sprite = initparam['motionsprite']
         if (@sprite?)
             @_type = initparam['_type']
-            switch (@_type)
-                when SPRITE, CONTROL, LABEL, PRIMITIVE, COLLADA, SURFACE
-                    @_xback = @x = initparam['x']
-                    @_yback = @y = initparam['y']
-                    @z = initparam['z']
+            @_xback = @x = initparam['x']
+            @_yback = @y = initparam['y']
+            @z = initparam['z']
             @_xsback = @xs = initparam['xs']
             @_ysback = @ys = initparam['ys']
             @zs = initparam['zs']
@@ -92,11 +90,9 @@ class _stationary
             @intersectFlag = true
 
             # 非表示にしてから初期位置に設定する
-            switch (@_type)
-                when SPRITE, CONTROL, LABEL, PRIMITIVE, COLLADA, SURFACE
-                    @sprite.visible = false
-                    @sprite.x = Math.floor(@x - @_diffx)
-                    @sprite.y = Math.floor(@y - @_diffy)
+            @sprite.visible = false
+            @sprite.x = Math.floor(@x - @_diffx)
+            @sprite.y = Math.floor(@y - @_diffy)
 
     #***************************************************************
     # デストラクター
@@ -250,6 +246,12 @@ class _stationary
                     @z += @zs
 
                 when MAP, EXMAP
+                    @sprite.x = Math.floor(@x - @_diffx)
+                    @sprite.y = Math.floor(@y - @_diffy)
+
+                    @x += @xs
+                    @y += @ys
+
                     if (@opacity != @sprite.opacity)
                         if (@opacity < 0.0)
                             @opacity = 0.0
@@ -270,25 +272,27 @@ class _stationary
     # WebGLオブジェクトにクォータニオンを設定する
     #***************************************************************
     setQuaternion:(v, angle)->
-        switch (v)
-            when 0
-                @sprite.rotationSet(new Quat(1, 0, 0, angle * RAD))
-            when 1
-                @sprite.rotationSet(new Quat(0, 1, 0, angle * RAD))
-            when 2
-                @sprite.rotationSet(new Quat(0, 0, 1, angle * RAD))
+        if (@_type == COLLADA || @_type == PRIMITIVE)
+            switch (v)
+                when 0
+                    @sprite.rotationSet(new Quat(1, 0, 0, angle * RAD))
+                when 1
+                    @sprite.rotationSet(new Quat(0, 1, 0, angle * RAD))
+                when 2
+                    @sprite.rotationSet(new Quat(0, 0, 1, angle * RAD))
                 
     #***************************************************************
     # WebGLオブジェクトにクォータニオンを合成する
     #***************************************************************
     applyQuaternion:(v, angle)->
-        switch (v)
-            when 0
-                @sprite.rotationApply(new Quat(1, 0, 0, angle * RAD))
-            when 1
-                @sprite.rotationApply(new Quat(0, 1, 0, angle * RAD))
-            when 2
-                @sprite.rotationApply(new Quat(0, 0, 1, angle * RAD))
+        if (@_type == COLLADA || @_type == PRIMITIVE)
+            switch (v)
+                when 0
+                    @sprite.rotationApply(new Quat(1, 0, 0, angle * RAD))
+                when 1
+                    @sprite.rotationApply(new Quat(0, 1, 0, angle * RAD))
+                when 2
+                    @sprite.rotationApply(new Quat(0, 0, 1, angle * RAD))
     
     #***************************************************************
     # 3Dオブジェクトにテクスチャーをマッピングする
