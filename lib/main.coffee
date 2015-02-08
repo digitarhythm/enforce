@@ -207,6 +207,7 @@ window.onload = ->
         _FPSLABEL.y = SCREEN_HEIGHT - 24
         _FPSLABEL.width = 48
         _FPSLABEL.height = 24
+        _FPSLABEL.opacity = 0.8
         _FPSLABEL.font = "24px 'Arial'"
         _FPSLABEL.textAlign = "center"
         _FPSLABEL.color = "gray"
@@ -257,6 +258,8 @@ window.onload = ->
         __limittimefps = parseFloat(LAPSEDTIME) + 1.0
 
         # バーチャルゲームパッド
+        if (!VGAMEPAD?)
+            VGAMEPAD = false
         if (VGAMEPAD)
             _VGAMEPADOBJ = new Pad()
             _VGAMEPADOBJ.y = SCREEN_HEIGHT - 160
