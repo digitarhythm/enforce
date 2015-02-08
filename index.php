@@ -14,14 +14,13 @@ $webgl = $ini['ENVIRON']['WEBGL'];
     if ($library == "enchant") {
 ?>
         <script type="text/javascript" src="extlib/enchant.0.8.1-enforce.min.js"></script>
+        <script type="text/javascript" src="extlib/ui.enchant-enforce.js"></script>
         <script type="text/javascript" src="extlib/extendMap.enchant.js"></script>
 <?php
     }
 ?>
     <meta name="viewport" content="width=device-width, user-scalable=no, minimal-ui">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <!--script type="text/javascript" src="extlib/jquery-2.1.0.min.js"></script-->
-    <!--script type="text/javascript" src="extlib/jquery.cookie.js"></script-->
 	<script type="text/javascript" src="usrobject/environ.js"></script>
 <?php
     if ($library == "enchant") {

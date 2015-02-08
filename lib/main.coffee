@@ -64,6 +64,7 @@ PADAXES             = []
 PADAXES[0]          = [0, 0]
 ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
+VGAMEPADOBJ         = undefined
 
 # Frame Per Seconds
 if (!FPS?)
@@ -201,6 +202,15 @@ window.onload = ->
         _DEBUGLABEL.color = "white"
         _DEBUGLABEL.font = "10px 'Arial'"
         _scenes[DEBUGSCENE].addChild(_DEBUGLABEL)
+        _FPSLABEL = new Label()
+        _FPSLABEL.x = 0
+        _FPSLABEL.y = SCREEN_HEIGHT - 24
+        _FPSLABEL.width = 48
+        _FPSLABEL.height = 24
+        _FPSLABEL.font = "24px 'Arial'"
+        _FPSLABEL.textAlign = "center"
+        _FPSLABEL.color = "gray"
+        _scenes[DEBUGSCENE].addChild(_FPSLABEL)
 
     if (WEBGL && isWebGL())
         # 3Dシーンを生成
@@ -245,9 +255,16 @@ window.onload = ->
         __total = 0
         __count = 0
         __limittimefps = parseFloat(LAPSEDTIME) + 1.0
+
+        # バーチャルゲームパッド
+        if (VGAMEPAD)
+            _VGAMEPADOBJ = new Pad()
+            _VGAMEPADOBJ.y = SCREEN_HEIGHT - 160
+            rootScene.addChild(_VGAMEPADOBJ)
+
         # フレーム処理（enchant任せ）
         rootScene.addEventListener 'enterframe', (e)->
-
+            _VGAMEPADOBJ.frame = 0
             # FPS表示（デバッグモード時のみ）
             if (DEBUG)
                 __total += parseFloat(core.actualFps.toFixed(2))
@@ -257,6 +274,7 @@ window.onload = ->
                     __total = 0
                     __count = 0
                     __limittimefps = parseFloat(LAPSEDTIME) + 1.0
+                    _FPSLABEL.text =fpsnum
 
             # ジョイパッド処理
             if (typeof gamepadProcedure == 'function')
@@ -299,15 +317,23 @@ window.onload = ->
                 PADBUTTONS[0][5] = false
 
             if (core.input.left)
+                _VGAMEPADOBJ.rotation = 270
+                _VGAMEPADOBJ.frame = 1
                 PADAXES[0][HORIZONTAL] = -1
             else if (core.input.right)
+                _VGAMEPADOBJ.rotation = 90
+                _VGAMEPADOBJ.frame = 1
                 PADAXES[0][HORIZONTAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][HORIZONTAL] = 0
 
             if (core.input.up)
+                _VGAMEPADOBJ.rotation = 0
+                _VGAMEPADOBJ.frame = 1
                 PADAXES[0][VERTICAL] = -1
             else if (core.input.down)
+                _VGAMEPADOBJ.rotation = 180
+                _VGAMEPADOBJ.frame = 1
                 PADAXES[0][VERTICAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
@@ -371,7 +397,7 @@ addObject = (param, parent = undefined)->
     density = if (param['density']?) then param['density'] else 1.0
     friction = if (param['friction']?) then param['friction'] else 1.0
     restitution = if (param['restitution']?) then param['restitution'] else 1.0
-    radius = if (param['radius']?) then param['radius'] else 1.0
+    radius = if (param['radius']?) then param['radius'] else undefined
     radius2 = if (param['radius2']?) then param['radius2'] else 1.0
     size = if (param['size']?) then param['size'] else 1.0
     scaleX = if (param['scaleX']?) then param['scaleX'] else 1.0
@@ -406,6 +432,8 @@ addObject = (param, parent = undefined)->
             motionsprite = undefined
             if (_type == SPRITE)
                 if (rigid)
+                    if (!radius?)
+                        radius = width
                     switch (kind)
                         when DYNAMIC_BOX
                             motionsprite = new PhyBoxSprite(width, height, enchant.box2d.DYNAMIC_SPRITE, density, friction, restitution, true)
@@ -546,6 +574,8 @@ addObject = (param, parent = undefined)->
         # プリミティブ
         #*****************************************************************
         when PRIMITIVE
+            if (!radius?)
+                radius = 1.0
             switch (model)
                 when BOX
                     motionsprite = new Box(width, height, depth)
@@ -604,6 +634,8 @@ addObject = (param, parent = undefined)->
         # COLLADAモデル
         #*****************************************************************
         when COLLADA
+            if (!radius?)
+                radius = 1.0
             if (MEDIALIST[model]?)
                 motionsprite = new Sprite3D()
                 motionsprite.set(core.assets[MEDIALIST[model]].clone())

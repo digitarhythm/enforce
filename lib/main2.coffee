@@ -581,6 +581,11 @@ addObject = (param, parent = undefined)->
                 motionsprite = tm.display.MapSprite(mapsheet, width, height)
                 _scenes[scene].addChild(motionsprite)
             retObject = @setMotionObj
+                x: x
+                y: y
+                xs: xs
+                ys: ys
+                map: map
                 visible: visible
                 width: width
                 height: height
@@ -628,12 +633,21 @@ setMotionObj = (param)->
     initparam['collider'] = if (param['collider']?) then param['collider'] else undefined
     initparam['offsetx'] = if (param['offsetx']?) then param['offsetx'] else 0
     initparam['offsety'] = if (param['offsety']?) then param['offsety'] else 0
-    initparam['diffx'] = Math.floor(initparam['width'] / 2)
-    initparam['diffy'] = Math.floor(initparam['height'] / 2)
+
     scene = if (param['scene']?) then param['scene'] else GAMESCENE
     _type = if (param['_type']?) then param['_type'] else SPRITE
     initparam['_type'] = _type
     motionObj = if (param['motionObj']?) then param['motionObj'] else undefined
+
+    map = if (param['map']?) then param['map'] else []
+    if (_type == MAP || _type == EXMAP)
+        mapwidth = map[0].length * initparam['width']
+        mapheight = map.length * initparam['height']
+        initparam['diffx'] = Math.floor(mapwidth / 2)
+        initparam['diffy'] = Math.floor(mapheight / 2)
+    else
+        initparam['diffx'] = Math.floor(initparam['width'] / 2)
+        initparam['diffy'] = Math.floor(initparam['height'] / 2)
 
     objnum = _getNullObject()
     if (objnum < 0)

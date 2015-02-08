@@ -67,7 +67,6 @@ class _stationary
             @sprite.scaleY = @scaleY
             @sprite.scaleZ = @scaleZ
 
-            @sprite.visible = @visible
             @sprite.opacity = @opacity
 
             @sprite.ontouchstart = (e)=>
@@ -117,15 +116,6 @@ class _stationary
                         @y += @ys
                         @z += @zs
 
-                        if (@collider? && @collider.sprite?)
-                            if (@collider._uniqueID != @_uniqueID)
-                                @collider.sprite.visible = false
-                                @collider.visible = false
-                            @collider.x = @x + @collider._offsetx
-                            @collider.y = @y + @collider._offsety
-                            @collider._xback = @sprite.x + @collider._offsetx
-                            @collider._yback = @sprite.y + @collider._offsety
-
                         if (@rotation > 359)
                             @rotation = @rotation % 360
                         @sprite.rotation = @rotation
@@ -150,6 +140,15 @@ class _stationary
                         @sprite.density = @density
                         @sprite.friction = @friction
                         @sprite.restitution = @restitution
+
+                    if (@collider? && @collider.sprite?)
+                        if (@collider._uniqueID != @_uniqueID)
+                            @collider.sprite.visible = false
+                            @collider.visible = false
+                            @collider.x = @x + @collider._offsetx
+                            @collider.y = @y + @collider._offsety
+                            @collider._xback = @sprite.x + @collider._offsetx
+                            @collider._yback = @sprite.y + @collider._offsety
 
                     if (@opacity != @sprite.opacity)
                         if (@opacity < 0.0)
@@ -425,6 +424,18 @@ class _stationary
     #***************************************************************
     spriteRotation:(ang)->
         @sprite.rotate(ang * DEG)
+
+#*******************************************************************
+# box2d関連
+#*******************************************************************
+    applyForce:(force)->
+        @sprite.applyForce(force)
+        
+    applyImpulse:(impulse)->
+        @sprite.applyImpulse(impulse)
+        
+    applyTorque:(torque)->
+        @sprite.applyTorque(torque)
 
 #*******************************************************************
 # TimeLine 制御

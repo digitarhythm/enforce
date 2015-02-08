@@ -10,15 +10,13 @@ class _stationary
         @_returnflag = false
         @_autoRemove = false
         @_animTime = LAPSEDTIME * 1000
-        @sprite = initparam['motionsprite']
 
+        @sprite = initparam['motionsprite']
         if (@sprite?)
             @_type = initparam['_type']
-            switch (@_type)
-                when SPRITE, CONTROL, LABEL, PRIMITIVE, COLLADA, SURFACE
-                    @_xback = @x = initparam['x']
-                    @_yback = @y = initparam['y']
-                    @z = initparam['z']
+            @_xback = @x = initparam['x']
+            @_yback = @y = initparam['y']
+            @z = initparam['z']
             @_xsback = @xs = initparam['xs']
             @_ysback = @ys = initparam['ys']
             @zs = initparam['zs']
@@ -208,6 +206,12 @@ class _stationary
                     @z += @zs
 
                 when MAP
+                    @sprite.x = Math.floor(@x - @_diffx)
+                    @sprite.y = Math.floor(@y - @_diffy)
+
+                    @x += @xs
+                    @y += @ys
+
                     if (@opacity != @sprite.alpha)
                         if (@opacity < 0.0)
                             @opacity = 0.0
