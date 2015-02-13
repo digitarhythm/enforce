@@ -267,7 +267,6 @@ window.onload = ->
 
         # フレーム処理（enchant任せ）
         rootScene.addEventListener 'enterframe', (e)->
-            _VGAMEPADOBJ.frame = 0
             # FPS表示（デバッグモード時のみ）
             if (DEBUG)
                 __total += parseFloat(core.actualFps.toFixed(2))

@@ -8,7 +8,7 @@
 
 # static values setting ***********************************************************************************
 DEBUG           = true                      # デバッグモード
-VGAMEPAD        = true                      # バーチャルゲームパッド
+VGAMEPAD        = false                     # バーチャルゲームパッド
 SCREEN_WIDTH    = 600                       # 画面の幅
 SCREEN_HEIGHT   = 864                       # 画面の高さ
 BGCOLOR         = "black"                   # 背景色
