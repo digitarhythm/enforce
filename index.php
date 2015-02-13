@@ -45,6 +45,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 ?>
         <script type="text/javascript" src="extlib/tmlib.min.js"></script>
         <script type="text/javascript" src="sysobject/enforce.core2.js"></script>
+        <script type="text/javascript" src="extlib/Box2dWeb-2.1.a.3.min.js"></script>
 <?php
     }
     if ($webgl == true) {

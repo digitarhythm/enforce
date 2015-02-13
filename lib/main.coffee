@@ -54,6 +54,9 @@ DEG                 = (180.0 / Math.PI)
 # グローバル初期化
 GLOBAL              = []
 
+# サウンドプリロード用
+SOUNDARR            = []
+
 # アスペクト比
 ASPECT              = 0.0
 
@@ -172,9 +175,9 @@ window.onload = ->
         MEDIALIST['_notice'] = 'lib/notice.png'
         MEDIALIST['_execbutton'] = 'lib/execbutton.png'
         mediaarr = []
-        i = 0
+        num = 0
         for obj of MEDIALIST
-            mediaarr[i++] = MEDIALIST[obj]
+            mediaarr[num++] = MEDIALIST[obj]
         core.preload(mediaarr)
 
     # rootSceneをグローバルに保存
@@ -917,7 +920,8 @@ pauseSound = (obj)->
 #**********************************************************************
 resumeSound = (obj, flag = false)->
     obj.play()
-    obj.src.loop = flag
+    #obj.src.loop = flag
+    obj.loop = flag
 
 #**********************************************************************
 # サウンド停止

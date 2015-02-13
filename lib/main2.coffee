@@ -22,6 +22,12 @@ COLLADA             = 5
 MAP                 = 6
 EXMAP               = 7
 
+# 物理スプライトの種類
+DYNAMIC_BOX         = 0
+DYNAMIC_CIRCLE      = 1
+STATIC_BOX          = 2
+STATIC_CIRCLE       = 3
+
 # WebGLのプリミティブの種類
 BOX                 = 0
 CUBE                = 1
@@ -58,6 +64,12 @@ PADAXES             = []
 PADAXES[0]          = [0, 0]
 ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
+
+# box2dの重力値
+if (!GRAVITY_X?)
+    GRAVITY_X = 0.0
+if (!GRAVITY_Y?)
+    GRAVITY_Y = 0.0
 
 # センサー系
 MOTION_ACCEL        = [x:0, y:0, z:0]
@@ -187,6 +199,9 @@ tm.main ->
                 scene = tm.display.CanvasElement().addChildTo(rootScene)
                 _scenes[i] = scene
 
+            gravity = new Box2D.Common.Math.b2Vec2(GRAVITY_X, GRAVITY_Y)
+            box2dworld = new Box2D.Dynamics.b2World(gravity, true)
+
             if (DEBUG == true)
                 _DEBUGLABEL = new tm.display.Label()
                 _DEBUGLABEL.originX = 0
@@ -202,6 +217,7 @@ tm.main ->
             return
 
         onenterframe: ->
+            box2dworld.Step(1/FPS, 1, 1)
             if (typeof gamepadProcedure == 'function')
                 _GAMEPADSINFO = gamepadProcedure()
                 for num in [0..._GAMEPADSINFO.length]
@@ -303,6 +319,7 @@ addObject = (param, parent = undefined)->
     animnum = if (param['animnum']?) then param['animnum'] else 0
     visible = if (param['visible']?) then param['visible'] else true
     scene = if (param['scene']?) then param['scene'] else -1
+    rigid = if (param['rigid']?) then param['rigid'] else false
     model = if (param['model']?) then param['model'] else undefined
     density = if (param['density']?) then param['density'] else 1.0
     friction = if (param['friction']?) then param['friction'] else 0.5
@@ -320,6 +337,7 @@ addObject = (param, parent = undefined)->
     labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
     active = if (param['active']?) then param['active'] else true
+    kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
     collider = if (param['collider']?) then param['collider'] else undefined
     offsetx = if (param['offsetx']?) then param['offsetx'] else 0
     offsety = if (param['offsety']?) then param['offsety'] else 0
@@ -339,6 +357,37 @@ addObject = (param, parent = undefined)->
                 scene = GAMESCENE_SUB1
 
             if (animlist?)
+                if (rigid)
+                    if (!radius?)
+                        radius = width
+
+                    b2bodydef = new Box2D.Dynamics.b2BodyDef()
+                    b2bodydef.position.Set(x, y)
+
+                    switch (kind)
+                        when DYNAMIC_BOX
+                            b2bodydef.type = Box2D.Dynamics.b2_dynamicBody
+                            b2box = new Box2D.Collision.Shapes.b2PolygonShape()
+                        when DYNAMIC_CIRCLE
+                            b2bodydef.type = Box2D.Dynamics.b2_dynamicBody
+                            b2box = new Box2D.Collision.Shapes.b2CircleShape()
+                        when STATIC_BOX
+                            b2bodydef.type = Box2D.Dynamics.b2_staticBody
+                            b2box = new Box2D.Collision.Shapes.b2PolygonShape()
+                        when STATIC_CIRCLE
+                            b2bodydef.type = Box2D.Dynamics.b2_staticBody
+                            b2box = new Box2D.Collision.Shapes.b2CircleShape()
+
+                    b2body = box2dworld.CreateBody(b2bodydef)
+                    b2box.SetAsBox(width, height)
+
+                    b2fixture = new Box2D.Dynamics.b2FixtureDef()
+                    b2fixture.shape = b2box
+                    b2fixture.density = density
+                    b2fixture.friction = friction
+                    b2fixture.restitution = restitution
+                    b2body.CreateFixture(b2fixture)
+
                 motionsprite = tm.display.Sprite(image, width, height)
                 animtmp = animlist[animnum]
                 motionsprite.frameIndex = animtmp[1][0]
