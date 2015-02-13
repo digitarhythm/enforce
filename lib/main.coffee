@@ -324,23 +324,27 @@ window.onload = ->
                 PADBUTTONS[0][5] = false
 
             if (core.input.left)
-                _VGAMEPADOBJ.rotation = 270
-                _VGAMEPADOBJ.frame = 1
+                if (_VGAMEPADOBJ?)
+                    _VGAMEPADOBJ.rotation = 270
+                    _VGAMEPADOBJ.frame = 1
                 PADAXES[0][HORIZONTAL] = -1
             else if (core.input.right)
-                _VGAMEPADOBJ.rotation = 90
-                _VGAMEPADOBJ.frame = 1
+                if (_VGAMEPADOBJ?)
+                    _VGAMEPADOBJ.rotation = 90
+                    _VGAMEPADOBJ.frame = 1
                 PADAXES[0][HORIZONTAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][HORIZONTAL] = 0
 
             if (core.input.up)
-                _VGAMEPADOBJ.rotation = 0
-                _VGAMEPADOBJ.frame = 1
+                if (_VGAMEPADOBJ?)
+                    _VGAMEPADOBJ.rotation = 0
+                    _VGAMEPADOBJ.frame = 1
                 PADAXES[0][VERTICAL] = -1
             else if (core.input.down)
-                _VGAMEPADOBJ.rotation = 180
-                _VGAMEPADOBJ.frame = 1
+                if (_VGAMEPADOBJ?)
+                    _VGAMEPADOBJ.rotation = 180
+                    _VGAMEPADOBJ.frame = 1
                 PADAXES[0][VERTICAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
