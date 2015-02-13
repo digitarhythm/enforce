@@ -19,5 +19,7 @@ GRAVITY_Y       = 9.8                       # box2d用垂直方向重力
 
 # preloading image list ***********************************************************************************
 MEDIALIST       = {
-    bear    : 'media/picture/chara1.png'
+    controlplane    : 'media/picture/controlplane.png'
+    colliderimage   : 'media/picture/colliderimage.png'
+    bear            : 'media/picture/chara1.png'
 }

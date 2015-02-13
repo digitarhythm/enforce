@@ -145,10 +145,8 @@ class _stationary
                         if (@collider._uniqueID != @_uniqueID)
                             @collider.sprite.visible = false
                             @collider.visible = false
-                            @collider.x = @x + @collider._offsetx
-                            @collider.y = @y + @collider._offsety
-                            @collider._xback = @sprite.x + @collider._offsetx
-                            @collider._yback = @sprite.y + @collider._offsety
+                            @collider._xback = @collider.x = @sprite.x + @_diffx - @collider._offsetx
+                            @collider._yback = @collider.y = @sprite.y + @_diffy + @collider._offsety
 
                     if (@opacity != @sprite.opacity)
                         if (@opacity < 0.0)

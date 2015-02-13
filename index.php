@@ -19,7 +19,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 <?php
     }
 ?>
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimal-ui">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale:1, minimum-scale=1, max-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
 	<script type="text/javascript" src="usrobject/environ.js"></script>
 <?php

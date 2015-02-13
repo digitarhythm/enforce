@@ -54,6 +54,9 @@ DEG                 = (180.0 / Math.PI)
 # グローバル初期化
 GLOBAL              = []
 
+# アスペクト比
+ASPECT              = 0.0
+
 # ゲームパッド情報格納変数
 HORIZONTAL          = 0
 VERTICAL            = 1
@@ -148,6 +151,8 @@ enchant.ENV.SOUND_ENABLED_ON_MOBILE_SAFARI = false
 
 # ゲーム起動時の処理
 window.onload = ->
+    # アスペクト比
+    ASPECT = (SCREEN_WIDTH / SCREEN_HEIGHT).toFixed(2)
     # enchant初期化
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
     # FPS設定
@@ -563,6 +568,7 @@ addObject = (param, parent = undefined)->
                 opacity: opacity
                 scene: scene
                 _type: _type
+                active: active
                 motionsprite: motionsprite
                 motionObj: motionObj
                 fontsize: fontsize
@@ -620,6 +626,7 @@ addObject = (param, parent = undefined)->
                 depth: depth
                 animlist: animlist
                 animnum: animnum
+                active: active
                 opacity: opacity
                 scene: WEBGLSCENE
                 _type: _type
@@ -660,6 +667,7 @@ addObject = (param, parent = undefined)->
                 scaleZ: scaleZ
                 radius: radius
                 radius2: radius2
+                active: active
                 size: size
                 gravity: gravity
                 width: width
@@ -709,6 +717,7 @@ addObject = (param, parent = undefined)->
                 motionObj: motionObj
                 parent: parent
                 context: context
+                active: active
                 surface: surface
             _scenes[scene].addChild(motionsprite)
             return retObject
@@ -745,6 +754,7 @@ addObject = (param, parent = undefined)->
                 height: height
                 opacity: opacity
                 scene: scene
+                active: active
                 image: image
                 _type: _type
                 motionsprite: motionsprite
