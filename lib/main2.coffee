@@ -197,6 +197,7 @@ tm.main ->
         superClass: "tm.app.Scene"
         init: ->
             @superInit()
+            core.background = BGCOLOR
             rootScene = @
             for i in [0..MAXSCENE]
                 scene = tm.display.CanvasElement().addChildTo(rootScene)
@@ -897,6 +898,14 @@ createVirtualGamepad = (param)->
                 ]
                 scene: _SYSTEMSCENE
             _VGAMEBUTTON.push(obj)
+
+#**********************************************************************
+# バーチャルゲームパッドの表示制御
+#**********************************************************************
+dispVirtualGamepad = (flag)->
+    _VGAMEPADOBJ.visible = flag
+    for obj in _VGAMEBUTTON
+        obj.visible = flag
 
 #**********************************************************************
 #**********************************************************************
