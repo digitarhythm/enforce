@@ -960,7 +960,7 @@ createVirtualGamepad = (param)->
         scale = 1.0
         x = (100 / 2) * scale
         y = SCREEN_HEIGHT - ((100 / 2) * scale)
-        button = 2
+        button = 0
         buttonscale = 1
         coord = []
 
