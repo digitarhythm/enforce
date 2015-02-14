@@ -45,7 +45,9 @@ GAMESCENE_SUB1      = 4
 GAMESCENE_SUB2      = 5
 TOPSCENE            = 6
 WEBGLSCENE          = 7
-DEBUGSCENE          = 8
+_SYSTEMSCENE        = 8
+DEBUGSCENE          = 9
+MAXSCENE            = (if (DEBUG) then DEBUGSCENE else _SYSTEMSCENE)
 
 # 数学式
 RAD                 = (Math.PI / 180.0)
@@ -64,6 +66,8 @@ PADAXES             = []
 PADAXES[0]          = [0, 0]
 ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
+_VGAMEPADOBJ        = undefined
+_VGAMEBUTTON        = []
 
 # box2dの重力値
 if (!GRAVITY_X?)
@@ -194,8 +198,7 @@ tm.main ->
         init: ->
             @superInit()
             rootScene = @
-            maxscene = (if (DEBUG) then DEBUGSCENE else WEBGLSCENE)
-            for i in [0..maxscene]
+            for i in [0..MAXSCENE]
                 scene = tm.display.CanvasElement().addChildTo(rootScene)
                 _scenes[i] = scene
 
@@ -230,26 +233,46 @@ tm.main ->
 
             key = core.keyboard
                 
-            if (key.getKey("z"))
+            if (key.getKey("z") || (_VGAMEBUTTON[0]? && _VGAMEBUTTON[0].push))
                 PADBUTTONS[0][0] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][0] = false
 
-            if (key.getKey("x"))
+            if (key.getKey("x") || (_VGAMEBUTTON[1]? && _VGAMEBUTTON[1].push))
                 PADBUTTONS[0][1] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][1] = false
 
-            if (key.getKey("left"))
+            if (key.getKey("c") || (_VGAMEBUTTON[2]? && _VGAMEBUTTON[2].push))
+                PADBUTTONS[0][2] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][2] = false
+
+            if (key.getKey("v") || (_VGAMEBUTTON[3]? && _VGAMEBUTTON[3].push))
+                PADBUTTONS[0][3] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][3] = false
+
+            if (key.getKey("b") || (_VGAMEBUTTON[4]? && _VGAMEBUTTON[4].push))
+                PADBUTTONS[0][4] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][4] = false
+
+            if (key.getKey("n") || (_VGAMEBUTTON[5]? && _VGAMEBUTTON[5].push))
+                PADBUTTONS[0][5] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][5] = false
+
+            if (key.getKey("left") || (_VGAMEPADOBJ? && _VGAMEPADOBJ.input.left))
                 PADAXES[0][HORIZONTAL] = -1
-            else if (key.getKey("right"))
+            else if (key.getKey("right") || (_VGAMEPADOBJ? && _VGAMEPADOBJ.input.right))
                 PADAXES[0][HORIZONTAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][HORIZONTAL] = 0
 
-            if (key.getKey("up"))
+            if (key.getKey("up") || (_VGAMEPADOBJ? && _VGAMEPADOBJ.input.up))
                 PADAXES[0][VERTICAL] = -1
-            else if (key.getKey("down"))
+            else if (key.getKey("down") || (_VGAMEPADOBJ? && _VGAMEPADOBJ.input.down))
                 PADAXES[0][VERTICAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
@@ -263,6 +286,10 @@ tm.main ->
     core.fps = FPS
     core.resize SCREEN_WIDTH, SCREEN_HEIGHT
     core.fitWindow()
+    MEDIALIST['_notice'] = 'lib/notice.png'
+    MEDIALIST['_execbutton'] = 'lib/execbutton.png'
+    MEDIALIST['_pad'] = 'lib/pad.png'
+    MEDIALIST['_button'] = 'lib/button.png'
     core.replaceScene customLoadingScene(
         assets: MEDIALIST
         nextScene: mainScene
@@ -810,6 +837,66 @@ pauseGame =->
 resumeGame =->
     ACTIVATE = true
     core.resume()
+
+#**********************************************************************
+# バーチャルゲームパッド
+#**********************************************************************
+createVirtualGamepad = (param)->
+    if (param?)
+        if (param.scale?) then scale = param.scale else scale = 1
+        if (param.x?) then x = param.x else x = (100 / 2) * scale
+        if (param.y?) then y = param.y else y = SCREEN_HEIGHT - ((100 / 2) * scale)
+        if (param.button?) then button = param.button else button = 0
+        if (param.buttonscale?) then buttonscale = param.buttonscale else buttonscale = 1
+        if (param.coord?) then coord = param.coord else coord = []
+    else
+        scale = 1.0
+        x = (100 / 2) * scale
+        y = SCREEN_HEIGHT - ((100 / 2) * scale)
+        button = 2
+        buttonscale = 1
+        coord = []
+
+    if (!_VGAMEPADOBJ?)
+        _VGAMEPADOBJ = addObject
+            motionObj: _vgamepad
+            image: '_pad'
+            x: x
+            y: y
+            width: 100
+            height: 100
+            animlist: [
+                [100, [0]]
+                [100, [1]]
+                [100, [2]]
+            ]
+            visible: false
+            scaleX: scale
+            scaleY: scale
+            scene: _SYSTEMSCENE
+
+        for i in [0...button]
+            c = coord[i]
+            if (!c?)
+                c = []
+                c[0] = SCREEN_WIDTH - ((64 / 2) * buttonscale)
+                c[1] = (64 * buttonscale) * (i + 1)
+            obj = addObject
+                image: '_button'
+                motionObj: _vgamebutton
+                width: 64
+                height: 64
+                x: c[0]
+                y: c[1]
+                visible: false
+                scaleX: buttonscale
+                scaleY: buttonscale
+                animlist: [
+                    [100, [0]]
+                    [100, [1]]
+                ]
+                scene: _SYSTEMSCENE
+            _VGAMEBUTTON.push(obj)
 
 #**********************************************************************
 #**********************************************************************

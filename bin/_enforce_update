@@ -38,6 +38,6 @@ cp -af $ENF/lib/htaccess.noindexes $PROJ/lib/.htaccess
 cp -af $ENF/lib/htaccess.noaccess $PROJ/src/.htaccess
 
 # enchantライブラリ生成
-coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.coffee $ENF/lib/library.coffee $ENF/lib/main.coffee $ENF/plugins/*.coffee
+coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.coffee $ENF/lib/_vgamepad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/library.coffee $ENF/lib/main.coffee $ENF/plugins/*.coffee
 # tmlibライブラリ生成
-coffee -b -j $PROJ/sysobject/enforce.core2.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary2.coffee $ENF/lib/library.coffee $ENF/lib/main2.coffee $ENF/plugins/*.coffee
+coffee -b -j $PROJ/sysobject/enforce.core2.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary2.coffee $ENF/lib/_vgamepad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/library.coffee $ENF/lib/main2.coffee $ENF/plugins/*.coffee
