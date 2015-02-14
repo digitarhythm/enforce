@@ -858,6 +858,9 @@ createVirtualGamepad = (param)->
         buttonscale = 1
         coord = []
 
+    if (button > 6)
+        button = 6
+
     if (!_VGAMEPADOBJ?)
         _VGAMEPADOBJ = addObject
             motionObj: _vgamepad
@@ -881,7 +884,7 @@ createVirtualGamepad = (param)->
             if (!c?)
                 c = []
                 c[0] = SCREEN_WIDTH - ((64 / 2) * buttonscale)
-                c[1] = (64 * buttonscale) * (i + 1)
+                c[1] = (64 * buttonscale) * i + (32 * buttonscale)
             obj = addObject
                 image: '_button'
                 motionObj: _vgamebutton
