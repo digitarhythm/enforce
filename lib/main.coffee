@@ -1012,7 +1012,7 @@ createVirtualGamepad = (param)->
 # バーチャルゲームパッドの表示制御
 #**********************************************************************
 dispVirtualGamepad = (flag)->
-    _VGAMEPADOBJ.visible = flag
+    _VGAMEPADOBJ.visible = flag if (_VGAMEPADOBJ?)
     for obj in _VGAMEBUTTON
         obj.visible = flag
 

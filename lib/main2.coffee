@@ -221,7 +221,6 @@ tm.main ->
             return
 
         onenterframe: ->
-            box2dworld.Step(1/FPS, 1, 1)
             if (typeof gamepadProcedure == 'function')
                 _GAMEPADSINFO = gamepadProcedure()
                 for num in [0..._GAMEPADSINFO.length]
@@ -283,7 +282,7 @@ tm.main ->
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
 
-    core = tm.display.CanvasApp("#stage")
+    core = tm.app.CanvasApp("#stage")
     core.fps = FPS
     core.resize SCREEN_WIDTH, SCREEN_HEIGHT
     core.fitWindow()
@@ -389,34 +388,8 @@ addObject = (param, parent = undefined)->
                     if (!radius?)
                         radius = width
 
-                    b2bodydef = new Box2D.Dynamics.b2BodyDef()
-                    b2bodydef.position.Set(x, y)
-
-                    switch (kind)
-                        when DYNAMIC_BOX
-                            b2bodydef.type = Box2D.Dynamics.b2_dynamicBody
-                            b2box = new Box2D.Collision.Shapes.b2PolygonShape()
-                        when DYNAMIC_CIRCLE
-                            b2bodydef.type = Box2D.Dynamics.b2_dynamicBody
-                            b2box = new Box2D.Collision.Shapes.b2CircleShape()
-                        when STATIC_BOX
-                            b2bodydef.type = Box2D.Dynamics.b2_staticBody
-                            b2box = new Box2D.Collision.Shapes.b2PolygonShape()
-                        when STATIC_CIRCLE
-                            b2bodydef.type = Box2D.Dynamics.b2_staticBody
-                            b2box = new Box2D.Collision.Shapes.b2CircleShape()
-
-                    b2body = box2dworld.CreateBody(b2bodydef)
-                    b2box.SetAsBox(width, height)
-
-                    b2fixture = new Box2D.Dynamics.b2FixtureDef()
-                    b2fixture.shape = b2box
-                    b2fixture.density = density
-                    b2fixture.friction = friction
-                    b2fixture.restitution = restitution
-                    b2body.CreateFixture(b2fixture)
-
-                motionsprite = tm.display.Sprite(image, width, height)
+                if (!motionsprite?)
+                    motionsprite = tm.display.Sprite(image, width, height)
                 animtmp = animlist[animnum]
                 motionsprite.frameIndex = animtmp[1][0]
 
@@ -434,7 +407,6 @@ addObject = (param, parent = undefined)->
                 motionsprite.boundingType = "rect"
             else
                 motionsprite = tm.display.Sprite()
-                motionsprite.visible = true
 
             # スプライトを表示
             motionsprite.addChildTo(_scenes[scene])
@@ -763,6 +735,9 @@ removeObject = (motionObj)->
     if (ret == false)
         return
 
+    if (motionObj.collider._uniqueID != motionObj._uniqueID)
+        removeObject(motionObj.collider)
+
     if (typeof(motionObj.destructor) == 'function')
         motionObj.destructor()
 
@@ -905,8 +880,8 @@ createVirtualGamepad = (param)->
 #**********************************************************************
 # バーチャルゲームパッドの表示制御
 #**********************************************************************
-dispVirtualGamepad = (flag)->
-    _VGAMEPADOBJ.visible = flag
+dispVirtualGamepad = (flag)-> if (_VGAMEPADOBJ?)
+    _VGAMEPADOBJ.visible = flag if (_VGAMEOBJ?)
     for obj in _VGAMEBUTTON
         obj.visible = flag
 

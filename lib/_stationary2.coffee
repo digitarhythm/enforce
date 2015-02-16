@@ -109,16 +109,17 @@ class _stationary
                     @y += @ys
                     @z += @zs
 
-                    if (@collider? && @collider.sprite?)
-                        if (@collider._uniqueID != @_uniqueID)
-                            @collider.sprite.visible = false
-                            @collider.visible = false
-                            @collider._xback = @collider.x = @sprite.x + @_diffx - @collider._offsetx
-                            @collider._yback = @collider.y = @sprite.y + @_diffy + @collider._offsety
-
                     if (@rotation > 359)
                         @rotation = @rotation % 360
                     @sprite.rotation = @rotation
+
+                    if (@collider? && @collider.sprite?)
+                        if (@collider._uniqueID != @_uniqueID)
+                            @collider.sprite.visible = DEBUG
+                            @collider.visible = DEBUG
+                            @collider.opacity = if (DEBUG) then 0.5 else 1.0
+                            @collider._xback = @collider.x = @sprite.x - @collider._offsetx
+                            @collider._yback = @collider.y = @sprite.y + @collider._offsety
 
                     if (@opacity != @sprite.alpha)
                         if (@sprite.alpha == @opacity_back)
@@ -372,14 +373,18 @@ class _stationary
     # スプライトをfadeInさせる
     #***************************************************************
     fadeIn:(time)->
-        @sprite.timeline.to({alpha:1.0}, time, 0)
+        @sprite.tweener.to
+            alpha: 1.0
+        , time
         return @
 
     #***************************************************************
     # スプライトをフェイドアウトする
     #***************************************************************
     fadeOut:(time)->
-        @sprite.timeline.to({alpha:0.0}, time, 0)
+        @sprite.tweener.to
+            alpha: 0.0
+        , time
         return @
 
     #***************************************************************
@@ -391,10 +396,40 @@ class _stationary
     # ライムラインをクリアする
     #***************************************************************
     clear:->
+        @sprite.tweener.clear()
+        return @
 
-    moveTo:(x, y, time)->
-        @sprite.timeline.to({x: x, y: y}, time, 0)
+    #***************************************************************
+    #指定した座標に指定した時間で移動させる（絶対座標）
+    #***************************************************************
+    moveTo:(x, y, time, easing = "easeOutQuad")->
+        @sprite.tweener.to
+            x: x
+            y: y
+        , time
+        , easing
+        return @
 
-    moveByo:(x, y, time)->
-        @sprite.timeline.by({x: x, y: y}, time, 0)
+    #***************************************************************
+    #指定した座標に指定した時間で移動させる（相対座標）
+    #***************************************************************
+    moveBy:(x, y, time, easing = "easeOutQuad")->
+        @sprite.tweener.by
+            x: x
+            y: y
+        , time
+        , easing
+        return @
 
+    #***************************************************************
+    #指定した時間待つ
+    #***************************************************************
+    delay:(time)->
+        @sprite.tweener.wait(time)
+        return @
+
+    #***************************************************************
+    # 指定した処理を実行する
+    #***************************************************************
+    then:(func)->
+        func()
