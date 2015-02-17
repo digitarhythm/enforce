@@ -317,7 +317,7 @@ debugwrite = (param)->
         fontcolor = if (param.fontcolor?) then param.fontcolor else "red"
         _DEBUGLABEL.fontSize = fontsize
         _DEBUGLABEL.text = labeltext
-        _DEBUGLABEL.fontColor = fontcolor
+        _DEBUGLABEL.fillStyle = fontcolor
 debugclear =->
     if (DEBUG == true)
         _DEBUGLABEL.text = ""
@@ -464,7 +464,7 @@ addObject = (param, parent = undefined)->
             motionsprite.visible = visible
             motionsprite.width = width
             motionsprite.height = height
-            motionsprite.color = color
+            motionsprite.fillStyle = color
             motionsprite.text = labeltext
             motionsprite.fontSize = fontsize
             motionsprite.fontFamily = 'Arial'

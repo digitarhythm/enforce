@@ -176,9 +176,9 @@ class _stationary
                     @sprite.height = @height
                     @sprite.fontSize = @fontsize
                     @sprite.fontFamily = 'Arial'
-                    @sprite.color = @color
+                    @sprite.fillStyle = @color
                     @sprite.text = @labeltext
-                    @sprite.textAlign = @textalign
+                    @sprite.setAlign(@textalign)
 
                 when PRIMITIVE, COLLADA
                     if (@lastvisible != @visible)
@@ -432,4 +432,9 @@ class _stationary
     # 指定した処理を実行する
     #***************************************************************
     then:(func)->
-        func()
+        @sprite.tweener.call(func)
+        return @
+
+
+
+
