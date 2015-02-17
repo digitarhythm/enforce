@@ -363,8 +363,7 @@ class _stationary
             if (!motionObj? || !motionObj.collider? || !motionObj.collider.sprite? || !@collider? || !@collider.sprite?)
                 ret = false
             else if (@intersectFlag == true && motionObj.intersectFlag == true)
-                if (!@rigid)
-                    ret = @collider.sprite.intersect(motionObj.collider.sprite)
+                ret = @collider.sprite.intersect(motionObj.collider.sprite)
             else
                 ret = false
         else if (@_type == MAP || @_type == EXMAP)
