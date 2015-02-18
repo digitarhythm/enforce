@@ -49,6 +49,8 @@ class _stationary
             @_offsetx = initparam['offsetx']
             @_offsety = initparam['offsety']
 
+            @animnum_back = @animnum
+
             if (!@collider?)
                 @collider = @
 
@@ -134,6 +136,9 @@ class _stationary
                     @sprite.height = @height
 
                     if (@_type == SPRITE && @animlist?)
+                        if (@animnum_back != @animnum)
+                            @_dispframe = 0
+                            @animnum_back = @animnum
                         animtmp = @animlist[@animnum]
                         animtime = animtmp[0]
                         animpattern = animtmp[1]
