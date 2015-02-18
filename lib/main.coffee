@@ -872,8 +872,10 @@ removeObject = (motionObj)->
 
     if (motionObj.rigid)
         object.motionObj.sprite.destroy()
-    else if (motionObj._type == LABEL || motionObj._type == SPRITE || motionObj._type == PRIMITIVE || motionObj._type == COLLADA)
-        _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
+    else
+        switch (motionObj._type)
+            when SPRITE, LABEL, MAP, EXMAP, PRIMITIVE, COLLADA
+                _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
 
     object.motionObj.sprite = undefined
     object.motionObj = undefined
