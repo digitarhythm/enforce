@@ -109,6 +109,14 @@ RENDERER            = undefined
 CAMERA              = undefined
 LIGHT               = undefined
 
+# デバイスサイズ
+_frame = getBounds()
+DEVICE_WIDTH = _frame[0]
+DEVICE_HEIGHT = _frame[1]
+if (!SCREEN_WIDTH? && !SCREEN_HEIGHT?)
+    SCREEN_WIDTH = DEVICE_WIDTH
+    SCREEN_HEIGHT = DEVICE_HEIGHT
+
 # メディアデータ用配列
 ASSETS              = []
 
@@ -368,6 +376,7 @@ addObject = (param, parent = undefined)->
     collider = if (param['collider']?) then param['collider'] else undefined
     offsetx = if (param['offsetx']?) then param['offsetx'] else 0
     offsety = if (param['offsety']?) then param['offsety'] else 0
+    bgcolor = if (param['bgcolor']?) then param['bgcolor'] else 'transparent'
     map = if (param['map']?) then param['map'] else undefined
     mapcollision = if (param['mapcollision']?) then param['mapcollision'] else undefined
 
@@ -825,6 +834,7 @@ createVirtualGamepad = (param)->
         if (param.button?) then button = param.button else button = 0
         if (param.buttonscale?) then buttonscale = param.buttonscale else buttonscale = 1
         if (param.coord?) then coord = param.coord else coord = []
+        if (param.visible?) then visible = param.visible else visible = true
     else
         scale = 1.0
         x = (100 / 2) * scale
@@ -832,6 +842,7 @@ createVirtualGamepad = (param)->
         button = 2
         buttonscale = 1
         coord = []
+        visible = true
 
     if (button > 6)
         button = 6
@@ -853,6 +864,7 @@ createVirtualGamepad = (param)->
             scaleX: scale
             scaleY: scale
             scene: _SYSTEMSCENE
+        _VGAMEPADOBJ.visible = visible
 
         for i in [0...button]
             c = coord[i]
@@ -875,13 +887,14 @@ createVirtualGamepad = (param)->
                     [100, [1]]
                 ]
                 scene: _SYSTEMSCENE
+            obj.visible = visible
             _VGAMEBUTTON.push(obj)
 
 #**********************************************************************
 # バーチャルゲームパッドの表示制御
 #**********************************************************************
-dispVirtualGamepad = (flag)-> if (_VGAMEPADOBJ?)
-    _VGAMEPADOBJ.visible = flag if (_VGAMEOBJ?)
+dispVirtualGamepad = (flag)->
+    _VGAMEPADOBJ.visible = flag if (_VGAMEPADOBJ?)
     for obj in _VGAMEBUTTON
         obj.visible = flag
 

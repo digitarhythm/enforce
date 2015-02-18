@@ -58,7 +58,6 @@ class _stationary
             @sprite.scaleY = @scaleY
             @sprite.scaleZ = @scaleZ
 
-            @sprite.visible = @visible
             @sprite.alpha = @opacity
 
             @sprite.setInteractive(true)

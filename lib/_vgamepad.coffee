@@ -4,7 +4,6 @@ class _vgamepad extends _stationary
     #**************************
     constructor:(initparam)->
         super(initparam)
-        @visible = true
 
         @input = []
         @input.up = false

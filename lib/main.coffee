@@ -119,6 +119,14 @@ RENDERER            = undefined
 CAMERA              = undefined
 LIGHT               = undefined
 
+# デバイスサイズ
+_frame = getBounds()
+DEVICE_WIDTH = _frame[0]
+DEVICE_HEIGHT = _frame[1]
+if (!SCREEN_WIDTH? && !SCREEN_HEIGHT?)
+    SCREEN_WIDTH = DEVICE_WIDTH
+    SCREEN_HEIGHT = DEVICE_HEIGHT
+
 # 動作状況
 ACTIVATE            = true
 
@@ -214,6 +222,7 @@ window.onload = ->
         _DEBUGLABEL.color = "white"
         _DEBUGLABEL.font = "10px 'Arial'"
         _scenes[DEBUGSCENE].addChild(_DEBUGLABEL)
+        ###
         _FPSLABEL = new Label()
         _FPSLABEL.x = 0
         _FPSLABEL.y = SCREEN_HEIGHT - 24
@@ -224,6 +233,7 @@ window.onload = ->
         _FPSLABEL.textAlign = "center"
         _FPSLABEL.color = "gray"
         _scenes[DEBUGSCENE].addChild(_FPSLABEL)
+        ###
 
     if (WEBGL && isWebGL())
         # 3Dシーンを生成
@@ -272,6 +282,7 @@ window.onload = ->
         # フレーム処理（enchant任せ）
         rootScene.addEventListener 'enterframe', (e)->
             # FPS表示（デバッグモード時のみ）
+            ###
             if (DEBUG)
                 __total += parseFloat(core.actualFps.toFixed(2))
                 __count++
@@ -281,6 +292,7 @@ window.onload = ->
                     __count = 0
                     __limittimefps = parseFloat(LAPSEDTIME) + 1.0
                     _FPSLABEL.text =fpsnum
+            ###
 
             # ジョイパッド処理
             if (typeof gamepadProcedure == 'function')
@@ -415,6 +427,7 @@ addObject = (param, parent = undefined)->
     collider = if (param['collider']?) then param['collider'] else undefined
     offsetx = if (param['offsetx']?) then param['offsetx'] else 0
     offsety = if (param['offsety']?) then param['offsety'] else 0
+    bgcolor = if (param['bgcolor']?) then param['bgcolor'] else 'transparent'
 
     if (motionObj == null)
         motionObj = undefined
@@ -444,12 +457,12 @@ addObject = (param, parent = undefined)->
 
             if (!motionsprite?)
                 motionsprite = new Sprite()
+                # TimeLineを時間ベースにする
+                motionsprite.tl.setTimeBased()
+
 
             if (scene < 0)
                 scene = GAMESCENE_SUB1
-
-            # TimeLineを時間ベースにする
-            motionsprite.tl.setTimeBased()
 
             if (animlist?)
                 animtmp = animlist[animnum]
@@ -956,6 +969,7 @@ createVirtualGamepad = (param)->
         if (param.button?) then button = param.button else button = 0
         if (param.buttonscale?) then buttonscale = param.buttonscale else buttonscale = 1
         if (param.coord?) then coord = param.coord else coord = []
+        if (param.visible?) then visible = param.visible else visible = true
     else
         scale = 1.0
         x = (100 / 2) * scale
@@ -963,6 +977,7 @@ createVirtualGamepad = (param)->
         button = 0
         buttonscale = 1
         coord = []
+        visible = true
 
     if (button > 6)
         button = 6
@@ -984,6 +999,7 @@ createVirtualGamepad = (param)->
             scaleX: scale
             scaleY: scale
             scene: _SYSTEMSCENE
+        _VGAMEPADOBJ.visible = visible
 
         for i in [0...button]
             c = coord[i]
@@ -1006,6 +1022,7 @@ createVirtualGamepad = (param)->
                     [100, [1]]
                 ]
                 scene: _SYSTEMSCENE
+            obj.visible = visible
             _VGAMEBUTTON.push(obj)
 
 #**********************************************************************

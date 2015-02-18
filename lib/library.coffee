@@ -1,6 +1,6 @@
 # random
 rand = (n)->
-	return Math.floor(Math.random() * (n + 1))
+	return parseInt(Math.floor(Math.random() * (n + 1)))
 
 # debug write
 JSLog = (a, b...)-> 
