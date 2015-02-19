@@ -876,7 +876,7 @@ removeObject = (motionObj)->
         object.motionObj.sprite.destroy()
     else
         switch (motionObj._type)
-            when SPRITE, LABEL, MAP, EXMAP, PRIMITIVE, COLLADA
+            when CONTROL, SPRITE, LABEL, MAP, EXMAP, PRIMITIVE, COLLADA
                 _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
 
     object.motionObj.sprite = undefined
