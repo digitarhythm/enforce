@@ -296,8 +296,10 @@ tm.main ->
     core.fitWindow()
     MEDIALIST['_notice'] = 'lib/notice.png'
     MEDIALIST['_execbutton'] = 'lib/execbutton.png'
-    MEDIALIST['_pad'] = 'lib/pad.png'
-    MEDIALIST['_button'] = 'lib/button.png'
+    MEDIALIST['_pad_w'] = 'lib/pad_w.png'
+    MEDIALIST['_pad_b'] = 'lib/pad_b.png'
+    MEDIALIST['_button_w'] = 'lib/button_w.png'
+    MEDIALIST['_button_b'] = 'lib/button_b.png'
     core.replaceScene customLoadingScene(
         assets: MEDIALIST
         nextScene: mainScene
@@ -839,6 +841,7 @@ createVirtualGamepad = (param)->
         if (param.buttonscale?) then buttonscale = param.buttonscale else buttonscale = 1
         if (param.coord?) then coord = param.coord else coord = []
         if (param.visible?) then visible = param.visible else visible = true
+        if (param.kind?) then kind = param.kind else kind = 0
     else
         scale = 1.0
         x = (100 / 2) * scale
@@ -847,6 +850,16 @@ createVirtualGamepad = (param)->
         buttonscale = 1
         coord = []
         visible = true
+        kind = 0
+
+    # パッドの種類を設定
+    switch (kind)
+        when 0
+            padname = "_pad_w"
+            buttonname = "_button_w"
+        when 1
+            padname = "_pad_b"
+            buttonname = "_button_b"
 
     if (button > 6)
         button = 6
@@ -854,7 +867,7 @@ createVirtualGamepad = (param)->
     if (!_VGAMEPADOBJ?)
         _VGAMEPADOBJ = addObject
             motionObj: _vgamepad
-            image: '_pad'
+            image: padname
             x: x
             y: y
             width: 100
@@ -877,7 +890,7 @@ createVirtualGamepad = (param)->
                 c[0] = SCREEN_WIDTH - ((64 / 2) * buttonscale)
                 c[1] = (64 * buttonscale) * i + (32 * buttonscale)
             obj = addObject
-                image: '_button'
+                image: buttonname
                 motionObj: _vgamebutton
                 width: 64
                 height: 64
