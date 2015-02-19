@@ -182,7 +182,7 @@ class _stationary
                     @sprite.fontFamily = 'Arial'
                     @sprite.fillStyle = @color
                     @sprite.text = @labeltext
-                    @sprite.setAlign(@textalign)
+                    @sprite.align = @textalign
 
                 when PRIMITIVE, COLLADA
                     if (@lastvisible != @visible)

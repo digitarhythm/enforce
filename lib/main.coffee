@@ -271,6 +271,14 @@ window.onload = ->
         rootScene.backgroundColor = BGCOLOR
         WEBGL = false
 
+    if (DEBUG == true)
+        core.debug()
+    else
+        core.start()
+
+#******************************************************************************
+# 起動時の処理
+#******************************************************************************
     core.onload = ->
         # ゲーム用オブジェクトを指定された数だけ確保
         for i in [0...OBJECTNUM]
@@ -360,11 +368,6 @@ window.onload = ->
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
-
-    if (DEBUG == true)
-        core.debug()
-    else
-        core.start()
 
 debugwrite = (param)->
     if (DEBUG)

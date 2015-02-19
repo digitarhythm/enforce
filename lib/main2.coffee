@@ -463,7 +463,6 @@ addObject = (param, parent = undefined)->
             # ラベルを生成
             motionsprite = tm.display.Label(labeltext)
             # 値を代入
-            motionsprite.backgroundColor = "transparent"
             motionsprite.setOrigin(0.5, 0.5)
             motionsprite.setPosition(x, y)
             motionsprite.x = Math.floor(x)
@@ -478,8 +477,9 @@ addObject = (param, parent = undefined)->
             motionsprite.fillStyle = color
             motionsprite.text = labeltext
             motionsprite.fontSize = fontsize
+            motionsprite.align = textalign
             motionsprite.fontFamily = 'Arial'
-            motionsprite.setAlign(textalign)
+            motionsprite.setBaseline("middle")
             # スプライトを表示
             motionsprite.addChildTo(_scenes[scene])
             # 動きを定義したオブジェクトを生成する
