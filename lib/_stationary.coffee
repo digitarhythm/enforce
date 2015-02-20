@@ -73,19 +73,19 @@ class _stationary
 
             @sprite.ontouchstart = (e)=>
                 pos = {x:e.x, y:e.y}
-                if (typeof @touchesBegan == 'function')
+                if (typeof @touchesBegan == 'function' && @visible)
                     @touchesBegan(pos)
             @sprite.ontouchmove = (e)=>
                 pos = {x:e.x, y:e.y}
-                if (typeof @touchesMoved == 'function')
+                if (typeof @touchesMoved == 'function' && @visible)
                     @touchesMoved(pos)
             @sprite.ontouchend = (e)=>
                 pos = {x:e.x, y:e.y}
-                if (typeof @touchesEnded == 'function')
+                if (typeof @touchesEnded == 'function' && @visible)
                     @touchesEnded(pos)
             @sprite.ontouchcancel = (e)=>
                 pos = {x:e.x, y:e.y}
-                if (typeof @touchesCanceled == 'function')
+                if (typeof @touchesCanceled == 'function' && @visible)
                     @touchesCanceled(pos)
 
             @intersectFlag = true
@@ -448,14 +448,14 @@ class _stationary
     # スプライトをfadeInさせる
     #***************************************************************
     fadeIn:(time)->
-        @sprite.tl.fadeIn(time)
+        @sprite.tl.fadeIn(time * 0.5)
         return @
 
     #***************************************************************
     # スプライトをフェイドアウトする
     #***************************************************************
     fadeOut:(time)->
-        @sprite.tl.fadeOut(time)
+        @sprite.tl.fadeOut(time * 0.5)
         return @
 
     #***************************************************************
@@ -475,7 +475,7 @@ class _stationary
     #***************************************************************
     moveTo:(x, y, time, easing = enchant.Easing.QUAD_EASEINOUT)->
         @_reversePosFlag = true
-        @sprite.tl.moveTo(x - @_diffx, y - @_diffy, time, easing).then =>
+        @sprite.tl.moveTo(x - @_diffx, y - @_diffy, time * 0.5, easing).then =>
             @_reversePosFlag = false
         return @
 
@@ -484,7 +484,7 @@ class _stationary
     #***************************************************************
     moveBy:(x, y, time, easing = enchant.Easing.QUAD_EASEINOUT)->
         @_reversePosFlag = true
-        @sprite.tl.moveBy(x + @_diffx, y + @_diffy, time, easing).then =>
+        @sprite.tl.moveBy(x + @_diffx, y + @_diffy, time * 0.5, easing).then =>
             @_reversePosFlag = false
         return @
 
@@ -492,7 +492,7 @@ class _stationary
     # 指定した時間だけ待つ
     #***************************************************************
     delay:(time)->
-        @sprite.tl.delay(time)
+        @sprite.tl.delay(time * 0.5)
         return @
 
     #***************************************************************

@@ -72,8 +72,7 @@ PADAXES             = []
 PADAXES[0]          = [0, 0]
 ANALOGSTICK         = []
 ANALOGSTICK[0]      = [0, 0, 0, 0]
-_VGAMEPADOBJ        = undefined
-_VGAMEBUTTON        = []
+_VGAMEPADCONTROL    = undefined
 
 # Frame Per Seconds
 if (!FPS?)
@@ -187,6 +186,10 @@ window.onload = ->
         MEDIALIST['_execbutton'] = 'lib/execbutton.png'
         MEDIALIST['_pad_w'] = 'lib/pad_w.png'
         MEDIALIST['_pad_b'] = 'lib/pad_b.png'
+        MEDIALIST['_apad_w'] = 'lib/apad_w.png'
+        MEDIALIST['_apad_b'] = 'lib/apad_b.png'
+        MEDIALIST['_apad2_w'] = 'lib/apad2_w.png'
+        MEDIALIST['_apad2_b'] = 'lib/apad2_b.png'
         MEDIALIST['_button_w'] = 'lib/button_w.png'
         MEDIALIST['_button_b'] = 'lib/button_b.png'
         mediaarr = []
@@ -254,8 +257,6 @@ window.onload = ->
         #alight = new AmbientLight()
         #alight.directionX = 0
         #alight.directionY = 100
-        #alight.directionZ = 0
-        #alight.color = [1.0, 1.0, 1.0]
         #rootScene3d.setAmbientLight(alight)
 
         # カメラ生成
@@ -314,46 +315,46 @@ window.onload = ->
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
 
-            if (core.input.a || core.input.space || (_VGAMEBUTTON[0]? && _VGAMEBUTTON[0].push))
+            if (core.input.a || core.input.space || (_VGAMEPADCONTROL.input.buttons[0]? && _VGAMEPADCONTROL.input.buttons[0]))
                 PADBUTTONS[0][0] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][0] = false
 
-            if (core.input.b || (_VGAMEBUTTON[1]? && _VGAMEBUTTON[1].push))
+            if (core.input.b || (_VGAMEPADCONTROL.input.buttons[1]? && _VGAMEPADCONTROL.input.buttons[1]))
                 PADBUTTONS[0][1] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][1] = false
 
-            if (core.input.c || (_VGAMEBUTTON[2]? && _VGAMEBUTTON[2].push))
+            if (core.input.c || (_VGAMEPADCONTROL.input.buttons[2]? && _VGAMEPADCONTROL.input.buttons[2]))
                 PADBUTTONS[0][2] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][2] = false
 
-            if (core.input.d || (_VGAMEBUTTON[3]? && _VGAMEBUTTON[3].push))
+            if (core.input.d || (_VGAMEPADCONTROL.input.buttons[3]? && _VGAMEPADCONTROL.input.buttons[3]))
                 PADBUTTONS[0][3] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][3] = false
 
-            if (core.input.e || (_VGAMEBUTTON[4]? && _VGAMEBUTTON[4].push))
+            if (core.input.e || (_VGAMEPADCONTROL.input.buttons[4]? && _VGAMEPADCONTROL.input.buttons[4]))
                 PADBUTTONS[0][4] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][4] = false
 
-            if (core.input.f || (_VGAMEBUTTON[5]? && _VGAMEBUTTON[5].push))
+            if (core.input.f || (_VGAMEPADCONTROL.input.buttons[5]? && _VGAMEPADCONTROL.input.buttons[5]))
                 PADBUTTONS[0][5] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][5] = false
 
-            if (core.input.left || (_VGAMEPADOBJ? && _VGAMEPADOBJ.input.left))
+            if (core.input.left || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.left))
                 PADAXES[0][HORIZONTAL] = -1
-            else if (core.input.right || (_VGAMEPADOBJ? && _VGAMEPADOBJ.input.right))
+            else if (core.input.right || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.right))
                 PADAXES[0][HORIZONTAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][HORIZONTAL] = 0
 
-            if (core.input.up || (_VGAMEPADOBJ? && _VGAMEPADOBJ.input.up))
+            if (core.input.up || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.up))
                 PADAXES[0][VERTICAL] = -1
-            else if (core.input.down || (_VGAMEPADOBJ? && _VGAMEPADOBJ.input.down))
+            else if (core.input.down || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.down))
                 PADAXES[0][VERTICAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
@@ -970,86 +971,45 @@ resumeGame =->
 #**********************************************************************
 createVirtualGamepad = (param)->
     if (param?)
-        if (param.scale?) then scale = param.scale else scale = 1
-        if (param.x?) then x = param.x else x = (100 / 2) * scale
-        if (param.y?) then y = param.y else y = SCREEN_HEIGHT - ((100 / 2) * scale)
-        if (param.button?) then button = param.button else button = 0
-        if (param.buttonscale?) then buttonscale = param.buttonscale else buttonscale = 1
-        if (param.coord?) then coord = param.coord else coord = []
-        if (param.visible?) then visible = param.visible else visible = true
-        if (param.kind?) then kind = param.kind else kind = 0
-    else
-        scale = 1.0
-        x = (100 / 2) * scale
-        y = SCREEN_HEIGHT - ((100 / 2) * scale)
-        button = 0
-        buttonscale = 1
-        coord = []
-        visible = true
-        kind = 0
+        scale       = if (param.scale?)         then param.scale        else 1
+        x           = if (param.x?)             then param.x            else (100 / 2) * scale
+        y           = if (param.y?)             then param.y            else SCREEN_HEIGHT - ((100 / 2) * scale)
+        visible     = if (param.visible?)       then param.visible      else true
+        kind        = if (param.kind?)          then param.kind         else 0
+        analog      = if (param.analog?)        then param.analog       else false
 
-    # パッドの種類を設定
-    switch (kind)
-        when 0
-            padname = "_pad_w"
-            buttonname = "_button_w"
-        when 1
-            padname = "_pad_b"
-            buttonname = "_button_b"
+        button      = if (param.button?)        then param.button       else 0
+        buttonscale = if (param.buttonscale?)   then param.buttonscale  else 1
+        coord       = if (param.coord?)         then param.coord        else []
+    else
+        param = []
+        scale       = param.scale       = 1.0
+        x           = param.x           = (100 / 2) * scale
+        y           = param.y           = SCREEN_HEIGHT - ((100 / 2) * scale)
+        visible     = param.visible     = true
+        kind        = param.kind        = 0
+        analog      = param.analog      = false
+
+        button      = param.button      = 0
+        buttonscale = param.buttonscale = 1
+        coord       = param.coord       = []
 
     if (button > 6)
-        button = 6
+        button = param.button = 6
 
-    if (!_VGAMEPADOBJ?)
-        _VGAMEPADOBJ = addObject
-            motionObj: _vgamepad
-            image: padname
+    if (!_VGAMEPADCONTROL?)
+        _VGAMEPADCONTROL = addObject
             x: x
             y: y
-            width: 100
-            height: 100
-            animlist: [
-                [100, [0]]
-                [100, [1]]
-                [100, [2]]
-            ]
-            visible: false
-            scaleX: scale
-            scaleY: scale
-            scene: _SYSTEMSCENE
-        _VGAMEPADOBJ.visible = visible
-
-        for i in [0...button]
-            c = coord[i]
-            if (!c?)
-                c = []
-                c[0] = SCREEN_WIDTH - ((64 / 2) * buttonscale)
-                c[1] = (64 * buttonscale) * i + (32 * buttonscale)
-            obj = addObject
-                image: buttonname
-                motionObj: _vgamebutton
-                width: 64
-                height: 64
-                x: c[0]
-                y: c[1]
-                visible: false
-                scaleX: buttonscale
-                scaleY: buttonscale
-                animlist: [
-                    [100, [0]]
-                    [100, [1]]
-                ]
-                scene: _SYSTEMSCENE
-            obj.visible = visible
-            _VGAMEBUTTON.push(obj)
+            type: CONTROL
+            motionObj: _vgamepadcontrol
+        _VGAMEPADCONTROL.createGamePad(param)
 
 #**********************************************************************
 # バーチャルゲームパッドの表示制御
 #**********************************************************************
 dispVirtualGamepad = (flag)->
-    _VGAMEPADOBJ.visible = flag if (_VGAMEPADOBJ?)
-    for obj in _VGAMEBUTTON
-        obj.visible = flag
+    _VGAMEPADCONTROL.setVisible(flag)
 
 #**********************************************************************
 #**********************************************************************

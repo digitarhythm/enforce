@@ -66,19 +66,19 @@ class _stationary
 
             @sprite.onpointingstart = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesBegan == 'function')
+                if (typeof @touchesBegan == 'function' && @visible)
                     @touchesBegan(pos)
             @sprite.onpointingmove = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesMoved == 'function')
+                if (typeof @touchesMoved == 'function' && @visible)
                     @touchesMoved(pos)
             @sprite.onpointingend = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesEnded == 'function')
+                if (typeof @touchesEnded == 'function' && @visible)
                     @touchesEnded(pos)
             @sprite.onpointingcancel = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesCanceled == 'function')
+                if (typeof @touchesCanceled == 'function' && @visible)
                     @touchesCanceled(pos)
 
             @intersectFlag = true
@@ -360,7 +360,8 @@ class _stationary
     # タッチイベント登録
     #***************************************************************
     addTarget:(func)->
-        @sprite.addEventListener 'pointingend', (e)=>
+        #@sprite.addEventListener 'pointingend', (e)=>
+        @sprite.addEventListener 'touchstart', (e)=>
             func(e.app.pointing.x, e.app.pointing.y)
 
     #***************************************************************
