@@ -79,7 +79,6 @@ class _vgamepadcontrol extends _stationary
             y           = if (param.y?)             then param.y            else SCREEN_HEIGHT - ((100 / 2) * scale)
             visible     = if (param.visible?)       then param.visible      else true
             kind        = if (param.kind?)          then param.kind         else 0
-            analog      = if (param.analog?)        then param.analog       else false
 
             image       = if (param.image?)         then param.image        else undefined
             buttonscale = if (param.buttonscale?)   then param.buttonscale  else 1
@@ -88,17 +87,11 @@ class _vgamepadcontrol extends _stationary
         # パッドの色を設定
         switch (kind)
             when 0
-                if (analog)
-                    padname = "_apad_w"
-                    padname2 = "_apad2_w"
-                else
-                    padname = "_pad_w"
+                padname = "_apad_w"
+                padname2 = "_apad2_w"
             when 1
-                if (analog)
-                    padname = "_apad_b"
-                    padname2 = "_apad2_b"
-                else
-                    padname = "_pad_b"
+                padname = "_apad_b"
+                padname2 = "_apad2_b"
 
         if (!image?)
             switch (kind)
@@ -111,23 +104,22 @@ class _vgamepadcontrol extends _stationary
         else
             buttonname = image
 
-        if (analog)
-            @vgamecursor = addObject
-                image: padname2
-                x: @x
-                y: @y
-                width: 40
-                height: 40
-                scaleX: scale
-                scaleY: scale
-                visible: false
-                animlist: [
-                    [100, [0]]
-                ]   
-                scene: _SYSTEMSCENE
+        @vgamecursor = addObject
+            image: padname2
+            x: @x
+            y: @y
+            width: 40
+            height: 40
+            scaleX: scale
+            scaleY: scale
+            visible: false
+            animlist: [
+                [100, [0]]
+            ]   
+            scene: _SYSTEMSCENE
 
         @vgamepad = addObject
-            motionObj: if (analog) then _vanalogpad else _vdigipad
+            motionObj: _vanalogpad
             image: padname
             x: @x
             y: @y
