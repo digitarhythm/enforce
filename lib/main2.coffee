@@ -241,35 +241,45 @@ tm.main ->
 
             key = core.keyboard
                 
-            if (key.getKey("z") || (_VGAMEPADCONTROL.input.buttons[0]? && _VGAMEPADCONTROL.input.buttons[0]))
+            if (key.getKey("z") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[0]? && _VGAMEPADCONTROL.input.buttons[0]))
                 PADBUTTONS[0][0] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][0] = false
 
-            if (key.getKey("x") || (_VGAMEPADCONTROL.input.buttons[1]? && _VGAMEPADCONTROL.input.buttons[1]))
+            if (key.getKey("x") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[1]? && _VGAMEPADCONTROL.input.buttons[1]))
                 PADBUTTONS[0][1] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][1] = false
 
-            if (key.getKey("c") || (_VGAMEPADCONTROL.input.buttons[2]? && _VGAMEPADCONTROL.input.buttons[2]))
+            if (key.getKey("c") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[2]? && _VGAMEPADCONTROL.input.buttons[2]))
                 PADBUTTONS[0][2] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][2] = false
 
-            if (key.getKey("v") || (_VGAMEPADCONTROL.input.buttons[3]? && _VGAMEPADCONTROL.input.buttons[3]))
+            if (key.getKey("v") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[3]? && _VGAMEPADCONTROL.input.buttons[3]))
                 PADBUTTONS[0][3] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][3] = false
 
-            if (key.getKey("b") || (_VGAMEPADCONTROL.input.buttons[4]? && _VGAMEPADCONTROL.input.buttons[4]))
+            if (key.getKey("b") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[4]? && _VGAMEPADCONTROL.input.buttons[4]))
                 PADBUTTONS[0][4] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][4] = false
 
-            if (key.getKey("n") || (_VGAMEPADCONTROL.input.buttons[5]? && _VGAMEPADCONTROL.input.buttons[5]))
+            if (key.getKey("n") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[5]? && _VGAMEPADCONTROL.input.buttons[5]))
                 PADBUTTONS[0][5] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][5] = false
+
+            if (key.getKey("m") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[6]? && _VGAMEPADCONTROL.input.buttons[6]))
+                PADBUTTONS[0][6] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][6] = false
+
+            if (key.getKey("comma") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[7]? && _VGAMEPADCONTROL.input.buttons[7]))
+                PADBUTTONS[0][7] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][7] = false
 
             if (key.getKey("left") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.left))
                 PADAXES[0][HORIZONTAL] = -1
@@ -375,7 +385,7 @@ addObject = (param, parent = undefined)->
     texture = if (param['texture']?) then param['texture'] else undefined
     fontsize = if (param['fontsize']?) then param['fontsize'] else '16px'
     color = if (param['color']?) then param['color'] else 'white'
-    labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
+    labeltext = if (param['labeltext']?) then param['labeltext'].replace(/<br>/ig, "\n") else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
     active = if (param['active']?) then param['active'] else true
     kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
@@ -846,6 +856,7 @@ createVirtualGamepad = (param)->
         analog      = if (param.analog?)        then param.analog       else false
 
         button      = if (param.button?)        then param.button       else 0
+        image       = if (param.image?)         then param.image        else undefined
         buttonscale = if (param.buttonscale?)   then param.buttonscale  else 1
         coord       = if (param.coord?)         then param.coord        else []
     else
@@ -858,6 +869,7 @@ createVirtualGamepad = (param)->
         analog      = param.analog      = false
 
         button      = param.button      = 0
+        image       = param.image       = undefined
         buttonscale = param.buttonscale = 1
         coord       = param.coord       = []
 
@@ -876,7 +888,7 @@ createVirtualGamepad = (param)->
 # バーチャルゲームパッドの表示制御
 #**********************************************************************
 dispVirtualGamepad = (flag)->
-    _VGAMEPADCONTROL.setVisible(flag)
+    _VGAMEPADCONTROL.setVisible(flag) if (_VGAMEPADCONTROL?)
 
 #**********************************************************************
 #**********************************************************************

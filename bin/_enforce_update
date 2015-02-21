@@ -1,44 +1,52 @@
-#!/bin/bash
+#!/usr/bin/php
+<?php
+$ini = parse_ini_file("lib/config.ini", true);
+$library = $ini['ENVIRON']['LIBRARY'];
+$eftmp = dirname(__FILE__);
 
-CWD=`pwd`
-ENF=$(cd $(dirname $0)/..;pwd)
-PROJ=$CWD
+// enforce system directory
+$ENF = realpath("$eftmp/..");
+// working directory
+$PROJ = getcwd();
 
-# フレームワークファイルのコピー
-if [ ! -f $PROJ/index.php ]; then
-	echo "ERROR: This project is static mode."
-	exit
-fi
+// directory make
+exec("mkdir -p $PROJ/lib");
+exec("mkdir -p $PROJ/media/picture");
+exec("mkdir -p $PROJ/media/sound");
+exec("mkdir -p $PROJ/media/model");
+exec("mkdir -p $PROJ/src");
+exec("mkdir -p $PROJ/plugins");
+exec("mkdir -p $PROJ/extlib");
+exec("mkdir -p $PROJ/sysobject");
+exec("mkdir -p $PROJ/usrobject");
 
-mkdir -p $PROJ/lib
-mkdir -p $PROJ/media
-mkdir -p $PROJ/src
-mkdir -p $PROJ/plugins
-mkdir -p $PROJ/extlib
-mkdir -p $PROJ/sysobject
-mkdir -p $PROJ/usrobject
+// system file copy
+exec("cp -af $ENF/index.php $PROJ/");
+exec("cp -af $ENF/codit $PROJ/");
+exec("cp -af $ENF/extlib/* $PROJ/extlib/");
+exec("cp -af $ENF/lib/*.png $PROJ/lib/");
+exec("cp -af $ENF/media/picture/* $PROJ/media/picture/");
+exec("cp -af $ENF/media/sound/* $PROJ/media/sound/");
+exec("cp -af $ENF/media/model/* $PROJ/media/model/");
 
-cp -af $ENF/index.php $PROJ/
-cp -af $ENF/codit $PROJ/
-cp -af $ENF/extlib/* $PROJ/extlib/
-cp -af $ENF/lib/*.png $PROJ/lib/
-cp -af $ENF/media/picture/* $PROJ/media/picture/
-cp -af $ENF/media/sound/* $PROJ/media/sound/
-cp -af $ENF/media/model/* $PROJ/media/model/
+exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/media/.htaccess > /dev/null");
+exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/media/picture/.htaccess > /dev/null");
+exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/media/sound/.htaccess > /dev/null");
+exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/media/model/.htaccess > /dev/null");
+exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/extlib/.htaccess > /dev/null");
+exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/sysobject/.htaccess > /dev/null");
+exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/usrobject/.htaccess > /dev/null");
+exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/plugins/.htaccess > /dev/null");
+exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/lib/.htaccess > /dev/null");
+exec("cp -af $ENF/lib/htaccess.noaccess $PROJ/src/.htaccess > /dev/null");
 
-cp -af $ENF/lib/htaccess.noindexes $PROJ/media/.htaccess
-cp -af $ENF/lib/htaccess.noindexes $PROJ/media/picture/.htaccess
-cp -af $ENF/lib/htaccess.noindexes $PROJ/media/sound/.htaccess
-cp -af $ENF/lib/htaccess.noindexes $PROJ/media/model/.htaccess
-cp -af $ENF/lib/htaccess.noindexes $PROJ/extlib/.htaccess
-cp -af $ENF/lib/htaccess.noindexes $PROJ/sysobject/.htaccess
-cp -af $ENF/lib/htaccess.noindexes $PROJ/usrobject/.htaccess
-cp -af $ENF/lib/htaccess.noindexes $PROJ/plugins/.htaccess
-cp -af $ENF/lib/htaccess.noindexes $PROJ/lib/.htaccess
-cp -af $ENF/lib/htaccess.noaccess $PROJ/src/.htaccess
-
-# enchantライブラリ生成
-coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/library.coffee $ENF/lib/main.coffee $ENF/plugins/*.coffee
-
-# tmlibライブラリ生成
-coffee -b -j $PROJ/sysobject/enforce.core2.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary2.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/library.coffee $ENF/lib/main2.coffee $ENF/plugins/*.coffee
+if ($library == "enchant") {
+    # enchantライブラリ生成
+    echo "As for the library, enchant is chosen.\n";
+    exec("coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/library.coffee $ENF/lib/main.coffee $ENF/plugins/*.coffee");
+} else if ($library == "tmlib") {
+    echo "As for the library, tmlib is chosen.\n";
+    # tmlibライブラリ生成
+    exec("coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary2.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/library.coffee $ENF/lib/main2.coffee $ENF/plugins/*.coffee");
+}
+?>

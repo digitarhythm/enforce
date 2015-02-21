@@ -81,7 +81,7 @@ class _vgamepadcontrol extends _stationary
             kind        = if (param.kind?)          then param.kind         else 0
             analog      = if (param.analog?)        then param.analog       else false
 
-            button      = if (param.button?)        then param.button       else 0
+            image       = if (param.image?)         then param.image        else undefined
             buttonscale = if (param.buttonscale?)   then param.buttonscale  else 1
             coord       = if (param.coord?)         then param.coord        else []
 
@@ -93,14 +93,23 @@ class _vgamepadcontrol extends _stationary
                     padname2 = "_apad2_w"
                 else
                     padname = "_pad_w"
-                buttonname = "_button_w"
             when 1
                 if (analog)
                     padname = "_apad_b"
                     padname2 = "_apad2_b"
                 else
                     padname = "_pad_b"
-                buttonname = "_button_b"
+
+        if (!image?)
+            switch (kind)
+                when 0
+                    buttonname = "_button_w"
+                when 1
+                    buttonname = "_button_b"
+                else
+                    buttonname = "_button_w"
+        else
+            buttonname = image
 
         if (analog)
             @vgamecursor = addObject
@@ -137,30 +146,27 @@ class _vgamepadcontrol extends _stationary
         @vgamepad.cursor = @vgamecursor if (@vgamecursor?)
 
         @vgamepad.visible = visible
+        @vgamecursor.visible = visible
 
-        for i in [0...button]
-            c = coord[i]
-            if (!c?)
-                c = []
-                c[0] = SCREEN_WIDTH - ((64 / 2) * buttonscale)
-                c[1] = (64 * buttonscale) * i + (32 * buttonscale)
-            obj = addObject
-                image: buttonname
-                motionObj: _vgamebutton
-                width: 64
-                height: 64
-                x: c[0]
-                y: c[1]
-                visible: false
-                scaleX: buttonscale
-                scaleY: buttonscale
-                animlist: [
-                    [100, [0]]
-                    [100, [1]]
-                ]
-                scene: _SYSTEMSCENE
-            obj.visible = visible
-            @vgamebuttonlist.push(obj)
+        for c, num in coord
+            if (c?)
+                obj = addObject
+                    image: buttonname
+                    motionObj: _vgamebutton
+                    width: 64
+                    height: 64
+                    x: c[0]
+                    y: c[1]
+                    visible: false
+                    scaleX: buttonscale
+                    scaleY: buttonscale
+                    animlist: [
+                        [100, [0]]
+                        [100, [1]]
+                    ]
+                    scene: _SYSTEMSCENE
+                obj.visible = visible
+                @vgamebuttonlist[num] = obj
 
     setVisible:(@visible)->
         @vgamecursor.visible = @visible if (@vgamecursor?)

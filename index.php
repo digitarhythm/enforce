@@ -38,16 +38,15 @@ $webgl = $ini['ENVIRON']['WEBGL'];
             <script type="text/javascript" src="extlib/mmd.gl.enchant.js"></script>
 <?php
         }
-?>
-        <script type="text/javascript" src="sysobject/enforce.core.js"></script>
-<?php
     } else if ($library == "tmlib") {
 ?>
         <script type="text/javascript" src="extlib/tmlib.min.js"></script>
-        <script type="text/javascript" src="sysobject/enforce.core2.js"></script>
         <script type="text/javascript" src="extlib/Box2dWeb-2.1.a.3.min.js"></script>
 <?php
     }
+?>
+    <script type="text/javascript" src="sysobject/enforce.core.js"></script>
+<?php
     if ($webgl == true) {
 ?>
         <script type="text/javascript">
@@ -67,7 +66,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 	$srcdir = "./plugins";
 	$dir = opendir($srcdir);
 	while ($fname = readdir($dir)) {
-		if (is_dir($srcdir."/".$fname) || preg_match("/environ.js/", $fname)) {
+		if (is_dir($srcdir."/".$fname) || preg_match("/environ.js/", $fname) || preg_match("/^\..*/", $fname)) {
 			continue;
 		}
 		echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
@@ -78,7 +77,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 	$srcdir = "./usrobject";
 	$dir = opendir($srcdir);
 	while ($fname = readdir($dir)) {
-		if (is_dir($srcdir."/".$fname) || preg_match("/environ.js/", $fname)) {
+		if (is_dir($srcdir."/".$fname) || preg_match("/environ.js/", $fname) || preg_match("/^\..*/", $fname)) {
 			continue;
 		}
 		echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";

@@ -448,34 +448,39 @@ class _stationary
     # スプライトをfadeInさせる
     #***************************************************************
     fadeIn:(time)->
-        @sprite.tl.fadeIn(time * 0.5)
+        @sprite.tl.setTimeBased()
+        @sprite.tl.fadeIn(time / 2)
         return @
 
     #***************************************************************
     # スプライトをフェイドアウトする
     #***************************************************************
     fadeOut:(time)->
-        @sprite.tl.fadeOut(time * 0.5)
+        @sprite.tl.setTimeBased()
+        @sprite.tl.fadeOut(time / 2)
         return @
 
     #***************************************************************
     # タイムラインをループさせる
     #***************************************************************
     loop:->
+        @sprite.tl.setTimeBased()
         @sprite.tl.loop()
 
     #***************************************************************
     # ライムラインをクリアする
     #***************************************************************
     clear:->
+        @sprite.tl.setTimeBased()
         @sprite.tl.clear()
 
     #***************************************************************
     # 指定した位置へ移動させる
     #***************************************************************
     moveTo:(x, y, time, easing = enchant.Easing.QUAD_EASEINOUT)->
+        @sprite.tl.setTimeBased()
         @_reversePosFlag = true
-        @sprite.tl.moveTo(x - @_diffx, y - @_diffy, time * 0.5, easing).then =>
+        @sprite.tl.moveTo(x - @_diffx, y - @_diffy, time / 2, easing).then =>
             @_reversePosFlag = false
         return @
 
@@ -483,8 +488,9 @@ class _stationary
     # 相対的に移動させる
     #***************************************************************
     moveBy:(x, y, time, easing = enchant.Easing.QUAD_EASEINOUT)->
+        @sprite.tl.setTimeBased()
         @_reversePosFlag = true
-        @sprite.tl.moveBy(x + @_diffx, y + @_diffy, time * 0.5, easing).then =>
+        @sprite.tl.moveBy(x + @_diffx, y + @_diffy, time / 2, easing).then =>
             @_reversePosFlag = false
         return @
 
@@ -492,13 +498,15 @@ class _stationary
     # 指定した時間だけ待つ
     #***************************************************************
     delay:(time)->
-        @sprite.tl.delay(time * 0.5)
+        @sprite.tl.setTimeBased()
+        @sprite.tl.delay(time / 2)
         return @
 
     #***************************************************************
     # 指定した処理を実行する
     #***************************************************************
     then:(func)->
+        @sprite.tl.setTimeBased()
         @sprite.tl.then =>
             func()
         return @

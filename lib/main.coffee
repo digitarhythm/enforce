@@ -171,13 +171,15 @@ window.onload = ->
     # FPS設定
     core.fps = FPS
 
-    # 「A」ボタンの定義
+    # ボタンの定義
     core.keybind( 90, 'a' )
     core.keybind( 88, 'b' )
     core.keybind( 67, 'c' )
     core.keybind( 86, 'd' )
     core.keybind( 66, 'e' )
     core.keybind( 78, 'f' )
+    core.keybind( 77, 'g' )
+    core.keybind( 188, 'h' )
     core.keybind( 32, 'space' )
 
     # メディアファイルのプリロード
@@ -345,6 +347,16 @@ window.onload = ->
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][5] = false
 
+            if (core.input.g || (_VGAMEPADCONTROL.input.buttons[6]? && _VGAMEPADCONTROL.input.buttons[6]))
+                PADBUTTONS[0][6] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][6] = false
+
+            if (core.input.h || (_VGAMEPADCONTROL.input.buttons[7]? && _VGAMEPADCONTROL.input.buttons[7]))
+                PADBUTTONS[0][7] = true
+            else if (!_GAMEPADSINFO[0]?)
+                PADBUTTONS[0][7] = false
+
             if (core.input.left || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.left))
                 PADAXES[0][HORIZONTAL] = -1
             else if (core.input.right || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.right))
@@ -423,7 +435,7 @@ addObject = (param, parent = undefined)->
     texture = if (param['texture']?) then param['texture'] else undefined
     fontsize = if (param['fontsize']?) then param['fontsize'] else '16'
     color = if (param['color']?) then param['color'] else 'white'
-    labeltext = if (param['labeltext']?) then param['labeltext'] else 'text'
+    labeltext = if (param['labeltext']?) then param['labeltext'].replace(/\n/ig, "<br><br>") else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
     active = if (param['active']?) then param['active'] else true
     kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
@@ -463,9 +475,6 @@ addObject = (param, parent = undefined)->
 
             if (!motionsprite?)
                 motionsprite = new Sprite()
-                # TimeLineを時間ベースにする
-                motionsprite.tl.setTimeBased()
-
 
             if (scene < 0)
                 scene = GAMESCENE_SUB1
@@ -558,9 +567,7 @@ addObject = (param, parent = undefined)->
             motionsprite.color = color
             motionsprite.text = labeltext
             motionsprite.textAlign = textalign
-            motionsprite.font = fontsize+"px 'Arial'"
-            # TimeLineを時間ベースにする
-            motionsprite.tl.setTimeBased()
+            motionsprite.font = fontsize+"/32 'Arial'"
             # 動きを定義したオブジェクトを生成する
             retObject = @setMotionObj
                 x: x
@@ -752,7 +759,6 @@ addObject = (param, parent = undefined)->
                 if (mapcollision?)
                     motionsprite.collisionData = mapcollision
                 _scenes[scene].addChild(motionsprite)
-                motionsprite.tl.setTimeBased()
             retObject = @setMotionObj
                 x: x
                 y: y
@@ -980,6 +986,7 @@ createVirtualGamepad = (param)->
 
         button      = if (param.button?)        then param.button       else 0
         buttonscale = if (param.buttonscale?)   then param.buttonscale  else 1
+        image       = if (param.image?)         then param.image        else undefined
         coord       = if (param.coord?)         then param.coord        else []
     else
         param = []
@@ -991,6 +998,7 @@ createVirtualGamepad = (param)->
         analog      = param.analog      = false
 
         button      = param.button      = 0
+        image       = param.image       = undefined
         buttonscale = param.buttonscale = 1
         coord       = param.coord       = []
 
