@@ -14,7 +14,6 @@ $webgl = $ini['ENVIRON']['WEBGL'];
     if ($library == "enchant") {
 ?>
         <script type="text/javascript" src="extlib/enchant.0.8.1-enforce.min.js"></script>
-        <script type="text/javascript" src="extlib/ui.enchant-enforce.js"></script>
         <script type="text/javascript" src="extlib/extendMap.enchant.js"></script>
 <?php
     }

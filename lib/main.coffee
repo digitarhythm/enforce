@@ -283,6 +283,7 @@ window.onload = ->
 # 起動時の処理
 #******************************************************************************
     core.onload = ->
+        JSLog("hoge")
         # ゲーム用オブジェクトを指定された数だけ確保
         for i in [0...OBJECTNUM]
             _objects[i] = new _originObject()
@@ -317,42 +318,42 @@ window.onload = ->
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
 
-            if (core.input.a || core.input.space || (_VGAMEPADCONTROL.input.buttons[0]? && _VGAMEPADCONTROL.input.buttons[0]))
+            if (core.input.a || core.input.space || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[0]? && _VGAMEPADCONTROL.input.buttons[0]))
                 PADBUTTONS[0][0] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][0] = false
 
-            if (core.input.b || (_VGAMEPADCONTROL.input.buttons[1]? && _VGAMEPADCONTROL.input.buttons[1]))
+            if (core.input.b || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[1]? && _VGAMEPADCONTROL.input.buttons[1]))
                 PADBUTTONS[0][1] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][1] = false
 
-            if (core.input.c || (_VGAMEPADCONTROL.input.buttons[2]? && _VGAMEPADCONTROL.input.buttons[2]))
+            if (core.input.c || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[2]? && _VGAMEPADCONTROL.input.buttons[2]))
                 PADBUTTONS[0][2] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][2] = false
 
-            if (core.input.d || (_VGAMEPADCONTROL.input.buttons[3]? && _VGAMEPADCONTROL.input.buttons[3]))
+            if (core.input.d || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[3]? && _VGAMEPADCONTROL.input.buttons[3]))
                 PADBUTTONS[0][3] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][3] = false
 
-            if (core.input.e || (_VGAMEPADCONTROL.input.buttons[4]? && _VGAMEPADCONTROL.input.buttons[4]))
+            if (core.input.e || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[4]? && _VGAMEPADCONTROL.input.buttons[4]))
                 PADBUTTONS[0][4] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][4] = false
 
-            if (core.input.f || (_VGAMEPADCONTROL.input.buttons[5]? && _VGAMEPADCONTROL.input.buttons[5]))
+            if (core.input.f || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[5]? && _VGAMEPADCONTROL.input.buttons[5]))
                 PADBUTTONS[0][5] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][5] = false
 
-            if (core.input.g || (_VGAMEPADCONTROL.input.buttons[6]? && _VGAMEPADCONTROL.input.buttons[6]))
+            if (core.input.g || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[6]? && _VGAMEPADCONTROL.input.buttons[6]))
                 PADBUTTONS[0][6] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][6] = false
 
-            if (core.input.h || (_VGAMEPADCONTROL.input.buttons[7]? && _VGAMEPADCONTROL.input.buttons[7]))
+            if (core.input.h || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[7]? && _VGAMEPADCONTROL.input.buttons[7]))
                 PADBUTTONS[0][7] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][7] = false
@@ -1017,7 +1018,7 @@ createVirtualGamepad = (param)->
 # バーチャルゲームパッドの表示制御
 #**********************************************************************
 dispVirtualGamepad = (flag)->
-    _VGAMEPADCONTROL.setVisible(flag)
+    _VGAMEPADCONTROL.setVisible(flag) if (_VGAMEPADCONTROL?)
 
 #**********************************************************************
 #**********************************************************************
