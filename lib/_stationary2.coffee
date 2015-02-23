@@ -135,7 +135,7 @@ class _stationary
                     @sprite.width = @width
                     @sprite.height = @height
 
-                    if (@_type == SPRITE && @animlist?)
+                    if (@animlist?)
                         if (@animnum_back != @animnum)
                             @_dispframe = 0
                             @animnum_back = @animnum
@@ -157,6 +157,8 @@ class _stationary
                                     @_dispframe = 0
                                 else
                                     @_dispframe = 0
+                    else
+                        @sprite.frameIndex = 0
 
                 when LABEL
                     @sprite.x = Math.floor(@x)

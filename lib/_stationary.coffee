@@ -165,8 +165,8 @@ class _stationary
                     @sprite.visible = @visible
                     @sprite.scaleX  = @scaleX
                     @sprite.scaleY  = @scaleY
-                    @sprite.width = @width
-                    @sprite.height = @height
+                    @sprite.width   = @width
+                    @sprite.height  = @height
 
                     if (@animlist?)
                         if (@animnum_back != @animnum)
@@ -178,8 +178,9 @@ class _stationary
                         if (LAPSEDTIME * 1000 > @_animTime + animtime)
                             if (@_dispframe >= animpattern.length)
                                 @_dispframe = 0
-                            @sprite.frameIndex = animpattern[@_dispframe]
-                            @sprite.frame = animpattern[@_dispframe]
+                            framenum = animpattern[@_dispframe]
+                            @sprite.frameIndex = framenum
+                            @sprite.frame = framenum
                             @_animTime = LAPSEDTIME * 1000
                             @_dispframe++
                             if (@_dispframe >= animpattern.length)
@@ -193,6 +194,9 @@ class _stationary
                                     @_dispframe = 0
                                 else
                                     @_dispframe = 0
+                    else if (@image?)
+                        @sprite.frameIndex = 0
+                        @sprite.frame = 0
 
 
                 when LABEL

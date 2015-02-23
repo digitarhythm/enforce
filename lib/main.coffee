@@ -283,7 +283,6 @@ window.onload = ->
 # 起動時の処理
 #******************************************************************************
     core.onload = ->
-        JSLog("hoge")
         # ゲーム用オブジェクトを指定された数だけ確保
         for i in [0...OBJECTNUM]
             _objects[i] = new _originObject()
@@ -480,10 +479,13 @@ addObject = (param, parent = undefined)->
             if (scene < 0)
                 scene = GAMESCENE_SUB1
 
-            if (animlist?)
-                animtmp = animlist[animnum]
-                motionsprite.frame = animtmp[1][0]
-
+            # アニメーション設定
+            if (MEDIALIST[image]?)
+                if (animlist?)
+                    animtmp = animlist[animnum]
+                    motionsprite.frame = animtmp[1][0]
+                else
+                    motionsprite.frame = 0
                 motionsprite.backgroundColor = "transparent"
                 motionsprite.x = x - Math.floor(width / 2)
                 motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
@@ -494,14 +496,11 @@ addObject = (param, parent = undefined)->
                 motionsprite.visible = visible
                 motionsprite.width = width
                 motionsprite.height = height
+                img = MEDIALIST[image]
+                motionsprite.image = core.assets[img]
 
-                # 画像割り当て
-                if (MEDIALIST[image]? && animlist?)
-                    img = MEDIALIST[image]
-                    motionsprite.image = core.assets[img]
-
-                # スプライトを表示
-                _scenes[scene].addChild(motionsprite)
+            # スプライトを表示
+            _scenes[scene].addChild(motionsprite)
 
             # 動きを定義したオブジェクトを生成する
             retObject = @setMotionObj
@@ -800,7 +799,7 @@ setMotionObj = (param)->
     initparam['intersectFlag'] = if (param['intersectFlag']?) then param['intersectFlag'] else true
     initparam['width'] = if (param['width']?) then param['width'] else SCREEN_WIDTH
     initparam['height'] = if (param['height']?) then param['height'] else SCREEN_HEIGHT
-    initparam['animlist'] = if (param['animlist']?) then param['animlist'] else 0
+    initparam['animlist'] = if (param['animlist']?) then param['animlist'] else undefined
     initparam['animnum'] = if (param['animnum']?) then param['animnum'] else 0
     initparam['image'] = if (param['image']?) then param['image'] else undefined
     initparam['visible'] = if (param['visible']?) then param['visible'] else true

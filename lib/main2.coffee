@@ -408,30 +408,32 @@ addObject = (param, parent = undefined)->
             if (scene < 0)
                 scene = GAMESCENE_SUB1
 
-            if (animlist?)
-                if (rigid)
-                    if (!radius?)
-                        radius = width
+            if (rigid)
+                if (!radius?)
+                    radius = width
 
+            if (image?)
                 if (!motionsprite?)
                     motionsprite = tm.display.Sprite(image, width, height)
-                animtmp = animlist[animnum]
-                motionsprite.frameIndex = animtmp[1][0]
 
-                motionsprite.backgroundColor = "transparent"
-                motionsprite.setOrigin(0.5, 0.5)
-                motionsprite.x = Math.floor(x)
-                motionsprite.y = Math.floor(y) - Math.floor(z)
-                motionsprite.alpha = opacity
-                motionsprite.rotation = rotation
-                motionsprite.scaleX = scaleX
-                motionsprite.scaleY = scaleY
-                motionsprite.visible = visible
-                motionsprite.width = width
-                motionsprite.height = height
-                motionsprite.boundingType = "rect"
+                    motionsprite.backgroundColor = "transparent"
+                    motionsprite.setOrigin(0.5, 0.5)
+                    motionsprite.x = Math.floor(x)
+                    motionsprite.y = Math.floor(y) - Math.floor(z)
+                    motionsprite.alpha = opacity
+                    motionsprite.rotation = rotation
+                    motionsprite.scaleX = scaleX
+                    motionsprite.scaleY = scaleY
+                    motionsprite.visible = visible
+                    motionsprite.width = width
+                    motionsprite.height = height
+                    motionsprite.boundingType = "rect"
             else
                 motionsprite = tm.display.Sprite()
+
+            if (animlist?)
+                animtmp = animlist[animnum]
+                motionsprite.frameIndex = animtmp[1][0]
 
             # スプライトを表示
             motionsprite.addChildTo(_scenes[scene])
@@ -692,7 +694,7 @@ setMotionObj = (param)->
     initparam['intersectFlag'] = if (param['intersectFlag']?) then param['intersectFlag'] else true
     initparam['width'] = if (param['width']?) then param['width'] else 0
     initparam['height'] = if (param['height']?) then param['height'] else 0
-    initparam['animlist'] = if (param['animlist']?) then param['animlist'] else 0
+    initparam['animlist'] = if (param['animlist']?) then param['animlist'] else undefined
     initparam['animnum'] = if (param['animnum']?) then param['animnum'] else 0
     initparam['visible'] = if (param['visible']?) then param['visible'] else true
     initparam['opacity'] = if (param['opacity']?) then param['opacity'] else 0
