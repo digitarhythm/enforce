@@ -42,10 +42,10 @@ echo '2.0' > $PROJ/lib/version
 cp -af $ENF/src/sample.coffee $PROJ/src/
 
 # enchantライブラリを生成
-#coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/library.coffee $ENF/lib/main.coffee $ENF/plugins/*.coffee
+#coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.enchant.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/library.coffee $ENF/lib/main.enchant.coffee $ENF/plugins/*.coffee
 
 # tmlibライブラリを生成
-coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary2.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/library.coffee $ENF/lib/main2.coffee $ENF/plugins/*.coffee
+coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.tmlib.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/library.coffee $ENF/lib/main.tmlib.coffee $ENF/plugins/*.coffee
 
 # ユーザーファイルをコンパイル
 coffee -b -o $PROJ/usrobject -c $PROJ/src/*.coffee
