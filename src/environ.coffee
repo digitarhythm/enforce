@@ -17,11 +17,10 @@ GRAVITY_X       = 0.0                       # box2d用水平方向重力
 GRAVITY_Y       = 9.8                       # box2d用垂直方向重力
 
 # preloading image list ***********************************************************************************
-MEDIALIST       = {
+MEDIALIST =
     controlplane    : 'media/picture/controlplane.png'
     colliderimage   : 'media/picture/colliderimage.png'
     startbutton     : 'media/picture/startbutton.png'
     bear            : 'media/picture/chara1.png'
 
     gamestart       : 'media/sound/gamestart.mp3'
-}
