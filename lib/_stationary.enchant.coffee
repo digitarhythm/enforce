@@ -56,6 +56,7 @@ class _stationary
             @_offsetx = initparam['offsetx']
             @_offsety = initparam['offsety']
             @parent = initparam['parent']
+            @worldview = initparam['worldview']
 
             @animnum_back = @animnum
 
@@ -110,9 +111,6 @@ class _stationary
                 when SPRITE
                     if (!@rigid || @kind == STATIC_BOX || @kind == STATIC_CIRCLE)
                         # 通常スプライト
-                        @sprite.x = Math.floor(@x - @_diffx)
-                        @sprite.y = Math.floor(@y - @_diffy - @z)
-
                         @ys += @gravity
                         @x += @xs
                         @y += @ys
@@ -128,10 +126,10 @@ class _stationary
                         if (@_ysback != @ys)
                             @sprite.vy = @ys
 
-                        if (@_xback != @x)
-                            @sprite.x = @x - @_diffx
-                        if (@_yback != @y)
-                            @sprite.y = @y - @_diffy - @z
+                        #if (@_xback != @x)
+                        #    @sprite.x = @x - @_diffx
+                        #if (@_yback != @y)
+                        #    @sprite.y = @y - @_diffy - @z
 
                         @_xback = @x = @sprite.x + @_diffx
                         @_yback = @y = @sprite.y + @_diffy + @z
@@ -200,16 +198,9 @@ class _stationary
 
 
                 when LABEL
-                    if (@_reversePosFlag)
-                        @x = (@sprite.x + @_diffx)
-                        @y = (@sprite.y + @_diffy + @z)
-                    else
-                        @sprite.x = Math.floor(@x - @_diffx)
-                        @sprite.y = Math.floor(@y - @_diffy - @z)
-
-                        @x += @xs
-                        @y += @ys
-                        @z += @zs
+                    @x += @xs
+                    @y += @ys
+                    @z += @zs
 
                     if (@opacity != @sprite.opacity)
                         if (@sprite.opacity == @opacity_back)
@@ -235,10 +226,6 @@ class _stationary
                         else
                             rootScene3d.removeChild(@sprite)
                         @lastvisible = @visible
-                                
-                    @sprite.x = @x
-                    @sprite.y = @y
-                    @sprite.z = @z
 
                     if (@scaleX != @sprite.scaleX)
                         @sprite.scaleX = @scaleX
@@ -494,7 +481,7 @@ class _stationary
     moveBy:(x, y, time, easing = enchant.Easing.QUAD_EASEINOUT)->
         @sprite.tl.setTimeBased()
         @_reversePosFlag = true
-        @sprite.tl.moveBy(x + @_diffx, y + @_diffy, time / 2, easing).then =>
+        @sprite.tl.moveBy(x, y, time / 2, easing).then =>
             @_reversePosFlag = false
         return @
 

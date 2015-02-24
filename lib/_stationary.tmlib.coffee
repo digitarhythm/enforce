@@ -10,6 +10,7 @@ class _stationary
         @_returnflag = false
         @_autoRemove = false
         @_animTime = LAPSEDTIME * 1000
+        @_reversePosFlag = false
 
         @sprite = initparam['motionsprite']
         if (@sprite?)
@@ -48,6 +49,7 @@ class _stationary
             @collider = initparam['collider']
             @_offsetx = initparam['offsetx']
             @_offsety = initparam['offsety']
+            @worldview = initparam['worldview']
 
             @animnum_back = @animnum
 
@@ -101,8 +103,13 @@ class _stationary
         if (@sprite?)
             switch (@_type)
                 when SPRITE
-                    @sprite.x = Math.floor(@x)
-                    @sprite.y = Math.floor(@y - @z)
+                    # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
+                    #if (@_reversePosFlag)
+                    #    @x = (@sprite.x + @_diffx)
+                    #    @y = (@sprite.y + @_diffy + @z)
+                    #else
+                    #    @sprite.x = Math.floor(@x)
+                    #    @sprite.y = Math.floor(@y - @z)
 
                     @ys += @gravity
 
@@ -161,8 +168,12 @@ class _stationary
                         @sprite.frameIndex = 0
 
                 when LABEL
-                    @sprite.x = Math.floor(@x)
-                    @sprite.y = Math.floor(@y - @z)
+                    if (@_reversePosFlag)
+                        @x = (@sprite.x + @_diffx)
+                        @y = (@sprite.y + @_diffy + @z)
+                    else
+                        @sprite.x = Math.floor(@x)
+                        @sprite.y = Math.floor(@y - @z)
 
                     @x += @xs
                     @y += @ys
@@ -194,9 +205,9 @@ class _stationary
                             rootScene3d.removeChild(@sprite)
                         @lastvisible = @visible
                                 
-                    @sprite.x = @x
-                    @sprite.y = @y
-                    @sprite.z = @z
+                    #@sprite.x = @x
+                    #@sprite.y = @y
+                    #@sprite.z = @z
 
                     if (@scaleX != @sprite.scaleX)
                         @sprite.scaleX = @scaleX
@@ -211,8 +222,8 @@ class _stationary
                     @z += @zs
 
                 when MAP
-                    @sprite.x = Math.floor(@x - @_diffx)
-                    @sprite.y = Math.floor(@y - @_diffy)
+                    #@sprite.x = Math.floor(@x - @_diffx)
+                    #@sprite.y = Math.floor(@y - @_diffy)
 
                     @x += @xs
                     @y += @ys
@@ -410,22 +421,22 @@ class _stationary
     #指定した座標に指定した時間で移動させる（絶対座標）
     #***************************************************************
     moveTo:(x, y, time, easing = "easeOutQuad")->
-        @sprite.tweener.to
-            x: x
-            y: y
-        , time
-        , easing
+        @_reversePosFlag = true
+        @sprite.tweener
+            .to({ x: x, y: y} , time, easing)
+            .call =>
+                @_reversePosFlag = false
         return @
 
     #***************************************************************
     #指定した座標に指定した時間で移動させる（相対座標）
     #***************************************************************
     moveBy:(x, y, time, easing = "easeOutQuad")->
-        @sprite.tweener.by
-            x: x
-            y: y
-        , time
-        , easing
+        @_reversePosFlag = true
+        @sprite.tweener
+            .by({ x: x, y: y} , time, easing)
+            .call =>
+                @_reversePosFlag = false
         return @
 
     #***************************************************************

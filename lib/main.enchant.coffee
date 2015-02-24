@@ -49,6 +49,13 @@ _SYSTEMSCENE        = 8
 DEBUGSCENE          = 9
 MAXSCENE            = (if (DEBUG) then DEBUGSCENE else _SYSTEMSCENE)
 
+# ワールドビュー
+WORLDVIEW          =
+    sx: 0
+    sy: 0
+    ex: SCREEN_WIDTH
+    ey: SCREEN_HEIGHT
+
 # 数学式
 RAD                 = (Math.PI / 180.0)
 DEG                 = (180.0 / Math.PI)
@@ -381,6 +388,36 @@ window.onload = ->
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
+            # 更新した座標値をスプライトに適用する
+            for obj in _objects
+                if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
+                    wx = if (obj.motionObj.worldview) then WORLDVIEW.sx else 0
+                    wy = if (obj.motionObj.worldview) then WORLDVIEW.sy else 0
+                    switch (obj.motionObj._type)
+                        when CONTROL
+                            continue
+                        when PRIMITIVE, COLLADA
+                            obj.motionObj.sprite.x = Math.floor(obj.motionObj.x)
+                            obj.motionObj.sprite.y = Math.floor(obj.motionObj.y)
+                            obj.motionObj.sprite.z = Math.floor(obj.motionObj.z)
+                        when SPRITE, LABEL, SURFACE
+                            if (obj.motionObj.rigid)
+                                if (obj.motionObj._xback != obj.motionObj.x)
+                                    obj.motionObj.sprite.x = obj.motionObj.x - obj.motionObj._diffx - wx
+                                if (obj.motionObj._yback != obj.motionObj.y)
+                                    obj.motionObj.sprite.y = obj.motionObj.y - obj.motionObj._diffy - obj.motionObj.z - wy
+                            else
+                                # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
+                                if (obj.motionObj._reversePosFlag)
+                                    obj.motionObj.x = (obj.motionObj.sprite.x + obj.motionObj._diffx)
+                                    obj.motionObj.y = (obj.motionObj.sprite.y + obj.motionObj._diffy + obj.motionObj.z)
+                                else
+                                    obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - obj.motionObj._diffx - wx)
+                                    obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - obj.motionObj._diffy - obj.motionObj.z - wy)
+                        when MAP, EXMAP
+                            obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - obj.motionObj._diffx - wx)
+                            obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - obj.motionObj._diffy - wy)
+
 
 debugwrite = (param)->
     if (DEBUG)
@@ -446,6 +483,7 @@ addObject = (param, parent = undefined)->
     offsetx = if (param['offsetx']?) then param['offsetx'] else 0
     offsety = if (param['offsety']?) then param['offsety'] else 0
     bgcolor = if (param['bgcolor']?) then param['bgcolor'] else 'transparent'
+    worldview = if (param['worldview']?) then param['worldview'] else false
 
     if (motionObj == null)
         motionObj = undefined
@@ -498,6 +536,11 @@ addObject = (param, parent = undefined)->
                 motionsprite.height = height
                 img = MEDIALIST[image]
                 motionsprite.image = core.assets[img]
+            else
+                motionsprite.visible = false
+                motionsprite.width = 0
+                motionsprite.height = 0
+                motionsprite.image = ""
 
             # スプライトを表示
             _scenes[scene].addChild(motionsprite)
@@ -537,6 +580,7 @@ addObject = (param, parent = undefined)->
                 collider: collider
                 offsetx: offsetx
                 offsety: offsety
+                worldview: worldview
             return retObject
 
         #*****************************************************************
@@ -593,6 +637,7 @@ addObject = (param, parent = undefined)->
                 labeltext: labeltext
                 textalign: textalign
                 parent: parent
+                worldview: worldview
             return retObject
 
         #*****************************************************************
@@ -650,6 +695,7 @@ addObject = (param, parent = undefined)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 parent: parent
+                worldview: worldview
 
             if (visible)
                 rootScene3d.addChild(motionsprite)
@@ -698,6 +744,7 @@ addObject = (param, parent = undefined)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 parent: parent
+                worldview: worldview
             return retObject
 
         #*****************************************************************
@@ -736,6 +783,7 @@ addObject = (param, parent = undefined)->
                 context: context
                 active: active
                 surface: surface
+                worldview: worldview
             _scenes[scene].addChild(motionsprite)
             return retObject
 
@@ -776,6 +824,7 @@ addObject = (param, parent = undefined)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 parent: parent
+                worldview: worldview
             return retObject
 
 
@@ -822,6 +871,7 @@ setMotionObj = (param)->
     initparam['collider'] = if (param['collider']?) then param['collider'] else undefined
     initparam['offsetx'] = if (param['offsetx']?) then param['offsetx'] else 0
     initparam['offsety'] = if (param['offsety']?) then param['offsety'] else 0
+    initparam['worldview'] = if (param['worldview']?) then param['worldview'] else false
 
     scene = if (param['scene']?) then param['scene'] else GAMESCENE_SUB1
     _type = if (param['_type']?) then param['_type'] else SPRITE
@@ -971,6 +1021,16 @@ pauseGame =->
 resumeGame =->
     ACTIVATE = true
     core.resume()
+
+#**********************************************************************
+# ワールドビューの設定
+#**********************************************************************
+setWorldView = (sx, sy, ex, ey)->
+    WORLDVIEW =
+        sx: sx
+        sy: sy
+        ex: ex
+        ey: ey
 
 #**********************************************************************
 # バーチャルゲームパッド

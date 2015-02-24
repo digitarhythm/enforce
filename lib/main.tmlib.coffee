@@ -36,6 +36,19 @@ CYLINDER            = 3
 TORUS               = 4
 PLANE               = 5
 
+# すべてのメディアセットが持っている素材
+_PRELOADMEDIA       =
+    _notice     : 'lib/notice.png'
+    _execbutton : 'lib/execbutton.png'
+    _pad_w      : 'lib/pad_w.png'
+    _pad_b      : 'lib/pad_b.png'
+    _apad_w     : 'lib/apad_w.png'
+    _apad_b     : 'lib/apad_b.png'
+    _apad2_w    : 'lib/apad2_w.png'
+    _apad2_b    : 'lib/apad2_b.png'
+    _button_w   : 'lib/button_w.png'
+    _button_b   : 'lib/button_b.png'
+
 # Sceneの種類
 BGSCENE             = 0
 BGSCENE_SUB1        = 1
@@ -48,6 +61,13 @@ WEBGLSCENE          = 7
 _SYSTEMSCENE        = 8
 DEBUGSCENE          = 9
 MAXSCENE            = (if (DEBUG) then DEBUGSCENE else _SYSTEMSCENE)
+
+# ワールドビュー
+WORLDVIEW          =
+    sx: 0
+    sy: 0
+    ex: SCREEN_WIDTH
+    ey: SCREEN_HEIGHT
 
 # 数学式
 RAD                 = (Math.PI / 180.0)
@@ -299,21 +319,47 @@ tm.main ->
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
+            for obj in _objects
+                if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
+                    switch (obj.motionObj._type)
+                        when CONTROL
+                            continue
+                        when PRIMITIVE, COLLADA
+                            obj.motionObj.sprite.x = Math.floor(obj.motionObj.x)
+                            obj.motionObj.sprite.y = Math.floor(obj.motionObj.y)
+                            obj.motionObj.sprite.z = Math.floor(obj.motionObj.z)
+                        when SPRITE, LABEL, SURFACE
+                            wx = if (obj.motionObj.worldview) then WORLDVIEW.sx else 0
+                            wy = if (obj.motionObj.worldview) then WORLDVIEW.sy else 0
+                            # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
+                            if (obj.motionObj._reversePosFlag)
+                                obj.motionObj.x = obj.motionObj.sprite.x
+                                obj.motionObj.y = obj.motionObj.sprite.y + obj.motionObj.z
+                            else
+                                obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - wx)
+                                obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - wy - obj.motionObj.z)
+                        when MAP, EXMAP
+                            obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - wx - obj.motionObj._diffx)
+                            obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - wy - obj.motionObj._diffy)
 
     core = tm.app.CanvasApp("#stage")
     core.fps = FPS
     core.resize SCREEN_WIDTH, SCREEN_HEIGHT
     core.fitWindow()
-    MEDIALIST['_notice'] = 'lib/notice.png'
-    MEDIALIST['_execbutton'] = 'lib/execbutton.png'
-    MEDIALIST['_pad_w'] = 'lib/pad_w.png'
-    MEDIALIST['_pad_b'] = 'lib/pad_b.png'
-    MEDIALIST['_apad_w'] = 'lib/apad_w.png'
-    MEDIALIST['_apad_b'] = 'lib/apad_b.png'
-    MEDIALIST['_apad2_w'] = 'lib/apad2_w.png'
-    MEDIALIST['_apad2_b'] = 'lib/apad2_b.png'
-    MEDIALIST['_button_w'] = 'lib/button_w.png'
-    MEDIALIST['_button_b'] = 'lib/button_b.png'
+
+    # メディアファイルのプリロード
+    if (MEDIALIST?)
+        MEDIALIST['_notice'] = 'lib/notice.png'
+        MEDIALIST['_execbutton'] = 'lib/execbutton.png'
+        MEDIALIST['_pad_w'] = 'lib/pad_w.png'
+        MEDIALIST['_pad_b'] = 'lib/pad_b.png'
+        MEDIALIST['_apad_w'] = 'lib/apad_w.png'
+        MEDIALIST['_apad_b'] = 'lib/apad_b.png'
+        MEDIALIST['_apad2_w'] = 'lib/apad2_w.png'
+        MEDIALIST['_apad2_b'] = 'lib/apad2_b.png'
+        MEDIALIST['_button_w'] = 'lib/button_w.png'
+        MEDIALIST['_button_b'] = 'lib/button_b.png'
+
     core.replaceScene customLoadingScene(
         assets: MEDIALIST
         nextScene: mainScene
@@ -395,6 +441,7 @@ addObject = (param, parent = undefined)->
     bgcolor = if (param['bgcolor']?) then param['bgcolor'] else 'transparent'
     map = if (param['map']?) then param['map'] else undefined
     mapcollision = if (param['mapcollision']?) then param['mapcollision'] else undefined
+    worldview = if (param['worldview']?) then param['worldview'] else false
 
     if (motionObj == null)
         motionObj = undefined
@@ -467,6 +514,7 @@ addObject = (param, parent = undefined)->
                 collider: collider
                 offsetx: offsetx
                 offsety: offsety
+                worldview: worldview
             return retObject
 
         when LABEL
@@ -527,6 +575,7 @@ addObject = (param, parent = undefined)->
                 collider: collider
                 offsetx: offsetx
                 offsety: offsety
+                worldview: worldview
             return retObject
 
         when PRIMITIVE
@@ -578,6 +627,7 @@ addObject = (param, parent = undefined)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 parent: parent
+                worldview: worldview
 
             if (visible)
                 rootScene3d.addChild(motionsprite)
@@ -620,6 +670,7 @@ addObject = (param, parent = undefined)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 parent: parent
+                worldview: worldview
             return retObject
 
         #*****************************************************************
@@ -672,6 +723,7 @@ addObject = (param, parent = undefined)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 parent: parent
+                worldview: worldview
             return retObject
 
 setMotionObj = (param)->
@@ -709,6 +761,7 @@ setMotionObj = (param)->
     initparam['collider'] = if (param['collider']?) then param['collider'] else undefined
     initparam['offsetx'] = if (param['offsetx']?) then param['offsetx'] else 0
     initparam['offsety'] = if (param['offsety']?) then param['offsety'] else 0
+    initparam['worldview'] = if (param['worldview']?) then param['worldview'] else false
 
     scene = if (param['scene']?) then param['scene'] else GAMESCENE
     _type = if (param['_type']?) then param['_type'] else SPRITE
@@ -846,6 +899,16 @@ resumeGame =->
     core.resume()
 
 #**********************************************************************
+# ワールドビューの設定
+#**********************************************************************
+setWorldView = (sx, sy, ex, ey)->
+    WORLDVIEW =
+        sx: sx
+        sy: sy
+        ex: ex
+        ey: ey
+
+#**********************************************************************
 # バーチャルゲームパッド
 #**********************************************************************
 createVirtualGamepad = (param)->
@@ -900,7 +963,19 @@ dispVirtualGamepad = (flag)->
 #**********************************************************************
 #**********************************************************************
 
-gamepaddisconnected =(e)->
+#**********************************************************************
+# メディアデータのロード
+#**********************************************************************
+_loadMediaList = (medialist)->
+    for key, val in _PRELOADMEDIA
+        tm.graphics.TextureManager.add(key, val)
+    for key, val in medialist
+        ext = val.match(/\..*?$/)
+        switch (ext[0])
+            when ".png", ".jpg", ".jpeg", ".gif"
+                tm.graphics.TextureManager.add(key, val)
+            when ".mp3", ".m4a", ".ogg"
+                tm.sound.SoundManager.add(key, val)
 
 #**********************************************************************
 # オブジェクトリストの中で未使用のものの配列番号を返す。
