@@ -249,7 +249,7 @@ tm.main ->
 
             key = core.keyboard
                 
-            if (key.getKey("z") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[0]? && _VGAMEPADCONTROL.input.buttons[0]))
+            if (key.getKey("space") || key.getKey("z") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[0]? && _VGAMEPADCONTROL.input.buttons[0]))
                 PADBUTTONS[0][0] = true
             else if (!_GAMEPADSINFO[0]?)
                 PADBUTTONS[0][0] = false
