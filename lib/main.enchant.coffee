@@ -21,6 +21,7 @@ PRIMITIVE           = 4
 COLLADA             = 5
 MAP                 = 6
 EXMAP               = 7
+COLLIDER2D          = 8
 
 # 物理スプライトの種類
 DYNAMIC_BOX         = 0
@@ -50,7 +51,7 @@ DEBUGSCENE          = 9
 MAXSCENE            = (if (DEBUG) then DEBUGSCENE else _SYSTEMSCENE)
 
 # ワールドビュー
-WORLDVIEW          =
+_WORLDVIEW          =
     sx: 0
     sy: 0
     ex: SCREEN_WIDTH
@@ -391,8 +392,8 @@ window.onload = ->
             # 更新した座標値をスプライトに適用する
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
-                    wx = if (obj.motionObj.worldview) then WORLDVIEW.sx else 0
-                    wy = if (obj.motionObj.worldview) then WORLDVIEW.sy else 0
+                    wx = if (obj.motionObj.worldview? && obj.motionObj.worldview) then _WORLDVIEW.sx else 0
+                    wy = if (obj.motionObj.worldview? && obj.motionObj.worldview) then _WORLDVIEW.sy else 0
                     switch (obj.motionObj._type)
                         when CONTROL
                             continue
@@ -400,7 +401,7 @@ window.onload = ->
                             obj.motionObj.sprite.x = Math.floor(obj.motionObj.x)
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y)
                             obj.motionObj.sprite.z = Math.floor(obj.motionObj.z)
-                        when SPRITE, LABEL, SURFACE
+                        when SPRITE, LABEL, SURFACE, COLLIDER2D
                             if (obj.motionObj.rigid)
                                 if (obj.motionObj._xback != obj.motionObj.x)
                                     obj.motionObj.sprite.x = obj.motionObj.x - obj.motionObj._diffx - wx
@@ -495,7 +496,7 @@ addObject = (param, parent = undefined)->
         #*****************************************************************
         # CONTROL、SPRITE
         #*****************************************************************
-        when CONTROL, SPRITE
+        when CONTROL, SPRITE, COLLIDER2D
             motionsprite = undefined
             if (_type == SPRITE)
                 if (rigid)
@@ -514,6 +515,8 @@ addObject = (param, parent = undefined)->
             if (!motionsprite?)
                 motionsprite = new Sprite()
 
+            if (_type == COLLIDER2D)
+                scene = GAMESCENE_SUB2
             if (scene < 0)
                 scene = GAMESCENE_SUB1
 
@@ -527,7 +530,7 @@ addObject = (param, parent = undefined)->
                 motionsprite.backgroundColor = "transparent"
                 motionsprite.x = x - Math.floor(width / 2)
                 motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
-                motionsprite.opacity = opacity
+                motionsprite.opacity = if (_type == COLLIDER2D) then 0.8 else opacity
                 motionsprite.rotation = rotation
                 motionsprite.scaleX = scaleX
                 motionsprite.scaleY = scaleY
@@ -936,7 +939,7 @@ removeObject = (motionObj)->
         object.motionObj.sprite.destroy()
     else
         switch (motionObj._type)
-            when CONTROL, SPRITE, LABEL, MAP, EXMAP, PRIMITIVE, COLLADA
+            when CONTROL, SPRITE, LABEL, MAP, EXMAP, PRIMITIVE, COLLADA, COLLIDER2D
                 _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
 
     object.motionObj.sprite = undefined
@@ -1026,7 +1029,7 @@ resumeGame =->
 # ワールドビューの設定
 #**********************************************************************
 setWorldView = (sx, sy, ex, ey)->
-    WORLDVIEW =
+    _WORLDVIEW =
         sx: sx
         sy: sy
         ex: ex

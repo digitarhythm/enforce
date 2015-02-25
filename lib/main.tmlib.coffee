@@ -21,6 +21,7 @@ PRIMITIVE           = 4
 COLLADA             = 5
 MAP                 = 6
 EXMAP               = 7
+COLLIDER2D          = 8
 
 # 物理スプライトの種類
 DYNAMIC_BOX         = 0
@@ -36,19 +37,6 @@ CYLINDER            = 3
 TORUS               = 4
 PLANE               = 5
 
-# すべてのメディアセットが持っている素材
-_PRELOADMEDIA       =
-    _notice     : 'lib/notice.png'
-    _execbutton : 'lib/execbutton.png'
-    _pad_w      : 'lib/pad_w.png'
-    _pad_b      : 'lib/pad_b.png'
-    _apad_w     : 'lib/apad_w.png'
-    _apad_b     : 'lib/apad_b.png'
-    _apad2_w    : 'lib/apad2_w.png'
-    _apad2_b    : 'lib/apad2_b.png'
-    _button_w   : 'lib/button_w.png'
-    _button_b   : 'lib/button_b.png'
-
 # Sceneの種類
 BGSCENE             = 0
 BGSCENE_SUB1        = 1
@@ -63,7 +51,7 @@ DEBUGSCENE          = 9
 MAXSCENE            = (if (DEBUG) then DEBUGSCENE else _SYSTEMSCENE)
 
 # ワールドビュー
-WORLDVIEW          =
+_WORLDVIEW          =
     sx: 0
     sy: 0
     ex: SCREEN_WIDTH
@@ -321,6 +309,8 @@ tm.main ->
                     obj.motionObj.behavior()
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
+                    wx = if (obj.motionObj.worldview? && obj.motionObj.worldview) then _WORLDVIEW.sx else 0
+                    wy = if (obj.motionObj.worldview? && obj.motionObj.worldview) then _WORLDVIEW.sy else 0
                     switch (obj.motionObj._type)
                         when CONTROL
                             continue
@@ -328,9 +318,12 @@ tm.main ->
                             obj.motionObj.sprite.x = Math.floor(obj.motionObj.x)
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y)
                             obj.motionObj.sprite.z = Math.floor(obj.motionObj.z)
-                        when SPRITE, LABEL, SURFACE
-                            wx = if (obj.motionObj.worldview) then WORLDVIEW.sx else 0
-                            wy = if (obj.motionObj.worldview) then WORLDVIEW.sy else 0
+                        when SPRITE, LABEL, SURFACE, COLLIDER2D
+                            rot = obj.motionObj.sprite.rotation
+                            rot += obj.motionObj.rotation
+                            if (rot > 359)
+                                rot = rot % 360
+                            obj.motionObj.sprite.rotation = rot
                             # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
                             if (obj.motionObj._reversePosFlag)
                                 obj.motionObj.x = obj.motionObj.sprite.x
@@ -339,6 +332,11 @@ tm.main ->
                                 obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - wx)
                                 obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - wy - obj.motionObj.z)
                         when MAP, EXMAP
+                            rot = obj.motionObj.sprite.rotation
+                            rot += obj.motionObj.rotation
+                            if (rot > 359)
+                                rot = rot % 360
+                            obj.motionObj.sprite.rotation = rot
                             obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - wx - obj.motionObj._diffx)
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - wy - obj.motionObj._diffy)
 
@@ -450,8 +448,9 @@ addObject = (param, parent = undefined)->
 
     # スプライトを生成
     switch (_type)
-        when CONTROL, SPRITE
-            # 画像割り当て
+        when CONTROL, SPRITE, COLLIDER2D
+            if (_type == COLLIDER2D)
+                scene = GAMESCENE_SUB2
             if (scene < 0)
                 scene = GAMESCENE_SUB1
 
@@ -462,12 +461,11 @@ addObject = (param, parent = undefined)->
             if (image?)
                 if (!motionsprite?)
                     motionsprite = tm.display.Sprite(image, width, height)
-
                     motionsprite.backgroundColor = "transparent"
                     motionsprite.setOrigin(0.5, 0.5)
                     motionsprite.x = Math.floor(x)
                     motionsprite.y = Math.floor(y) - Math.floor(z)
-                    motionsprite.alpha = opacity
+                    motionsprite.alpha = if (_type == COLLIDER2D) then 0.8 else opacity
                     motionsprite.rotation = rotation
                     motionsprite.scaleX = scaleX
                     motionsprite.scaleY = scaleY
@@ -825,7 +823,7 @@ removeObject = (motionObj)->
         nop()
     else
         switch (motionObj._type)
-            when CONTROL, SPRITE, LABEL, PRIMITIVE, COLLADA, MAP, EXMAP
+            when CONTROL, SPRITE, LABEL, PRIMITIVE, COLLADA, MAP, EXMAP, COLLIDER2D
                 _scenes[object.motionObj._scene].removeChild(object.motionObj.sprite)
 
     object.motionObj.sprite = undefined
@@ -902,7 +900,7 @@ resumeGame =->
 # ワールドビューの設定
 #**********************************************************************
 setWorldView = (sx, sy, ex, ey)->
-    WORLDVIEW =
+    _WORLDVIEW =
         sx: sx
         sy: sy
         ex: ex
@@ -962,20 +960,6 @@ dispVirtualGamepad = (flag)->
 #**********************************************************************
 #**********************************************************************
 #**********************************************************************
-
-#**********************************************************************
-# メディアデータのロード
-#**********************************************************************
-_loadMediaList = (medialist)->
-    for key, val in _PRELOADMEDIA
-        tm.graphics.TextureManager.add(key, val)
-    for key, val in medialist
-        ext = val.match(/\..*?$/)
-        switch (ext[0])
-            when ".png", ".jpg", ".jpeg", ".gif"
-                tm.graphics.TextureManager.add(key, val)
-            when ".mp3", ".m4a", ".ogg"
-                tm.sound.SoundManager.add(key, val)
 
 #**********************************************************************
 # オブジェクトリストの中で未使用のものの配列番号を返す。

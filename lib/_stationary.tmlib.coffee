@@ -14,6 +14,9 @@ class _stationary
 
         @sprite = initparam['motionsprite']
         if (@sprite?)
+            # 非表示にしてから初期位置に設定する
+            @sprite.visible = false
+
             @_type = initparam['_type']
             @_xback = @x = initparam['x']
             @_yback = @y = initparam['y']
@@ -56,13 +59,9 @@ class _stationary
             if (!@collider?)
                 @collider = @
 
+            @collider.worldview = @worldview
+
             @lastvisible = @visible
-
-            @sprite.scaleX = @scaleX
-            @sprite.scaleY = @scaleY
-            @sprite.scaleZ = @scaleZ
-
-            @sprite.alpha = @opacity
 
             @sprite.setInteractive(true)
 
@@ -85,10 +84,6 @@ class _stationary
 
             @intersectFlag = true
 
-            # 非表示にしてから初期位置に設定する
-            @sprite.visible = false
-            @sprite.x = Math.floor(@x)
-            @sprite.y = Math.floor(@y - @z)
 
     #***************************************************************
     # デストラクター
@@ -103,31 +98,20 @@ class _stationary
         if (@sprite?)
             switch (@_type)
                 when SPRITE
-                    # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
-                    #if (@_reversePosFlag)
-                    #    @x = (@sprite.x + @_diffx)
-                    #    @y = (@sprite.y + @_diffy + @z)
-                    #else
-                    #    @sprite.x = Math.floor(@x)
-                    #    @sprite.y = Math.floor(@y - @z)
-
                     @ys += @gravity
-
                     @x += @xs
                     @y += @ys
                     @z += @zs
 
-                    if (@rotation > 359)
-                        @rotation = @rotation % 360
-                    @sprite.rotation = @rotation
-
+                    # コライダーを追随させる
                     if (@collider? && @collider.sprite?)
                         if (@collider._uniqueID != @_uniqueID)
+                            @collider.worldview = true
                             @collider.sprite.visible = DEBUG
                             @collider.visible = DEBUG
                             @collider.opacity = if (DEBUG) then 0.5 else 1.0
-                            @collider._xback = @collider.x = @sprite.x - @collider._offsetx
-                            @collider._yback = @collider.y = @sprite.y + @collider._offsety
+                            @collider._xback = @collider.x = @x - @collider._offsetx
+                            @collider._yback = @collider.y = @y - @z + @collider._offsety
 
                     if (@opacity != @sprite.alpha)
                         if (@sprite.alpha == @opacity_back)
@@ -168,13 +152,6 @@ class _stationary
                         @sprite.frameIndex = 0
 
                 when LABEL
-                    if (@_reversePosFlag)
-                        @x = (@sprite.x + @_diffx)
-                        @y = (@sprite.y + @_diffy + @z)
-                    else
-                        @sprite.x = Math.floor(@x)
-                        @sprite.y = Math.floor(@y - @z)
-
                     @x += @xs
                     @y += @ys
                     @z += @zs
@@ -205,10 +182,6 @@ class _stationary
                             rootScene3d.removeChild(@sprite)
                         @lastvisible = @visible
                                 
-                    #@sprite.x = @x
-                    #@sprite.y = @y
-                    #@sprite.z = @z
-
                     if (@scaleX != @sprite.scaleX)
                         @sprite.scaleX = @scaleX
                     if (@scaleY != @sprite.scaleY)
@@ -222,9 +195,6 @@ class _stationary
                     @z += @zs
 
                 when MAP
-                    #@sprite.x = Math.floor(@x - @_diffx)
-                    #@sprite.y = Math.floor(@y - @_diffy)
-
                     @x += @xs
                     @y += @ys
 

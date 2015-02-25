@@ -14,6 +14,9 @@ class _stationary
 
         @sprite = initparam['motionsprite']
         if (@sprite?)
+            # 非表示にしてから初期位置に設定する
+            @sprite.visible = false
+
             @_type = initparam['_type']
             @_xback = @x = initparam['x']
             @_yback = @y = initparam['y']
@@ -66,12 +69,6 @@ class _stationary
             @hitflag = false
             @lastvisible = @visible
 
-            @sprite.scaleX = @scaleX
-            @sprite.scaleY = @scaleY
-            @sprite.scaleZ = @scaleZ
-
-            @sprite.opacity = @opacity
-
             @sprite.ontouchstart = (e)=>
                 pos = {x:e.x, y:e.y}
                 if (typeof @touchesBegan == 'function' && @visible)
@@ -91,10 +88,6 @@ class _stationary
 
             @intersectFlag = true
 
-            # 非表示にしてから初期位置に設定する
-            @sprite.visible = false
-            @sprite.x = Math.floor(@x - @_diffx)
-            @sprite.y = Math.floor(@y - @_diffy)
 
     #***************************************************************
     # デストラクター
@@ -126,11 +119,6 @@ class _stationary
                         if (@_ysback != @ys)
                             @sprite.vy = @ys
 
-                        #if (@_xback != @x)
-                        #    @sprite.x = @x - @_diffx
-                        #if (@_yback != @y)
-                        #    @sprite.y = @y - @_diffy - @z
-
                         @_xback = @x = @sprite.x + @_diffx
                         @_yback = @y = @sprite.y + @_diffy + @z
                         @_xsback = @xs = @sprite.vx
@@ -143,11 +131,12 @@ class _stationary
 
                     if (@collider? && @collider.sprite?)
                         if (@collider._uniqueID != @_uniqueID)
+                            @collider.worldview = true
                             @collider.sprite.visible = DEBUG
                             @collider.visible = DEBUG
                             @collider.opacity = if (DEBUG) then 0.5 else 1.0
-                            @collider._xback = @collider.x = @sprite.x + @_diffx - @collider._offsetx
-                            @collider._yback = @collider.y = @sprite.y + @_diffy + @collider._offsety
+                            @collider._xback = @collider.x = @x + @collider._offsetx
+                            @collider._yback = @collider.y = @y + @collider._offsety
 
                     if (@opacity != @sprite.opacity)
                         if (@opacity < 0.0)
