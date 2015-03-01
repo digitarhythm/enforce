@@ -126,15 +126,6 @@ class _stationary
                         @sprite.friction = @friction
                         @sprite.restitution = @restitution
 
-                    if (@collider? && @collider.sprite?)
-                        if (@collider._uniqueID != @_uniqueID)
-                            @collider.worldview = true
-                            @collider.sprite.visible = DEBUG
-                            @collider.visible = DEBUG
-                            @collider.opacity = if (DEBUG) then 0.5 else 1.0
-                            @collider._xback = @collider.x = @x + @collider._offsetx
-                            @collider._yback = @collider.y = @y + @collider._offsety
-
                     if (@opacity != @sprite.opacity)
                         if (@opacity < 0.0)
                             @opacity = 0.0
@@ -145,6 +136,16 @@ class _stationary
                         else
                             @opacity = @sprite.opacity
                     @opacity_back = @sprite.opacity
+
+                    # コライダーを追随させる
+                    if (@collider? && @collider.sprite?)
+                        if (@collider._uniqueID != @_uniqueID)
+                            @collider.worldview = true
+                            @collider.sprite.visible = DEBUG
+                            @collider.visible = DEBUG
+                            @collider.opacity = if (DEBUG) then 0.5 else 1.0
+                            @collider._xback = @collider.x = @x + @collider._offsetx
+                            @collider._yback = @collider.y = @y - @z + @collider._offsety
 
                     @sprite.visible = @visible
                     @sprite.scaleX  = @scaleX
@@ -457,10 +458,12 @@ class _stationary
     moveTo:(x, y, time, easing_kind = LINEAR, easing_move = EASEINOUT)->
         move = EASINGVALUE[easing_kind]
         easing = move[easing_move]
-        @sprite.tl.setTimeBased()
         @_reversePosFlag = true
-        @sprite.tl.moveTo(x - @_diffx, y - @_diffy, time / 2, easing).then =>
-            @_reversePosFlag = false
+        @sprite.tl.setTimeBased()
+        @sprite.tl
+            .moveTo(x - @_diffx, y - @_diffy, time, easing)
+            .then =>
+                @_reversePosFlag = false
         return @
 
     #***************************************************************
@@ -469,17 +472,19 @@ class _stationary
     moveBy:(x, y, time, easing_kind = LINEAR, easing_move = EASEINOUT)->
         move = EASINGVALUE[easing_kind]
         easing = move[easing_move]
-        @sprite.tl.setTimeBased()
         @_reversePosFlag = true
-        @sprite.tl.moveBy(x, y, time / 2, easing).then =>
-            @_reversePosFlag = false
+        @sprite.tl.setTimeBased()
+        @sprite.tl
+            .moveBy(x, y, time, easing)
+            .then =>
+                @_reversePosFlag = false
         return @
 
     #***************************************************************
     # 指定した時間だけ待つ
     #***************************************************************
     delay:(time)->
-        @sprite.tl.setTimeBased()
+        #@sprite.tl.setTimeBased()
         @sprite.tl.delay(time)
         return @
 

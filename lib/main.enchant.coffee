@@ -452,12 +452,18 @@ window.onload = ->
                                     obj.motionObj.sprite.y = obj.motionObj.y - obj.motionObj._diffy - obj.motionObj.z - wy
                             else
                                 # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
-                                if (obj.motionObj._reversePosFlag)
-                                    obj.motionObj.x = (obj.motionObj.sprite.x + obj.motionObj._diffx)
-                                    obj.motionObj.y = (obj.motionObj.sprite.y + obj.motionObj._diffy + obj.motionObj.z)
+                                if (@_type == LABEL)
+                                    diffx = 0
+                                    diffy = 0
                                 else
-                                    obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - obj.motionObj._diffx - wx)
-                                    obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - obj.motionObj._diffy - obj.motionObj.z - wy)
+                                    diffx = obj.motionObj._diffx
+                                    diffy = obj.motionObj._diffy
+                                if (obj.motionObj._reversePosFlag)
+                                    obj.motionObj.x = obj.motionObj.sprite.x + diffx
+                                    obj.motionObj.y = obj.motionObj.sprite.y + diffy + obj.motionObj.z
+                                else
+                                    obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - diffx - wx)
+                                    obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - diffy - obj.motionObj.z - wy)
                         when MAP, EXMAP
                             obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - obj.motionObj._diffx - wx)
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - obj.motionObj._diffy - wy)

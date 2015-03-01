@@ -103,6 +103,14 @@ class _stationary
                     @x += @xs
                     @y += @ys
                     @z += @zs
+
+                    if (@opacity != @sprite.alpha)
+                        if (@sprite.alpha == @opacity_back)
+                            @sprite.alpha = @opacity
+                        else
+                            @opacity = @sprite.alpha
+                    @opacity_back = @sprite.alpha
+
                     # コライダーを追随させる
                     if (@collider? && @collider.sprite?)
                         if (@collider._uniqueID != @_uniqueID)
@@ -112,13 +120,6 @@ class _stationary
                             @collider.opacity = if (DEBUG) then 0.5 else 1.0
                             @collider._xback = @collider.x = @x - @collider._offsetx
                             @collider._yback = @collider.y = @y - @z + @collider._offsety
-
-                    if (@opacity != @sprite.alpha)
-                        if (@sprite.alpha == @opacity_back)
-                            @sprite.alpha = @opacity
-                        else
-                            @opacity = @sprite.alpha
-                    @opacity_back = @sprite.alpha
 
                     @sprite.visible = @visible
                     @sprite.scaleX  = @scaleX
@@ -397,7 +398,7 @@ class _stationary
         easing = move[easing_move]
         @_reversePosFlag = true
         @sprite.tweener
-            .to({ x: x, y: y} , time, easing)
+            .to({ x: x, y: y}, time, easing)
             .call =>
                 @_reversePosFlag = false
         return @
@@ -410,7 +411,7 @@ class _stationary
         easing = move[easing_move]
         @_reversePosFlag = true
         @sprite.tweener
-            .by({ x: x, y: y} , time, easing)
+            .by({ x: x, y: y}, time, easing)
             .call =>
                 @_reversePosFlag = false
         return @

@@ -2,14 +2,22 @@
 $ini = parse_ini_file("lib/config.ini", true);
 $library = $ini['ENVIRON']['LIBRARY'];
 $webgl = $ini['ENVIRON']['WEBGL'];
+$gametitle = $ini['ENVIRON']['TITLE'];
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
+    <title><?php echo $gametitle;?></title>
     <meta http-equiv="x-ua-compatible" content="IE=Edge">
-    <meta property="og:title" content="enforce games.">
-    <meta property="og:image" content="lib/enforce_icon.png">
+    <meta property='og:image' content='lib/enforce_icon.png'>
+<?php
+    if ($gametitle != "") {
+        echo "<meta property='og:title' content='$gametitle'>\n";
+    } else {
+        echo "<meta property='og:title' content='enforce games'>\n";
+    }
+?>
 <?php
     if ($library == "enchant") {
 ?>

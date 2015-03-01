@@ -248,11 +248,11 @@ tm.main ->
             EASINGVALUE[LINEAR]  = ["linear"]
             EASINGVALUE[SWING]   = ["swing"]
             EASINGVALUE[BACK]    = ["easeInOutBack",    "easeInBack",   "easeOutBack"]
-            EASINGVALUE[BOUNCE]  = ["easeInOutBounce",  "easeInBounce", "esseOutBounce"]
-            EASINGVALUE[CIRCLE]  = ["easeInOutCirc",    "easeInCirc",   "easeOutCir"]
+            EASINGVALUE[BOUNCE]  = ["easeInOutBounce",  "easeInBounce", "easeOutBounce"]
+            EASINGVALUE[CIRCLE]  = ["easeInOutCirc",    "easeInCirc",   "easeOutCirc"]
             EASINGVALUE[CUBIC]   = ["easeInOutCubic",   "easeInCubic",  "easeOutCubic"]
             EASINGVALUE[ELASTIC] = ["easeInOutElastic", "easeInElastic","easeOutElastic"]
-            EASINGVALUE[EXPO]    = ["easeInOutExpo",    "easeInExpo",   "easeOutElastic"]
+            EASINGVALUE[EXPO]    = ["easeInOutExpo",    "easeInExpo",   "easeOutExpo"]
             EASINGVALUE[QUAD]    = ["easeInOutQuad",    "easeInQuad",   "easeOutQuad"]
             EASINGVALUE[QUART]   = ["easeInOutQuart",   "easeInQuart",  "easeOutQuart"]
             EASINGVALUE[QUINT]   = ["easeInOutQuint",   "easeInQuint",  "easeOutQuint"]
@@ -364,8 +364,8 @@ tm.main ->
                             obj.motionObj.sprite.rotation = parseInt(rot)
                             # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
                             if (obj.motionObj._reversePosFlag)
-                                obj.motionObj.x = obj.motionObj.sprite.x
-                                obj.motionObj.y = obj.motionObj.sprite.y + obj.motionObj.z
+                                obj.motionObj.x = obj.motionObj.sprite.x + wx
+                                obj.motionObj.y = obj.motionObj.sprite.y + wy + obj.motionObj.z
                             else
                                 obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - wx)
                                 obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - wy - obj.motionObj.z)
