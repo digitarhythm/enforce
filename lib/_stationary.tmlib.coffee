@@ -43,6 +43,7 @@ class _stationary
             @animnum = initparam['animnum']
             @opacity = initparam['opacity']
             @rotation = initparam['rotation']
+            @rotate = initparam['rotate']
             @fontsize = initparam['fontsize']
             @color = initparam['color']
             @labeltext = initparam['labeltext']
@@ -102,7 +103,6 @@ class _stationary
                     @x += @xs
                     @y += @ys
                     @z += @zs
-
                     # コライダーを追随させる
                     if (@collider? && @collider.sprite?)
                         if (@collider._uniqueID != @_uniqueID)
@@ -379,6 +379,8 @@ class _stationary
     # タイムラインをループさせる
     #***************************************************************
     loop:->
+        @sprite.setLoop(true)
+        return @
 
     #***************************************************************
     # ライムラインをクリアする
@@ -390,7 +392,9 @@ class _stationary
     #***************************************************************
     #指定した座標に指定した時間で移動させる（絶対座標）
     #***************************************************************
-    moveTo:(x, y, time, easing = "easeOutQuad")->
+    moveTo:(x, y, time, easing_kind = LINEAR, easing_move = EASEINOUT)->
+        move = EASINGVALUE[easing_kind]
+        easing = move[easing_move]
         @_reversePosFlag = true
         @sprite.tweener
             .to({ x: x, y: y} , time, easing)
@@ -401,7 +405,9 @@ class _stationary
     #***************************************************************
     #指定した座標に指定した時間で移動させる（相対座標）
     #***************************************************************
-    moveBy:(x, y, time, easing = "easeOutQuad")->
+    moveBy:(x, y, time, easing_kind = LINEAR, easing_move = EASEINOUT)->
+        move = EASINGVALUE[easing_kind]
+        easing = move[easing_move]
         @_reversePosFlag = true
         @sprite.tweener
             .by({ x: x, y: y} , time, easing)
@@ -422,7 +428,5 @@ class _stationary
     then:(func)->
         @sprite.tweener.call(func)
         return @
-
-
 
 

@@ -29,6 +29,29 @@ DYNAMIC_CIRCLE      = 1
 STATIC_BOX          = 2
 STATIC_CIRCLE       = 3
 
+# Easingの種類(kind)
+LINEAR              = 0
+SWING               = 1
+BACK                = 2
+BOUNCE              = 3
+CIRCLE              = 4
+CUBIC               = 5
+ELASTIC             = 6
+EXPO                = 7
+QUAD                = 8
+QUART               = 9
+QUINT               = 10
+SINE                = 11
+
+# Easingの動き(move)
+EASEINOUT           = 0
+EASEIN              = 1
+EASEOUT             = 2
+NONE                = 3
+
+# Easingの配列
+EASINGVALUE         = []
+
 # WebGLのプリミティブの種類
 BOX                 = 0
 CUBE                = 1
@@ -221,6 +244,20 @@ tm.main ->
             gravity = new Box2D.Common.Math.b2Vec2(GRAVITY_X, GRAVITY_Y)
             box2dworld = new Box2D.Dynamics.b2World(gravity, true)
 
+            # Easing定義
+            EASINGVALUE[LINEAR]  = ["linear"]
+            EASINGVALUE[SWING]   = ["swing"]
+            EASINGVALUE[BACK]    = ["easeInOutBack",    "easeInBack",   "easeOutBack"]
+            EASINGVALUE[BOUNCE]  = ["easeInOutBounce",  "easeInBounce", "esseOutBounce"]
+            EASINGVALUE[CIRCLE]  = ["easeInOutCirc",    "easeInCirc",   "easeOutCir"]
+            EASINGVALUE[CUBIC]   = ["easeInOutCubic",   "easeInCubic",  "easeOutCubic"]
+            EASINGVALUE[ELASTIC] = ["easeInOutElastic", "easeInElastic","easeOutElastic"]
+            EASINGVALUE[EXPO]    = ["easeInOutExpo",    "easeInExpo",   "easeOutElastic"]
+            EASINGVALUE[QUAD]    = ["easeInOutQuad",    "easeInQuad",   "easeOutQuad"]
+            EASINGVALUE[QUART]   = ["easeInOutQuart",   "easeInQuart",  "easeOutQuart"]
+            EASINGVALUE[QUINT]   = ["easeInOutQuint",   "easeInQuint",  "easeOutQuint"]
+            EASINGVALUE[SINE]    = ["easeInOutSine",    "easeInSine",   "easeOutSine"]
+
             if (DEBUG == true)
                 _DEBUGLABEL = new tm.display.Label()
                 _DEBUGLABEL.originX = 0
@@ -319,11 +356,12 @@ tm.main ->
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y)
                             obj.motionObj.sprite.z = Math.floor(obj.motionObj.z)
                         when SPRITE, LABEL, SURFACE, COLLIDER2D
-                            rot = obj.motionObj.sprite.rotation
-                            rot += obj.motionObj.rotation
+                            rot = parseFloat(obj.motionObj.rotation)
+                            rot += parseFloat(obj.motionObj.rotate)
                             if (rot > 359)
                                 rot = rot % 360
-                            obj.motionObj.sprite.rotation = rot
+                            obj.motionObj.rotation = rot
+                            obj.motionObj.sprite.rotation = parseInt(rot)
                             # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
                             if (obj.motionObj._reversePosFlag)
                                 obj.motionObj.x = obj.motionObj.sprite.x
@@ -425,7 +463,8 @@ addObject = (param, parent = undefined)->
     scaleX = if (param['scaleX']?) then param['scaleX'] else 1.0
     scaleY = if (param['scaleY']?) then param['scaleY'] else 1.0
     scaleZ = if (param['scaleZ']?) then param['scaleZ'] else 1.0
-    rotation = if (param['rotation']?) then param['rotation'] else 0.0
+    rotation = if (param['rotation']?) then param['rotation'] else 0.0 # 現在の角度
+    rotate = if (param['rotate']?) then param['rotate'] else 0.0 # 角度に追加される値
     texture = if (param['texture']?) then param['texture'] else undefined
     fontsize = if (param['fontsize']?) then param['fontsize'] else '16px'
     color = if (param['color']?) then param['color'] else 'white'
@@ -467,6 +506,7 @@ addObject = (param, parent = undefined)->
                     motionsprite.y = Math.floor(y) - Math.floor(z)
                     motionsprite.alpha = if (_type == COLLIDER2D) then 0.8 else opacity
                     motionsprite.rotation = rotation
+                    motionsprite.rotate = rotate
                     motionsprite.scaleX = scaleX
                     motionsprite.scaleY = scaleY
                     motionsprite.visible = visible
@@ -507,6 +547,7 @@ addObject = (param, parent = undefined)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 rotation: rotation
+                rotate: rotate
                 parent: parent
                 active: active
                 collider: collider
@@ -531,6 +572,7 @@ addObject = (param, parent = undefined)->
             motionsprite.y = Math.floor(y) - Math.floor(z)
             motionsprite.alpha = opacity
             motionsprite.rotation = rotation
+            motionsprite.rotate = rotate
             motionsprite.scaleX = scaleX
             motionsprite.scaleY = scaleY
             motionsprite.visible = visible
@@ -749,6 +791,7 @@ setMotionObj = (param)->
     initparam['visible'] = if (param['visible']?) then param['visible'] else true
     initparam['opacity'] = if (param['opacity']?) then param['opacity'] else 0
     initparam['rotation'] = if (param['rotation']?) then param['rotation'] else 0.0
+    initparam['rotate'] = if (param['rotate']?) then param['rotate'] else 0.0
     initparam['motionsprite'] = if (param['motionsprite']?) then param['motionsprite'] else 0
     initparam['fontsize'] = if (param['fontsize']?) then param['fontsize'] else '16px'
     initparam['color'] = if (param['color']?) then param['color'] else 'white'

@@ -29,6 +29,29 @@ DYNAMIC_CIRCLE      = 1
 STATIC_BOX          = 2
 STATIC_CIRCLE       = 3
 
+# Easingの種類(kind)
+LINEAR              = 0
+SWING               = 1
+BACK                = 2
+BOUNCE              = 3
+CIRCLE              = 4
+CUBIC               = 5
+ELASTIC             = 6
+EXPO                = 7
+QUAD                = 8
+QUART               = 9
+QUINT               = 10
+SINE                = 11
+
+# Easingの動き(move)
+EASEINOUT           = 0
+EASEIN              = 1
+EASEOUT             = 2
+NONE                = 3
+
+# Easingの配列
+EASINGVALUE         = []
+
 # WebGLのプリミティブの種類
 BOX                 = 0
 CUBE                = 1
@@ -178,6 +201,20 @@ window.onload = ->
     core = new Core(SCREEN_WIDTH, SCREEN_HEIGHT)
     # FPS設定
     core.fps = FPS
+
+    # Easing定義
+    EASINGVALUE[LINEAR]  = [enchant.Easing.LINEAR]
+    EASINGVALUE[SWING]   = [enchant.Easing.SWING]
+    EASINGVALUE[BACK]    = [enchant.Easing.BACK_EASEINOUT,    enchant.Easing.BACK_EASEIN,    enchant.Easing.BACK_EASEOUT]
+    EASINGVALUE[BOUNCE]  = [enchant.Easing.BOUNCE_EASEINOUT,  enchant.Easing.BOUNCE_EASEIN,  enchant.Easing.BOUNCE_EASEOUT]
+    EASINGVALUE[CIRCLE]  = [enchant.Easing.CIRCLE_EASEINOUT,  enchant.Easing.CIRCLE_EASEIN,  enchant.Easing.CIRCLE_EASEOUT]
+    EASINGVALUE[CUBIC]   = [enchant.Easing.CUBIC_EASEINOUT,   enchant.Easing.CUBIC_EASEIN,   enchant.Easing.CUBIC_EASEOUT]
+    EASINGVALUE[ELASTIC] = [enchant.Easing.ELASTIC_EASEINOUT, enchant.Easing.ELASTIC_EASEIN, enchant.Easing.ELASTIC_EASEOUT]
+    EASINGVALUE[EXPO]    = [enchant.Easing.EXPO_EASEINOUT,    enchant.Easing.EXPO_EASEIN,    enchant.Easing.EXPO_EASEOUT]
+    EASINGVALUE[QUAD]    = [enchant.Easing.QUAD_EASEINOUT,    enchant.Easing.QUAD_EASEIN,    enchant.Easing.QUAD_EASEOUT]
+    EASINGVALUE[QUART]   = [enchant.Easing.QUART_EASEINOUT,   enchant.Easing.QUART_EASEIN,   enchant.Easing.QUART_EASEOUT]
+    EASINGVALUE[QUINT]   = [enchant.Easing.QUINT_EASEINOUT,   enchant.Easing.QUINT_EASEIN,   enchant.Easing.QUINT_EASEOUT]
+    EASINGVALUE[SINE]    = [enchant.Easing.SINE_EASEINOUT,    enchant.Easing.SINE_EASEIN,    enchant.Easing.SINE_EASEOUT]
 
     # ボタンの定義
     core.keybind( 90, 'a' )
@@ -402,6 +439,12 @@ window.onload = ->
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y)
                             obj.motionObj.sprite.z = Math.floor(obj.motionObj.z)
                         when SPRITE, LABEL, SURFACE, COLLIDER2D
+                            rot = parseFloat(obj.motionObj.rotation)
+                            rot += parseFloat(obj.motionObj.rotate)
+                            if (rot > 359.0)
+                                rot = rot % 360
+                            obj.motionObj.rotation = rot
+                            obj.motionObj.sprite.rotation = parseInt(rot)
                             if (obj.motionObj.rigid)
                                 if (obj.motionObj._xback != obj.motionObj.x)
                                     obj.motionObj.sprite.x = obj.motionObj.x - obj.motionObj._diffx - wx
@@ -470,10 +513,11 @@ addObject = (param, parent = undefined)->
     scaleY = if (param['scaleY']?) then param['scaleY'] else 1.0
     scaleZ = if (param['scaleZ']?) then param['scaleZ'] else 1.0
     rotation = if (param['rotation']?) then param['rotation'] else 0.0
+    rotate = if (param['rotate']?) then param['rotate'] else 0.0
     texture = if (param['texture']?) then param['texture'] else undefined
     fontsize = if (param['fontsize']?) then param['fontsize'] else '16'
     color = if (param['color']?) then param['color'] else 'white'
-    labeltext = if (param['labeltext']?) then param['labeltext'].replace(/\n/ig, "<br><br>") else 'text'
+    labeltext = if (param['labeltext']?) then param['labeltext'].replace(/\n/ig, "<br>") else 'text'
     textalign = if (param['textalign']?) then param['textalign'] else 'left'
     active = if (param['active']?) then param['active'] else true
     kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
@@ -532,6 +576,7 @@ addObject = (param, parent = undefined)->
                 motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
                 motionsprite.opacity = if (_type == COLLIDER2D) then 0.8 else opacity
                 motionsprite.rotation = rotation
+                motionsprite.rotate = rotate
                 motionsprite.scaleX = scaleX
                 motionsprite.scaleY = scaleY
                 motionsprite.visible = visible
@@ -572,6 +617,7 @@ addObject = (param, parent = undefined)->
                 motionsprite: motionsprite
                 motionObj: motionObj
                 rotation: rotation
+                rotate: rotate
                 parent: parent
                 radius: radius
                 density: density
@@ -601,20 +647,21 @@ addObject = (param, parent = undefined)->
             # ラベルを表示
             _scenes[scene].addChild(motionsprite)
             # 値を代入
-            motionsprite.backgroundColor = "transparent"
-            motionsprite.x = x - Math.floor(width / 2)
-            motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
-            motionsprite.opacity = opacity
-            motionsprite.rotation = rotation
-            motionsprite.scaleX = scaleX
-            motionsprite.scaleY = scaleY
-            motionsprite.visible = visible
-            motionsprite.width = width
-            motionsprite.height = height
-            motionsprite.color = color
-            motionsprite.text = labeltext
-            motionsprite.textAlign = textalign
-            motionsprite.font = fontsize+"/32 'Arial'"
+            #motionsprite.backgroundColor = "transparent"
+            #motionsprite.x = x - Math.floor(width / 2)
+            #motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
+            #motionsprite.opacity = opacity
+            #motionsprite.rotation = rotation
+            #motionsprite.rotate = rotate
+            #motionsprite.scaleX = scaleX
+            #motionsprite.scaleY = scaleY
+            #motionsprite.visible = visible
+            #motionsprite.width = width
+            #motionsprite.height = height
+            #motionsprite.color = color
+            motionsprite.text = ""
+            #motionsprite.textAlign = textalign
+            #motionsprite.font = fontsize+"px 'Arial'"
             # 動きを定義したオブジェクトを生成する
             retObject = @setMotionObj
                 x: x
@@ -857,6 +904,7 @@ setMotionObj = (param)->
     initparam['visible'] = if (param['visible']?) then param['visible'] else true
     initparam['opacity'] = if (param['opacity']?) then param['opacity'] else 0
     initparam['rotation'] = if (param['rotation']?) then param['rotation'] else 0.0
+    initparam['rotate'] = if (param['rotate']?) then param['rotate'] else 0.0
     initparam['motionsprite'] = if (param['motionsprite']?) then param['motionsprite'] else 0
     initparam['fontsize'] = if (param['fontsize']?) then param['fontsize'] else '16'
     initparam['color'] = if (param['color']?) then param['color'] else 'white'

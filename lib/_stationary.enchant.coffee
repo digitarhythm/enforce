@@ -43,6 +43,7 @@ class _stationary
             @animnum = initparam['animnum']
             @opacity = initparam['opacity']
             @rotation = initparam['rotation']
+            @rotate = initparam['rotate']
             @fontsize = initparam['fontsize']
             @color = initparam['color']
             @labeltext = initparam['labeltext']
@@ -108,10 +109,6 @@ class _stationary
                         @x += @xs
                         @y += @ys
                         @z += @zs
-
-                        if (@rotation > 359)
-                            @rotation = @rotation % 360
-                        @sprite.rotation = @rotation
                     else
                         # 物理演算スプライト
                         if (@_xsback != @xs)
@@ -205,7 +202,7 @@ class _stationary
                     @sprite.height = @height
                     @sprite.font = @fontsize+"px 'Arial'"
                     @sprite.color = @color
-                    @sprite.text = @labeltext
+                    @sprite.text = @labeltext.replace(/\n/ig, "<br>")
                     @sprite.textAlign = @textalign
 
                 when PRIMITIVE, COLLADA
@@ -457,7 +454,9 @@ class _stationary
     #***************************************************************
     # 指定した位置へ移動させる
     #***************************************************************
-    moveTo:(x, y, time, easing = enchant.Easing.QUAD_EASEINOUT)->
+    moveTo:(x, y, time, easing_kind = LINEAR, easing_move = EASEINOUT)->
+        move = EASINGVALUE[easing_kind]
+        easing = move[easing_move]
         @sprite.tl.setTimeBased()
         @_reversePosFlag = true
         @sprite.tl.moveTo(x - @_diffx, y - @_diffy, time / 2, easing).then =>
@@ -467,7 +466,9 @@ class _stationary
     #***************************************************************
     # 相対的に移動させる
     #***************************************************************
-    moveBy:(x, y, time, easing = enchant.Easing.QUAD_EASEINOUT)->
+    moveBy:(x, y, time, easing_kind = LINEAR, easing_move = EASEINOUT)->
+        move = EASINGVALUE[easing_kind]
+        easing = move[easing_move]
         @sprite.tl.setTimeBased()
         @_reversePosFlag = true
         @sprite.tl.moveBy(x, y, time / 2, easing).then =>
@@ -479,7 +480,7 @@ class _stationary
     #***************************************************************
     delay:(time)->
         @sprite.tl.setTimeBased()
-        @sprite.tl.delay(time / 2)
+        @sprite.tl.delay(time)
         return @
 
     #***************************************************************

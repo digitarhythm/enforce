@@ -9,6 +9,12 @@ $ENF = realpath("$eftmp/..");
 // working directory
 $PROJ = getcwd();
 
+// check develop mode
+if (!is_file("$PROJ/index.php")) {
+    echo "It does not become a development mode.\n";
+    exit;
+}
+
 // directory make
 exec("mkdir -p $PROJ/lib");
 exec("mkdir -p $PROJ/media/picture");
