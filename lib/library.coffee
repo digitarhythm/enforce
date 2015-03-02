@@ -61,5 +61,11 @@ isWebGL = ->
     catch e
         return false
 
+# Swap value
+swap = (a, b)->
+    c = a
+    a = b
+    b = c
+
 # do noting
 nop =->

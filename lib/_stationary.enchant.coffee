@@ -131,7 +131,7 @@ class _stationary
                             @opacity = 0.0
                         if (@opacity > 1.0)
                             @opacity = 1.0
-                        if (@sprite.opacity == @opacity_back)
+                        if (@sprite.opacity == @opacity_back || !@opacity_back?)
                             @sprite.opacity = @opacity
                         else
                             @opacity = @sprite.opacity
@@ -427,7 +427,8 @@ class _stationary
     #***************************************************************
     fadeIn:(time)->
         @sprite.tl.setTimeBased()
-        @sprite.tl.fadeIn(time / 2)
+        @sprite.tl
+            .fadeIn(time / 2)
         return @
 
     #***************************************************************
@@ -435,7 +436,8 @@ class _stationary
     #***************************************************************
     fadeOut:(time)->
         @sprite.tl.setTimeBased()
-        @sprite.tl.fadeOut(time / 2)
+        @sprite.tl
+            .fadeOut(time / 2)
         return @
 
     #***************************************************************

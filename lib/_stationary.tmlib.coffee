@@ -105,7 +105,11 @@ class _stationary
                     @z += @zs
 
                     if (@opacity != @sprite.alpha)
-                        if (@sprite.alpha == @opacity_back)
+                        if (@opacity < 0.0)
+                            @opacity = 0.0
+                        if (@opacity > 1.0)
+                            @opacity = 1.0
+                        if (@sprite.alpha == @opacity_back || !@opacity_back?)
                             @sprite.alpha = @opacity
                         else
                             @opacity = @sprite.alpha
@@ -117,7 +121,7 @@ class _stationary
                             @collider.worldview = true
                             @collider.sprite.visible = DEBUG
                             @collider.visible = DEBUG
-                            @collider.opacity = if (DEBUG) then 0.5 else 1.0
+                            @collider.alpha = if (DEBUG) then 0.5 else 1.0
                             @collider._xback = @collider.x = @x - @collider._offsetx
                             @collider._yback = @collider.y = @y - @z + @collider._offsety
 
@@ -362,18 +366,16 @@ class _stationary
     # スプライトをfadeInさせる
     #***************************************************************
     fadeIn:(time)->
-        @sprite.tweener.to
-            alpha: 1.0
-        , time
+        @sprite.tweener
+            .to({alpha: 1.0}, time)
         return @
 
     #***************************************************************
     # スプライトをフェイドアウトする
     #***************************************************************
     fadeOut:(time)->
-        @sprite.tweener.to
-            alpha: 0.0
-        , time
+        @sprite.tweener
+            .to({alpha: 0.0}, time)
         return @
 
     #***************************************************************
