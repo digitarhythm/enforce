@@ -1082,7 +1082,11 @@ resumeGame =->
 #**********************************************************************
 # ワールドビューの設定
 #**********************************************************************
-setWorldView = (sx, sy, ex, ey)->
+setWorldView = (sx, sy, ex = undefined, ey = undefined)->
+    if (!ex?)
+        ex = sx + SCREEN_WIDTH
+    if (!ey?)
+        ey = sy + SCREEN_HEIGHT
     _WORLDVIEW =
         sx: sx
         sy: sy

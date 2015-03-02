@@ -344,9 +344,9 @@ class _stationary
     # タッチイベント登録
     #***************************************************************
     addTarget:(func)->
-        #@sprite.addEventListener 'pointingend', (e)=>
-        @sprite.addEventListener 'touchstart', (e)=>
-            func(e.app.pointing.x, e.app.pointing.y)
+        @sprite.addEventListener 'pointingend', (e)=>
+        #@sprite.addEventListener 'touchstart', (e)=>
+            func(e.app.pointing.x, e.app.pointing.y, @)
 
     #***************************************************************
     # 2Dスプライト回転
