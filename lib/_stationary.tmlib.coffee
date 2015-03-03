@@ -379,6 +379,16 @@ class _stationary
         return @
 
     #***************************************************************
+    # 指定した透過度にする
+    #***************************************************************
+    fadeTo:(num, time, easing_kind = LINEAR, easing_move = EASEINOUT)->
+        move = EASINGVALUE[easing_kind]
+        easing = move[easing_move]
+        @sprite.tweener
+            .to({alpha: num}, time)
+        return @
+
+    #***************************************************************
     # タイムラインをループさせる
     #***************************************************************
     loop:->

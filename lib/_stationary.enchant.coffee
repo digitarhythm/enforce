@@ -426,32 +426,38 @@ class _stationary
     # スプライトをfadeInさせる
     #***************************************************************
     fadeIn:(time)->
-        @sprite.tl.setTimeBased()
         @sprite.tl
-            .fadeIn(time / 2)
+            .fadeIn(time * FPS / 1000)
         return @
 
     #***************************************************************
     # スプライトをフェイドアウトする
     #***************************************************************
     fadeOut:(time)->
-        @sprite.tl.setTimeBased()
         @sprite.tl
-            .fadeOut(time / 2)
+            .fadeOut(time * FPS / 1000)
+        return @
+
+    #***************************************************************
+    # 指定した透過度にする
+    #***************************************************************
+    fadeTo:(num, time, easing_kind = LINEAR, easing_move = EASEINOUT)->
+        move = EASINGVALUE[easing_kind]
+        easing = move[easing_move]
+        @sprite.tl
+            .fadeTo(num, time * FPS / 1000, easing)
         return @
 
     #***************************************************************
     # タイムラインをループさせる
     #***************************************************************
     loop:->
-        @sprite.tl.setTimeBased()
         @sprite.tl.loop()
 
     #***************************************************************
     # ライムラインをクリアする
     #***************************************************************
     clear:->
-        @sprite.tl.setTimeBased()
         @sprite.tl.clear()
 
     #***************************************************************
@@ -461,9 +467,8 @@ class _stationary
         move = EASINGVALUE[easing_kind]
         easing = move[easing_move]
         @_reversePosFlag = true
-        @sprite.tl.setTimeBased()
         @sprite.tl
-            .moveTo(x - @_diffx, y - @_diffy, time, easing)
+            .moveTo(x - @_diffx, y - @_diffy, time * FPS / 1000, easing)
             .then =>
                 @_reversePosFlag = false
         return @
@@ -475,9 +480,8 @@ class _stationary
         move = EASINGVALUE[easing_kind]
         easing = move[easing_move]
         @_reversePosFlag = true
-        @sprite.tl.setTimeBased()
         @sprite.tl
-            .moveBy(x, y, time, easing)
+            .moveBy(x, y, time * FPS / 1000, easing)
             .then =>
                 @_reversePosFlag = false
         return @
@@ -486,15 +490,14 @@ class _stationary
     # 指定した時間だけ待つ
     #***************************************************************
     delay:(time)->
-        #@sprite.tl.setTimeBased()
-        @sprite.tl.delay(time)
+        @sprite.tl.delay(time * FPS / 1000)
         return @
 
     #***************************************************************
     # 指定した処理を実行する
     #***************************************************************
     then:(func)->
-        @sprite.tl.setTimeBased()
         @sprite.tl.then =>
             func()
         return @
+
