@@ -10,14 +10,11 @@ class _vgamepadcontrol extends _stationary
 
         @input = []
         @input.axes = []
-        @input.analog = []
         @input.axes.up = false
         @input.axes.down = false
         @input.axes.left = false
         @input.axes.right = false
         @input.buttons = [false, false, false, false, false, false]
-        @input.analog[HORIZONTAL] = 0.0
-        @input.analog[VERTICAL] = 0.0
 
     #**************************
     # character destructor
