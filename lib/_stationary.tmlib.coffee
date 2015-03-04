@@ -121,7 +121,7 @@ class _stationary
                             @collider.worldview = true
                             @collider.sprite.visible = DEBUG
                             @collider.visible = DEBUG
-                            @collider.alpha = if (DEBUG) then 0.5 else 1.0
+                            @collider.opacity = @collider.sprite.alpha = if (DEBUG) then 0.5 else 1.0
                             @collider._xback = @collider.x = @x - @collider._offsetx
                             @collider._yback = @collider.y = @y - @z + @collider._offsety
 
