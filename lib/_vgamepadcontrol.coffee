@@ -15,6 +15,7 @@ class _vgamepadcontrol extends _stationary
         @input.axes.left = false
         @input.axes.right = false
         @input.buttons = [false, false, false, false, false, false]
+        @input.analog = [0.0, 0.0]
 
     #**************************
     # character destructor
@@ -37,6 +38,9 @@ class _vgamepadcontrol extends _stationary
                 @input.axes.down = @vgamepad.input.axes.down
                 @input.axes.left = @vgamepad.input.axes.left
                 @input.axes.right = @vgamepad.input.axes.right
+
+                @input.analog[HORIZONTAL] = @vgamepad.input.analog[HORIZONTAL]
+                @input.analog[VERTICAL] = @vgamepad.input.analog[VERTICAL]
 
                 @input.buttons[0] = @vgamebuttonlist[0].push if (@vgamebuttonlist[0])
                 @input.buttons[1] = @vgamebuttonlist[1].push if (@vgamebuttonlist[1])

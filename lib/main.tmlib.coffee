@@ -96,7 +96,7 @@ PADBUTTONS[0]       = [false, false]
 PADAXES             = []
 PADAXES[0]          = [0, 0]
 ANALOGSTICK         = []
-ANALOGSTICK[0]      = [[], []]
+ANALOGSTICK[0]      = [[0, 0], [0, 0]]
 _VGAMEPADCONTROL    = undefined
 
 # box2dの重力値
@@ -283,6 +283,12 @@ tm.main ->
                     PADBUTTONS[num] = _GAMEPADSINFO[num].padbuttons
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
+            if (_VGAMEPADCONTROL.input.analog?)
+                ANALOGSTICK[0][0][HORIZONTAL] += _VGAMEPADCONTROL.input.analog[HORIZONTAL]
+                ANALOGSTICK[0][0][VERTICAL] += _VGAMEPADCONTROL.input.analog[VERTICAL]
+                debugwrite
+                    labeltext: sprintf("x=%@, y=%@", _VGAMEPADCONTROL.input.analog[HORIZONTAL], _VGAMEPADCONTROL.input.analog[VERTICAL])
+                    clear: true
 
             key = core.keyboard
                 
@@ -333,12 +339,20 @@ tm.main ->
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][HORIZONTAL] = 0
 
+            ANALOGSTICK[0][0][HORIZONTAL] += PADAXES[0][HORIZONTAL]
+            if (ANALOGSTICK[0][0][HORIZONTAL] > 1.0)
+                ANALOGSTICK[0][0][HORIZONTAL] = 1.0
+
             if (key.getKey("up") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.up))
                 PADAXES[0][VERTICAL] = -1
             else if (key.getKey("down") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.down))
                 PADAXES[0][VERTICAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
+
+            ANALOGSTICK[0][0][VERTICAL] += PADAXES[0][VERTICAL]
+            if (ANALOGSTICK[0][0][VERTICAL] > 1.0)
+                ANALOGSTICK[0][0][VERTICAL] = 1.0
 
             LAPSEDTIME = (parseFloat((new Date) / 1000) - parseFloat(BEGINNINGTIME).toFixed(2))
             for obj in _objects

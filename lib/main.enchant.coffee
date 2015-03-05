@@ -102,7 +102,7 @@ PADBUTTONS[0]       = [false, false]
 PADAXES             = []
 PADAXES[0]          = [0, 0]
 ANALOGSTICK         = []
-ANALOGSTICK[0]      = [[], []]
+ANALOGSTICK[0]      = [[0, 0], [0, 0]]
 _VGAMEPADCONTROL    = undefined
 
 # Frame Per Seconds

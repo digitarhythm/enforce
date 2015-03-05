@@ -11,6 +11,9 @@ class _vanalogpad extends _stationary
         @input.axes.down = false
         @input.axes.left = false
         @input.axes.right = false
+        @input.analog = []
+        @input.analog[HORIZONTAL] = 0.0
+        @input.analog[VERTICAL] = 0.0
 
         @radius = parseFloat(@width * @scaleX / 2)
         @arclength = 0
@@ -56,8 +59,8 @@ class _vanalogpad extends _stationary
         @input.axes.down = false
         @input.axes.left = false
         @input.axes.right = false
-        ANALOGSTICK[0][0][HORIZONTAL] = 0.0
-        ANALOGSTICK[0][0][VERTICAL] = 0.0
+        @input.analog[HORIZONTAL] = 0.0
+        @input.analog[VERTICAL] = 0.0
 
     #**************************
     # touch cancel event
@@ -70,8 +73,8 @@ class _vanalogpad extends _stationary
         @input.axes.down = false
         @input.axes.left = false
         @input.axes.right = false
-        ANALOGSTICK[0][0][HORIZONTAL] = 0.0
-        ANALOGSTICK[0][0][VERTICAL] = 0.0
+        @inout.analog[HORIZONTAL] = 0.0
+        @input.analog[VERTICAL] = 0.0
 
     movePad:(pos)->
         # 底辺を求める
@@ -106,8 +109,8 @@ class _vanalogpad extends _stationary
         if (v > 1.0) then v = 1.0
         if (v < -1.0) then v = -1.0
 
-        ANALOGSTICK[0][0][HORIZONTAL] = h
-        ANALOGSTICK[0][0][VERTICAL] = v
+        @input.analog[HORIZONTAL] = h
+        @input.analog[VERTICAL] = v
 
         @input.axes.up = if (v < -0.3) then true else false
         @input.axes.down = if (v > 0.3) then true else false
