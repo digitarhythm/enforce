@@ -361,6 +361,20 @@ window.onload = ->
                     PADBUTTONS[num] = _GAMEPADSINFO[num].padbuttons
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
+                if (_VGAMEPADCONTROL.input.analog?)
+                    vgpx1 = parseFloat(_VGAMEPADCONTROL.input.analog[HORIZONTAL])
+                    vgpy1 = parseFloat(_VGAMEPADCONTROL.input.analog[VERTICAL])
+                else
+                    vgpx1 = 0
+                    vgpy1 = 0
+                if (_GAMEPADSINFO[0]?)
+                    vgpx2 = _GAMEPADSINFO[0].analogstick[0][HORIZONTAL]
+                    vgpy2 = _GAMEPADSINFO[0].analogstick[0][VERTICAL]
+                else
+                    vgpx2 = 0
+                    vgpy2 = 0
+            ANALOGSTICK[0][0][HORIZONTAL] = vgpx1 + vgpx2
+            ANALOGSTICK[0][0][VERTICAL] = vgpy1 + vgpy2
 
             if (core.input.a || core.input.space || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[0]? && _VGAMEPADCONTROL.input.buttons[0]))
                 PADBUTTONS[0][0] = true
