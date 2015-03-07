@@ -373,8 +373,8 @@ window.onload = ->
                 else
                     vgpx2 = 0
                     vgpy2 = 0
-            ANALOGSTICK[0][0][HORIZONTAL] = vgpx1 + vgpx2
-            ANALOGSTICK[0][0][VERTICAL] = vgpy1 + vgpy2
+            ANALOGSTICK[0][0][HORIZONTAL] = parseFloat(vgpx1 + vgpx2)
+            ANALOGSTICK[0][0][VERTICAL] = parseFloat(vgpy1 + vgpy2)
 
             if (core.input.a || core.input.space || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[0]? && _VGAMEPADCONTROL.input.buttons[0]))
                 PADBUTTONS[0][0] = true
@@ -429,6 +429,15 @@ window.onload = ->
                 PADAXES[0][VERTICAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
+
+            mx = (ANALOGSTICK[0][0][HORIZONTAL] + PADAXES[0][HORIZONTAL])
+            mx = 1  if (mx > 1)
+            mx = -1 if (mx < -1)
+            my = (ANALOGSTICK[0][0][VERTICAL] + PADAXES[0][VERTICAL])
+            my = 1  if (my > 1)
+            my = -1 if (my < -1)
+            ANALOGSTICK[0][0][HORIZONTAL] = mx
+            ANALOGSTICK[0][0][VERTICAL] = my
 
             # box2dの時間を進める
             box2dworld.step(core.fps)

@@ -296,12 +296,8 @@ tm.main ->
                 else
                     vgpx2 = 0
                     vgpy2 = 0
-            ANALOGSTICK[0][0][HORIZONTAL] = vgpx1 + vgpx2
-            ANALOGSTICK[0][0][VERTICAL] = vgpy1 + vgpy2
-
-            #debugwrite
-            #    labeltext: sprintf("x=%@, y=%@", ANALOGSTICK[0][0][HORIZONTAL], ANALOGSTICK[0][0][VERTICAL])
-            #    clear:true
+            ANALOGSTICK[0][0][HORIZONTAL] = parseFloat(vgpx1 + vgpx2)
+            ANALOGSTICK[0][0][VERTICAL]   = parseFloat(vgpy1 + vgpy2)
 
             key = core.keyboard
                 
@@ -346,11 +342,11 @@ tm.main ->
                 PADBUTTONS[0][7] = false
 
             if (key.getKey("left") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.left))
-                PADAXES[0][HORIZONTAL] = -1
+                PADAXES[0][HORIZONTAL] = -1.0
             else if (key.getKey("right") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.right))
-                PADAXES[0][HORIZONTAL] = 1
+                PADAXES[0][HORIZONTAL] = 1.0
             else if (!_GAMEPADSINFO[0]?)
-                PADAXES[0][HORIZONTAL] = 0
+                PADAXES[0][HORIZONTAL] = 0.0
 
             if (key.getKey("up") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.axes.up))
                 PADAXES[0][VERTICAL] = -1
@@ -358,6 +354,20 @@ tm.main ->
                 PADAXES[0][VERTICAL] = 1
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
+
+            mx = (ANALOGSTICK[0][0][HORIZONTAL] + PADAXES[0][HORIZONTAL])
+            mx = 1  if (mx > 1)
+            mx = -1 if (mx < -1)
+            my = (ANALOGSTICK[0][0][VERTICAL] + PADAXES[0][VERTICAL])
+            my = 1  if (my > 1)
+            my = -1 if (my < -1)
+            ANALOGSTICK[0][0][HORIZONTAL] = mx
+            ANALOGSTICK[0][0][VERTICAL] = my
+
+            #debugwrite
+            #    labeltext: sprintf("ax=%@, ay=%@, dx=%@, dy=%@, mx=%@, my=%@", ANALOGSTICK[0][0][HORIZONTAL], ANALOGSTICK[0][0][VERTICAL], PADAXES[0][HORIZONTAL], PADAXES[0][VERTICAL], mx, my)
+            #    clear:true
+
 
             LAPSEDTIME = (parseFloat((new Date) / 1000) - parseFloat(BEGINNINGTIME).toFixed(2))
             for obj in _objects

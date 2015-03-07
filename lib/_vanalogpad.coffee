@@ -109,14 +109,6 @@ class _vanalogpad extends _stationary
         if (v > 1.0) then v = 1.0
         if (v < -1.0) then v = -1.0
 
-        #ANALOGSTICK[0][0][HORIZONTAL] = h
-        #ANALOGSTICK[0][0][VERTICAL] = v
         @input.analog[HORIZONTAL] = h
         @input.analog[VERTICAL] = v
-
-
-        @input.axes.up = if (v < -0.3) then true else false
-        @input.axes.down = if (v > 0.3) then true else false
-        @input.axes.left = if (h < -0.3) then true else false
-        @input.axes.right = if (h > 0.3) then true else false
 
