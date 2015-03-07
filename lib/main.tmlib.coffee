@@ -355,14 +355,15 @@ tm.main ->
             else if (!_GAMEPADSINFO[0]?)
                 PADAXES[0][VERTICAL] = 0
 
-            mx = (ANALOGSTICK[0][0][HORIZONTAL] + PADAXES[0][HORIZONTAL])
-            mx = 1  if (mx > 1)
-            mx = -1 if (mx < -1)
-            my = (ANALOGSTICK[0][0][VERTICAL] + PADAXES[0][VERTICAL])
-            my = 1  if (my > 1)
-            my = -1 if (my < -1)
-            ANALOGSTICK[0][0][HORIZONTAL] = mx
-            ANALOGSTICK[0][0][VERTICAL] = my
+            if (GAMEPADMIX? && GAMEPADMIX)
+                mx = (ANALOGSTICK[0][0][HORIZONTAL] + PADAXES[0][HORIZONTAL])
+                mx = 1  if (mx > 1)
+                mx = -1 if (mx < -1)
+                my = (ANALOGSTICK[0][0][VERTICAL] + PADAXES[0][VERTICAL])
+                my = 1  if (my > 1)
+                my = -1 if (my < -1)
+                ANALOGSTICK[0][0][HORIZONTAL] = mx
+                ANALOGSTICK[0][0][VERTICAL] = my
 
             #debugwrite
             #    labeltext: sprintf("ax=%@, ay=%@, dx=%@, dy=%@, mx=%@, my=%@", ANALOGSTICK[0][0][HORIZONTAL], ANALOGSTICK[0][0][VERTICAL], PADAXES[0][HORIZONTAL], PADAXES[0][VERTICAL], mx, my)
