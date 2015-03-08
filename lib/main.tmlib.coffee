@@ -208,6 +208,22 @@ tm.main ->
                         @text = "loading"
                 return
             label.addChildTo @bg
+
+
+
+            label = tm.display.Label("powerd by tmlib.js")
+            label.x = param.width / 2
+            label.y = param.height - 20
+            label.width = param.width
+            label.align = "center"
+            label.baseline = "middle"
+            label.fontSize = 16
+            label.setFillStyle "#ffffff"
+            label.counter = 0
+            label.addChildTo @bg
+
+
+
             @bg.tweener.clear().fadeIn(100).call (->
                 if param.assets
                     loader = tm.asset.Loader()
