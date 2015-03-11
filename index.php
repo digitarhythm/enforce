@@ -1,7 +1,7 @@
 <?php
 $ini = parse_ini_file("lib/config.ini", true);
 $library = $ini['ENVIRON']['LIBRARY'];
-$webgl = $ini['ENVIRON']['WEBGL'];
+$webgl = $ini['ENVIRON']['WEBGL'] ? 1 : 0;
 $gametitle = $ini['ENVIRON']['TITLE'];
 ?>
 <!DOCTYPE html>
@@ -17,8 +17,6 @@ $gametitle = $ini['ENVIRON']['TITLE'];
     } else {
         echo "<meta property='og:title' content='enforce games'>\n";
     }
-?>
-<?php
     if ($library == "enchant") {
 ?>
         <script type="text/javascript" src="extlib/enchant.0.8.1-enforce.min.js"></script>
@@ -28,7 +26,6 @@ $gametitle = $ini['ENVIRON']['TITLE'];
 ?>
     <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale:1, minimum-scale=1, max-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-	<script type="text/javascript" src="usrobject/environ.js"></script>
 <?php
     if ($library == "enchant") {
 ?>
@@ -52,21 +49,14 @@ $gametitle = $ini['ENVIRON']['TITLE'];
 <?php
     }
 ?>
+    <script type="text/javascript" src="sysobject/library.js"></script>
+    <script type="text/javascript">
+        WEBGL = <?= $webgl?>;
+        _POSTPARAM = separateGETquery();
+    </script>
+	<script type="text/javascript" src="usrobject/environ.js"></script>
     <script type="text/javascript" src="sysobject/enforce.core.js"></script>
 <?php
-    if ($webgl == true) {
-?>
-        <script type="text/javascript">
-            WEBGL = true;
-        </script>
-<?php
-    } else {
-?>
-        <script type="text/javascript">
-            WEBGL = false;
-        </script>
-<?php
-    }
     // #################################################################################
     // プラグインスクリプト読み込み
     // #################################################################################
@@ -100,9 +90,7 @@ $gametitle = $ini['ENVIRON']['TITLE'];
 <body bgcolor="#303030">
 <?php
     if ($library == "tmlib") {
-?>
-        <canvas id="stage"></canvas>
-<?php
+        echo "<canvas id='stage'></canvas>";
     }
 ?>
 </body>

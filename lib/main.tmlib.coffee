@@ -300,7 +300,7 @@ tm.main ->
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
 
-                if (_VGAMEPADCONTROL.input.analog?)
+                if (_VGAMEPADCONTROL? &&_VGAMEPADCONTROL.input.analog?)
                     vgpx1 = parseFloat(_VGAMEPADCONTROL.input.analog[HORIZONTAL])
                     vgpy1 = parseFloat(_VGAMEPADCONTROL.input.analog[VERTICAL])
                 else
