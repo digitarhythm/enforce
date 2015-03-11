@@ -6,6 +6,8 @@ rand = (n)->
 JSLog = (a, b...)-> 
     if (DEBUG == true)
         for data in b
+            if (!data?)
+                data = "undefined"
             a = a.replace('%@', data)
         console.log(a)
 
@@ -75,9 +77,9 @@ separateGETquery = ->
         parameters = query.split('&')
         for i in [0...parameters.length]
             element = parameters[i].split('=')
-            paramName = decodeURIComponent( element[0])
+            paramName = decodeURIComponent(element[0])
             paramValue = decodeURIComponent(element[1])
-            result[paramName] = paramValue
+            result[paramName] = paramValue.replace(/\+/g, ' ')
     return result
 
 # do noting
