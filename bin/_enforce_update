@@ -31,7 +31,7 @@ exec("cp -af $ENF/index.php $PROJ/");
 exec("cp -af $ENF/codit $PROJ/");
 exec("cp -af $ENF/extlib/* $PROJ/extlib/");
 exec("cp -af $ENF/lib/*.png $PROJ/lib/");
-exec("cp -af $ENF/media/picture/* $PROJ/media/picture/");
+//exec("cp -af $ENF/media/picture/* $PROJ/media/picture/");
 exec("cp -af $ENF/media/sound/* $PROJ/media/sound/");
 exec("cp -af $ENF/media/model/* $PROJ/media/model/");
 

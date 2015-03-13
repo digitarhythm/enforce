@@ -61,6 +61,7 @@ class _stationary
             @_offsety = initparam['offsety']
             @parent = initparam['parent']
             @worldview = initparam['worldview']
+            @userInteractionEnabled = initparam['userInteractionEnabled']
 
             @animnum_back = @animnum
 
@@ -72,19 +73,19 @@ class _stationary
 
             @sprite.ontouchstart = (e)=>
                 pos = {x:e.x, y:e.y}
-                if (typeof @touchesBegan == 'function' && @visible)
+                if (typeof @touchesBegan == 'function' && @visible && @userInteractionEnabled)
                     @touchesBegan(pos)
             @sprite.ontouchmove = (e)=>
                 pos = {x:e.x, y:e.y}
-                if (typeof @touchesMoved == 'function' && @visible)
+                if (typeof @touchesMoved == 'function' && @visible && @userInteractionEnabled)
                     @touchesMoved(pos)
             @sprite.ontouchend = (e)=>
                 pos = {x:e.x, y:e.y}
-                if (typeof @touchesEnded == 'function' && @visible)
+                if (typeof @touchesEnded == 'function' && @visible && @userInteractionEnabled)
                     @touchesEnded(pos)
             @sprite.ontouchcancel = (e)=>
                 pos = {x:e.x, y:e.y}
-                if (typeof @touchesCanceled == 'function' && @visible)
+                if (typeof @touchesCanceled == 'function' && @visible && @userInteractionEnabled)
                     @touchesCanceled(pos)
 
             @intersectFlag = true
@@ -398,7 +399,7 @@ class _stationary
     #***************************************************************
     addTarget:(func)->
         @sprite.addEventListener 'touchend', (e)=>
-            func(e.x, e.y, @)
+            func(e.x, e.y, @) if (@userInteractionEnabled)
 
     #***************************************************************
     # 2Dスプライト回転

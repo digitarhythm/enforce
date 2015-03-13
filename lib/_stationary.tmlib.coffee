@@ -54,6 +54,7 @@ class _stationary
             @_offsetx = initparam['offsetx']
             @_offsety = initparam['offsety']
             @worldview = initparam['worldview']
+            @userInteractionEnabled = initparam['userInteractionEnabled']
 
             @animnum_back = @animnum
 
@@ -68,19 +69,19 @@ class _stationary
 
             @sprite.onpointingstart = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesBegan == 'function' && @visible)
+                if (typeof @touchesBegan == 'function' && @visible && @userInteractionEnabled)
                     @touchesBegan(pos)
             @sprite.onpointingmove = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesMoved == 'function' && @visible)
+                if (typeof @touchesMoved == 'function' && @visible && @userInteractionEnabled)
                     @touchesMoved(pos)
             @sprite.onpointingend = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesEnded == 'function' && @visible)
+                if (typeof @touchesEnded == 'function' && @visible && @userInteractionEnabled)
                     @touchesEnded(pos)
             @sprite.onpointingcancel = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesCanceled == 'function' && @visible)
+                if (typeof @touchesCanceled == 'function' && @visible && @userInteractionEnabled)
                     @touchesCanceled(pos)
 
             @intersectFlag = true
@@ -349,8 +350,7 @@ class _stationary
     #***************************************************************
     addTarget:(func)->
         @sprite.addEventListener 'pointingend', (e)=>
-        #@sprite.addEventListener 'touchstart', (e)=>
-            func(e.app.pointing.x, e.app.pointing.y, @)
+            func(e.app.pointing.x, e.app.pointing.y, @) if (@userInteractionEnabled)
 
     #***************************************************************
     # 2Dスプライト回転

@@ -559,6 +559,7 @@ addObject = (param, parent = undefined)->
     offsety = if (param['offsety']?) then param['offsety'] else 0
     bgcolor = if (param['bgcolor']?) then param['bgcolor'] else 'transparent'
     worldview = if (param['worldview']?) then param['worldview'] else false
+    userInteractionEnabled = if (param['userInteractionEnabled']?) then param['userInteractionEnabled'] else true
 
     if (motionObj == null)
         motionObj = undefined
@@ -660,6 +661,7 @@ addObject = (param, parent = undefined)->
                 offsetx: offsetx
                 offsety: offsety
                 worldview: worldview
+                userInteractionEnabled: userInteractionEnabled
             return retObject
 
         #*****************************************************************
@@ -718,6 +720,7 @@ addObject = (param, parent = undefined)->
                 textalign: textalign
                 parent: parent
                 worldview: worldview
+                userInteractionEnabled: userInteractionEnabled
             return retObject
 
         #*****************************************************************
@@ -776,6 +779,7 @@ addObject = (param, parent = undefined)->
                 motionObj: motionObj
                 parent: parent
                 worldview: worldview
+                userInteractionEnabled: userInteractionEnabled
 
             if (visible)
                 rootScene3d.addChild(motionsprite)
@@ -825,6 +829,7 @@ addObject = (param, parent = undefined)->
                 motionObj: motionObj
                 parent: parent
                 worldview: worldview
+                userInteractionEnabled: userInteractionEnabled
             return retObject
 
         #*****************************************************************
@@ -864,6 +869,7 @@ addObject = (param, parent = undefined)->
                 active: active
                 surface: surface
                 worldview: worldview
+                userInteractionEnabled: userInteractionEnabled
             _scenes[scene].addChild(motionsprite)
             return retObject
 
@@ -905,6 +911,7 @@ addObject = (param, parent = undefined)->
                 motionObj: motionObj
                 parent: parent
                 worldview: worldview
+                userInteractionEnabled: userInteractionEnabled
             return retObject
 
 
@@ -953,6 +960,7 @@ setMotionObj = (param)->
     initparam['offsetx'] = if (param['offsetx']?) then param['offsetx'] else 0
     initparam['offsety'] = if (param['offsety']?) then param['offsety'] else 0
     initparam['worldview'] = if (param['worldview']?) then param['worldview'] else false
+    initparam['userInteractionEnabled'] = if (param['userInteractionEnabled']?) then param['userInteractionEnabled'] else true
 
     scene = if (param['scene']?) then param['scene'] else GAMESCENE_SUB1
     _type = if (param['_type']?) then param['_type'] else SPRITE

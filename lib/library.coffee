@@ -6,15 +6,31 @@ rand = (n)->
 JSLog = (a, b...)-> 
     if (DEBUG == true)
         for data in b
-            if (!data?)
-                data = "undefined"
-            a = a.replace('%@', data)
+            match = a.match(/%0\d*@/)
+            if (match?)
+                repstr = match[0]
+                num = parseInt(repstr.match(/\d+/))
+                zero =""
+                zero += "0" while (zero.length < num)
+                data2 = (zero+data).substr(-num)
+                a = a.replace(repstr, data2)
+            else
+                a = a.replace('%@', data)
         console.log(a)
 
 # format strings
 sprintf = (a, b...)-> 
     for data in b
-        a = a.replace('%@', data)
+        match = a.match(/%0\d*@/)
+        if (match?)
+            repstr = match[0]
+            num = parseInt(repstr.match(/\d+/))
+            zero =""
+            zero += "0" while (zero.length < num)
+            data2 = (zero+data).substr(-num)
+            a = a.replace(repstr, data2)
+        else
+            a = a.replace('%@', data)
     return a
 
 # create unique ID
