@@ -54,7 +54,7 @@ class _stationary
             @_offsetx = initparam['offsetx']
             @_offsety = initparam['offsety']
             @worldview = initparam['worldview']
-            @userInteractionEnabled = initparam['userInteractionEnabled']
+            @touchEnabled = initparam['touchEnabled']
 
             @animnum_back = @animnum
 
@@ -69,19 +69,19 @@ class _stationary
 
             @sprite.onpointingstart = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesBegan == 'function' && @visible && @userInteractionEnabled)
+                if (typeof @touchesBegan == 'function' && @visible && @touchEnabled)
                     @touchesBegan(pos)
             @sprite.onpointingmove = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesMoved == 'function' && @visible && @userInteractionEnabled)
+                if (typeof @touchesMoved == 'function' && @visible && @touchEnabled)
                     @touchesMoved(pos)
             @sprite.onpointingend = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesEnded == 'function' && @visible && @userInteractionEnabled)
+                if (typeof @touchesEnded == 'function' && @visible && @touchEnabled)
                     @touchesEnded(pos)
             @sprite.onpointingcancel = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
-                if (typeof @touchesCanceled == 'function' && @visible && @userInteractionEnabled)
+                if (typeof @touchesCanceled == 'function' && @visible && @touchEnabled)
                     @touchesCanceled(pos)
 
             @intersectFlag = true
@@ -350,7 +350,7 @@ class _stationary
     #***************************************************************
     addTarget:(func)->
         @sprite.addEventListener 'pointingend', (e)=>
-            func(e.app.pointing.x, e.app.pointing.y, @) if (@userInteractionEnabled)
+            func(e.app.pointing.x, e.app.pointing.y, @) if (@touchEnabled)
 
     #***************************************************************
     # 2Dスプライト回転

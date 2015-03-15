@@ -525,7 +525,7 @@ addObject = (param, parent = undefined)->
     map = if (param['map']?) then param['map'] else undefined
     mapcollision = if (param['mapcollision']?) then param['mapcollision'] else undefined
     worldview = if (param['worldview']?) then param['worldview'] else false
-    userInteractionEnabled = if (param['userInteractionEnabled']?) then param['userInteractionEnabled'] else false
+    touchEnabled = if (param['touchEnabled']?) then param['touchEnabled'] else false
 
     if (motionObj == null)
         motionObj = undefined
@@ -601,7 +601,7 @@ addObject = (param, parent = undefined)->
                 offsetx: offsetx
                 offsety: offsety
                 worldview: worldview
-                userInteractionEnabled: userInteractionEnabled
+                touchEnabled: touchEnabled
             return retObject
 
         when LABEL
@@ -664,7 +664,7 @@ addObject = (param, parent = undefined)->
                 offsetx: offsetx
                 offsety: offsety
                 worldview: worldview
-                userInteractionEnabled: userInteractionEnabled
+                touchEnabled: touchEnabled
             return retObject
 
         when PRIMITIVE
@@ -717,7 +717,7 @@ addObject = (param, parent = undefined)->
                 motionObj: motionObj
                 parent: parent
                 worldview: worldview
-                userInteractionEnabled: userInteractionEnabled
+                touchEnabled: touchEnabled
 
             if (visible)
                 rootScene3d.addChild(motionsprite)
@@ -761,7 +761,7 @@ addObject = (param, parent = undefined)->
                 motionObj: motionObj
                 parent: parent
                 worldview: worldview
-                userInteractionEnabled: userInteractionEnabled
+                touchEnabled: touchEnabled
             return retObject
 
         #*****************************************************************
@@ -815,7 +815,7 @@ addObject = (param, parent = undefined)->
                 motionObj: motionObj
                 parent: parent
                 worldview: worldview
-                userInteractionEnabled: userInteractionEnabled
+                touchEnabled: touchEnabled
             return retObject
 
 setMotionObj = (param)->
@@ -855,7 +855,7 @@ setMotionObj = (param)->
     initparam['offsetx'] = if (param['offsetx']?) then param['offsetx'] else 0
     initparam['offsety'] = if (param['offsety']?) then param['offsety'] else 0
     initparam['worldview'] = if (param['worldview']?) then param['worldview'] else false
-    initparam['userInteractionEnabled'] = if (param['userInteractionEnabled']?) then param['userInteractionEnabled'] else false
+    initparam['touchEnabled'] = if (param['touchEnabled']?) then param['touchEnabled'] else false
 
     scene = if (param['scene']?) then param['scene'] else GAMESCENE
     _type = if (param['_type']?) then param['_type'] else SPRITE
