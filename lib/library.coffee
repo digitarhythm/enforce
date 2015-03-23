@@ -60,7 +60,8 @@ getKeyDirection =->
 
 # set cookie value
 setCookie = (name, value, expireValue = 1)->
-    document.cookie = (name+'='+escape(value)+'; expires=' + expireValue)
+    maxage = expireValue * 24 * 3600
+    document.cookie = (name+'='+escape(value)+'; max-age='+maxage)
 
 # get cookie value
 getCookie = (name)->

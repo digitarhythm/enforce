@@ -157,6 +157,17 @@ if (!SCREEN_WIDTH? && !SCREEN_HEIGHT?)
     SCREEN_WIDTH = DEVICE_WIDTH
     SCREEN_HEIGHT = DEVICE_HEIGHT
 
+# アニメーション管理
+_requestID = ( =>
+    return window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    (callback)=>
+        window.setTimeout(callback, 1000 / 60);
+)() 
+
 # 動作状況
 ACTIVATE            = true
 
@@ -337,10 +348,14 @@ window.onload = ->
         __count = 0
         __limittimefps = parseFloat(LAPSEDTIME) + 1.0
 
+        enterframe()
+
         # フレーム処理（enchant任せ）
-        rootScene.addEventListener 'enterframe', (e)->
-            # FPS表示（デバッグモード時のみ）
+        #rootScene.addEventListener 'enterframe', (e)->
+enterframe = ->    
+            _requestID(enterframe)
             ###
+            # FPS表示（デバッグモード時のみ）
             if (DEBUG)
                 __total += parseFloat(core.actualFps.toFixed(2))
                 __count++
