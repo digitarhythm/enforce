@@ -3,8 +3,6 @@
 OPT=$1
 CWD=`pwd`
 
-echo ${OPT}
-
 if [ -z "$OPT" ]; then
     coffee -b -o $CWD/usrobject -c $CWD/src/
 elif [ "$OPT" = "-w" ]; then
