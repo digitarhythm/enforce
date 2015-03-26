@@ -196,7 +196,7 @@ tm.main ->
             label.width = param.width
             label.align = "center"
             label.baseline = "middle"
-            label.fontSize = 24
+            label.fontSize = Math.floor((if (param.width < param.height) then param.width else param.height) * 0.048)
             label.setFillStyle "#ffffff"
             label.counter = 0
             label.update = (app) ->
@@ -217,7 +217,7 @@ tm.main ->
             label.width = param.width
             label.align = "center"
             label.baseline = "middle"
-            label.fontSize = 16
+            label.fontSize = Math.floor((if (param.width < param.height) then param.width else param.height) * 0.03)
             label.setFillStyle "#ffffff"
             label.counter = 0
             label.addChildTo @bg
@@ -459,6 +459,9 @@ tm.main ->
         MOTION_ROTATE.beta = e.beta
         MOTION_ROTATE.gamma = e.gamma
 
+#******************************************************************************
+# デバッグ用関数
+#******************************************************************************
 debugwrite = (param)->
     if (DEBUG == true)
         if (param.clear)
@@ -571,7 +574,7 @@ addObject = (param, parent = undefined)->
             motionsprite.addChildTo(_scenes[scene])
 
             # 動きを定義したオブジェクトを生成する
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 x: x
                 y: y
                 z: z
@@ -635,7 +638,7 @@ addObject = (param, parent = undefined)->
             # スプライトを表示
             motionsprite.addChildTo(_scenes[scene])
             # 動きを定義したオブジェクトを生成する
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 x: x
                 y: y
                 z: z
@@ -690,7 +693,7 @@ addObject = (param, parent = undefined)->
                 motionsprite.mesh.texture = tx
 
             # 動きを定義したオブジェクトを生成する
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 x: x
                 y: y
                 z: z
@@ -734,7 +737,7 @@ addObject = (param, parent = undefined)->
             # 動きを定義したオブジェクトを生成する
             if (visible)
                 rootScene3d.addChild(motionsprite)
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 x: x
                 y: y
                 z: z
@@ -798,7 +801,7 @@ addObject = (param, parent = undefined)->
                     ]
                 motionsprite = tm.display.MapSprite(mapsheet, width, height)
                 _scenes[scene].addChild(motionsprite)
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 x: x
                 y: y
                 xs: xs
@@ -818,7 +821,7 @@ addObject = (param, parent = undefined)->
                 touchEnabled: touchEnabled
             return retObject
 
-setMotionObj = (param)->
+__setMotionObj = (param)->
     # 動きを定義したオブジェクトを生成する
     initparam = []
     initparam['x'] = if (param['x']?) then param['x'] else 0
@@ -872,7 +875,7 @@ setMotionObj = (param)->
         initparam['diffx'] = Math.floor(initparam['width'] / 2)
         initparam['diffy'] = Math.floor(initparam['height'] / 2)
 
-    objnum = _getNullObject()
+    objnum = __getNullObject()
     if (objnum < 0)
         return undefined
 
@@ -1053,25 +1056,6 @@ createVirtualGamepad = (param)->
 dispVirtualGamepad = (flag)->
     _VGAMEPADCONTROL.setVisible(flag) if (_VGAMEPADCONTROL?)
 
-#**********************************************************************
-#**********************************************************************
-#**********************************************************************
-# 以下は内部使用ライブラリ関数
-#**********************************************************************
-#**********************************************************************
-#**********************************************************************
-
-#**********************************************************************
-# オブジェクトリストの中で未使用のものの配列番号を返す。
-# 無かった場合は-1を返す
-#**********************************************************************
-_getNullObject = ->
-    ret = -1
-    for i in [0..._objects.length]
-        if (_objects[i].active == false)
-            ret = i
-            break
-    return ret
 
 #**********************************************************************
 # 標準ブラウザは非推奨というダイアログ表示
@@ -1107,5 +1091,27 @@ dispDefaultBrowserCheck = (func)->
             func()
     else
         func()
+
+
+#**********************************************************************
+#**********************************************************************
+#**********************************************************************
+# 以下は内部使用ライブラリ関数
+#**********************************************************************
+#**********************************************************************
+#**********************************************************************
+
+#**********************************************************************
+# オブジェクトリストの中で未使用のものの配列番号を返す。
+# 無かった場合は-1を返す
+#**********************************************************************
+__getNullObject = ->
+    ret = -1
+    for i in [0..._objects.length]
+        if (_objects[i].active == false)
+            ret = i
+            break
+    return ret
+
 
 

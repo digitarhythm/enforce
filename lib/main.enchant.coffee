@@ -108,6 +108,9 @@ _VGAMEPADCONTROL    = undefined
 # Frame Per Seconds
 if (!FPS?)
     FPS = 30
+__limittimefps      = 0.0
+__count             = 0.0
+__total             = 0.0
 
 # box2dの重力値
 if (!GRAVITY_X?)
@@ -138,9 +141,11 @@ else
     _browserMajorClass = "unknown"
 
 # ゲーム起動時からの経過時間（秒）
-LAPSEDTIME          = 0
+LAPSEDTIME          = 0.0
 # ゲーム起動時のUNIXTIME
-BEGINNINGTIME       = parseFloat((new Date) / 1000)
+BEGINNINGTIME       = undefined
+# フレームレート調整用
+__FRAMETIME         = 0.0
 
 # 3D系
 WEBGL               = undefined
@@ -158,7 +163,7 @@ if (!SCREEN_WIDTH? && !SCREEN_HEIGHT?)
     SCREEN_HEIGHT = DEVICE_HEIGHT
 
 # アニメーション管理
-_requestID = ( =>
+__requestID = ( =>
     return window.requestAnimationFrame ||
     window.webkitRequestAnimationFrame ||
     window.mozRequestAnimationFrame ||
@@ -182,6 +187,7 @@ _main               = null
 
 # デバッグ用LABEL
 _DEBUGLABEL         = undefined
+_FPSLABEL           = undefined
 
 # enchantのcoreオブジェクト
 core                = undefined
@@ -206,6 +212,8 @@ enchant.ENV.SOUND_ENABLED_ON_MOBILE_SAFARI = false
 
 # ゲーム起動時の処理
 window.onload = ->
+    # ゲーム起動時間
+    BEGINNINGTIME       = __getTime()
     # アスペクト比
     ASPECT = (SCREEN_WIDTH / SCREEN_HEIGHT).toFixed(2)
     # enchant初期化
@@ -278,14 +286,14 @@ window.onload = ->
         _scenes[i] = scene
         rootScene.addChild(scene)
 
-    if (DEBUG == true)
+    if (DEBUG)
         _DEBUGLABEL = new Label()
         _DEBUGLABEL.x = 0
         _DEBUGLABEL.y = 0
         _DEBUGLABEL.color = "white"
         _DEBUGLABEL.font = "10px 'Arial'"
         _scenes[DEBUGSCENE].addChild(_DEBUGLABEL)
-        ###
+        
         _FPSLABEL = new Label()
         _FPSLABEL.x = 0
         _FPSLABEL.y = SCREEN_HEIGHT - 24
@@ -294,9 +302,9 @@ window.onload = ->
         _FPSLABEL.opacity = 0.8
         _FPSLABEL.font = "24px 'Arial'"
         _FPSLABEL.textAlign = "center"
-        _FPSLABEL.color = "gray"
+        _FPSLABEL.color = "white"
         _scenes[DEBUGSCENE].addChild(_FPSLABEL)
-        ###
+       
 
     if (WEBGL && isWebGL())
         # 3Dシーンを生成
@@ -348,25 +356,23 @@ window.onload = ->
         __count = 0
         __limittimefps = parseFloat(LAPSEDTIME) + 1.0
 
-        enterframe()
-
         # フレーム処理（enchant任せ）
-        #rootScene.addEventListener 'enterframe', (e)->
-enterframe = ->    
-            _requestID(enterframe)
+        rootScene.addEventListener 'enterframe', (e)->
+
+            # 経過時間を計算
+            LAPSEDTIME = parseFloat((__getTime() / 1000).toFixed(2))
             ###
             # FPS表示（デバッグモード時のみ）
             if (DEBUG)
                 __total += parseFloat(core.actualFps.toFixed(2))
                 __count++
                 if (__limittimefps < LAPSEDTIME)
-                    fpsnum = (__total / __count).toFixed(2)
+                    fpsnum = parseFloat((__total / __count).toFixed(2))
                     __total = 0
                     __count = 0
                     __limittimefps = parseFloat(LAPSEDTIME) + 1.0
-                    _FPSLABEL.text =fpsnum
+                    _FPSLABEL.text = fpsnum
             ###
-
             # ジョイパッド処理
             if (typeof gamepadProcedure == 'function')
                 _GAMEPADSINFO = gamepadProcedure()
@@ -458,9 +464,6 @@ enterframe = ->
             # box2dの時間を進める
             box2dworld.step(core.fps)
 
-            # 経過時間を計算
-            LAPSEDTIME = (parseFloat((new Date) / 1000) - parseFloat(BEGINNINGTIME).toFixed(2))
-
             # 全てのオブジェクトの「behavior」を呼ぶ
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
@@ -508,6 +511,9 @@ enterframe = ->
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - obj.motionObj._diffy - wy)
 
 
+#******************************************************************************
+# デバッグ用関数
+#******************************************************************************
 debugwrite = (param)->
     if (DEBUG)
         if (param.clear)
@@ -640,7 +646,7 @@ addObject = (param, parent = undefined)->
             _scenes[scene].addChild(motionsprite)
 
             # 動きを定義したオブジェクトを生成する
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 x: x
                 y: y
                 z: z
@@ -710,7 +716,7 @@ addObject = (param, parent = undefined)->
             #motionsprite.textAlign = textalign
             #motionsprite.font = fontsize+"px 'Arial'"
             # 動きを定義したオブジェクトを生成する
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 x: x
                 y: y
                 z: z
@@ -766,7 +772,7 @@ addObject = (param, parent = undefined)->
                 motionsprite.mesh.texture = tx
 
             # 動きを定義したオブジェクトを生成する
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 x: x
                 y: y
                 z: z
@@ -816,7 +822,7 @@ addObject = (param, parent = undefined)->
             # 動きを定義したオブジェクトを生成する
             if (visible)
                 rootScene3d.addChild(motionsprite)
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 x: x
                 y: y
                 z: z
@@ -871,7 +877,7 @@ addObject = (param, parent = undefined)->
             context.stroke()
             ###
 
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 width: SCREEN_WIDTH
                 height: SCREEN_HEIGHT
                 opacity: opacity
@@ -908,7 +914,7 @@ addObject = (param, parent = undefined)->
                 if (mapcollision?)
                     motionsprite.collisionData = mapcollision
                 _scenes[scene].addChild(motionsprite)
-            retObject = @setMotionObj
+            retObject = @__setMotionObj
                 x: x
                 y: y
                 xs: xs
@@ -930,7 +936,7 @@ addObject = (param, parent = undefined)->
             return retObject
 
 
-setMotionObj = (param)->
+__setMotionObj = (param)->
     # 動きを定義したオブジェクトを生成する
     initparam = []
     initparam['x'] = if (param['x']?) then param['x'] else 0
@@ -993,7 +999,7 @@ setMotionObj = (param)->
         initparam['diffy'] = Math.floor(initparam['height'] / 2)
 
 
-    objnum = _getNullObject()
+    objnum = __getNullObject()
     if (objnum < 0)
         return undefined
 
@@ -1181,31 +1187,13 @@ createVirtualGamepad = (param)->
             motionObj: _vgamepadcontrol
         _VGAMEPADCONTROL.createGamePad(param)
 
+
 #**********************************************************************
 # バーチャルゲームパッドの表示制御
 #**********************************************************************
 dispVirtualGamepad = (flag)->
     _VGAMEPADCONTROL.setVisible(flag) if (_VGAMEPADCONTROL?)
 
-#**********************************************************************
-#**********************************************************************
-#**********************************************************************
-# 以下は内部使用ライブラリ関数
-#**********************************************************************
-#**********************************************************************
-#**********************************************************************
-
-#**********************************************************************
-# オブジェクトリストの中で未使用のものの配列番号を返す。
-# 無かった場合は-1を返す
-#**********************************************************************
-_getNullObject = ->
-    ret = -1
-    for i in [0..._objects.length]
-        if (_objects[i].active == false)
-            ret = i
-            break
-    return ret
 
 #**********************************************************************
 # 標準ブラウザは非推奨というダイアログ表示
@@ -1242,4 +1230,38 @@ dispDefaultBrowserCheck = (func)->
     else
         func()
 
+
+
+#**********************************************************************
+#**********************************************************************
+#**********************************************************************
+# 以下は内部使用ライブラリ関数
+#**********************************************************************
+#**********************************************************************
+#**********************************************************************
+
+#**********************************************************************
+# オブジェクトリストの中で未使用のものの配列番号を返す。
+# 無かった場合は-1を返す
+#**********************************************************************
+__getNullObject = ->
+    ret = -1
+    for i in [0..._objects.length]
+        if (_objects[i].active == false)
+            ret = i
+            break
+    return ret
+
+#**********************************************************************
+# 時間取得
+#**********************************************************************
+__getTime = ->
+    now = window.performance && (
+        performance.now || 
+        performance.mozNow || 
+        performance.msNow || 
+        performance.oNow || 
+        performance.webkitNow
+    )
+    return (now && now.call(performance) ) || (new Date().getTime())
 

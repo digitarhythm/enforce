@@ -99,5 +99,12 @@ separateGETquery = ->
             result[paramName] = paramValue.replace(/\+/g, ' ')
     return result
 
+# sanitize
+userStr =
+  encode: (str) ->
+    str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace /'/g, '&#39;'
+  decode: (str) ->
+    str.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, '\'').replace /&amp;/g, '&'
+
 # do noting
 nop =->
