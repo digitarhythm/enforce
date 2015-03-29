@@ -108,9 +108,6 @@ _VGAMEPADCONTROL    = undefined
 # Frame Per Seconds
 if (!FPS?)
     FPS = 30
-__limittimefps      = 0.0
-__count             = 0.0
-__total             = 0.0
 
 # box2dの重力値
 if (!GRAVITY_X?)
@@ -187,7 +184,10 @@ _main               = null
 
 # デバッグ用LABEL
 _DEBUGLABEL         = undefined
-_FPSLABEL           = undefined
+_FPSGAUGE           = undefined
+__fpsgaugeunit      = 0
+__fpscounter        = 0.0
+__limittimefps      = 0.0
 
 # enchantのcoreオブジェクト
 core                = undefined
@@ -248,6 +248,7 @@ window.onload = ->
 
     # メディアファイルのプリロード
     if (MEDIALIST?)
+        MEDIALIST['_fpsgauge'] = 'lib/fpsgauge.png'
         MEDIALIST['_notice'] = 'lib/notice.png'
         MEDIALIST['_execbutton'] = 'lib/execbutton.png'
         MEDIALIST['_pad_w'] = 'lib/pad_w.png'
@@ -285,26 +286,6 @@ window.onload = ->
         scene.backgroundColor = "black"
         _scenes[i] = scene
         rootScene.addChild(scene)
-
-    if (DEBUG)
-        _DEBUGLABEL = new Label()
-        _DEBUGLABEL.x = 0
-        _DEBUGLABEL.y = 0
-        _DEBUGLABEL.color = "white"
-        _DEBUGLABEL.font = "10px 'Arial'"
-        _scenes[DEBUGSCENE].addChild(_DEBUGLABEL)
-        
-        _FPSLABEL = new Label()
-        _FPSLABEL.x = 0
-        _FPSLABEL.y = SCREEN_HEIGHT - 24
-        _FPSLABEL.width = 48
-        _FPSLABEL.height = 24
-        _FPSLABEL.opacity = 0.8
-        _FPSLABEL.font = "24px 'Arial'"
-        _FPSLABEL.textAlign = "center"
-        _FPSLABEL.color = "white"
-        _scenes[DEBUGSCENE].addChild(_FPSLABEL)
-       
 
     if (WEBGL && isWebGL())
         # 3Dシーンを生成
@@ -352,27 +333,41 @@ window.onload = ->
             _objects[i] = new _originObject()
         _main = new enforceMain()
 
-        __total = 0
-        __count = 0
-        __limittimefps = parseFloat(LAPSEDTIME) + 1.0
+        if (DEBUG)
+            _DEBUGLABEL = new Label()
+            _DEBUGLABEL.x = 0
+            _DEBUGLABEL.y = 0
+            _DEBUGLABEL.color = "white"
+            _DEBUGLABEL.font = "32px 'Arial'"
+            _scenes[DEBUGSCENE].addChild(_DEBUGLABEL)
+            _FPSGAUGE = new Sprite()
+            _FPSGAUGE.x = SCREEN_WIDTH - 16
+            _FPSGAUGE.y = 0
+            _FPSGAUGE.width = 16
+            _FPSGAUGE.height = 1
+            _FPSGAUGE.scaleY = 1.0
+            _FPSGAUGE.opacity = 0.5
+            _FPSGAUGE.image = core.assets[MEDIALIST['_fpsgauge']]
+            _FPSGAUGE.frame = 0
+            _scenes[DEBUGSCENE].addChild(_FPSGAUGE)
+            __fpscounter = 0
+            __limittimefps = 0.0
 
         # フレーム処理（enchant任せ）
         rootScene.addEventListener 'enterframe', (e)->
 
             # 経過時間を計算
-            LAPSEDTIME = parseFloat((__getTime() / 1000).toFixed(2))
-            ###
+            LAPSEDTIME = parseFloat((__getTime() - parseFloat(BEGINNINGTIME.toFixed(2))) / 1000.0)
+
             # FPS表示（デバッグモード時のみ）
             if (DEBUG)
-                __total += parseFloat(core.actualFps.toFixed(2))
-                __count++
-                if (__limittimefps < LAPSEDTIME)
-                    fpsnum = parseFloat((__total / __count).toFixed(2))
-                    __total = 0
-                    __count = 0
-                    __limittimefps = parseFloat(LAPSEDTIME) + 1.0
-                    _FPSLABEL.text = fpsnum
-            ###
+                __fpscounter++
+                if (__limittimefps < parseFloat(LAPSEDTIME))
+                    __limittimefps = LAPSEDTIME + 1.0
+                    scale = parseFloat(((__fpscounter / FPS) * SCREEN_HEIGHT).toFixed(2))
+                    _FPSGAUGE.scaleY = scale
+                    __fpscounter = 0
+            
             # ジョイパッド処理
             if (typeof gamepadProcedure == 'function')
                 _GAMEPADSINFO = gamepadProcedure()
@@ -520,7 +515,7 @@ debugwrite = (param)->
             labeltext = if (param.labeltext?) then param.labeltext else ""
         else
             labeltext = _DEBUGLABEL.text += if (param.labeltext?) then param.labeltext else ""
-        fontsize = if (param.fontsize?) then param.fontsize else 12
+        fontsize = if (param.fontsize?) then param.fontsize else 32
         fontcolor = if (param.fontcolor?) then param.fontcolor else "white"
         _DEBUGLABEL.font = fontsize+"px 'Arial'"
         _DEBUGLABEL.text = labeltext
@@ -1251,17 +1246,4 @@ __getNullObject = ->
             ret = i
             break
     return ret
-
-#**********************************************************************
-# 時間取得
-#**********************************************************************
-__getTime = ->
-    now = window.performance && (
-        performance.now || 
-        performance.mozNow || 
-        performance.msNow || 
-        performance.oNow || 
-        performance.webkitNow
-    )
-    return (now && now.call(performance) ) || (new Date().getTime())
 

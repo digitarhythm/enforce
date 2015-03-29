@@ -130,7 +130,7 @@ else
 # ゲーム起動時からの経過時間（秒）
 LAPSEDTIME          = 0
 # ゲーム起動時のUNIXTIME
-BEGINNINGTIME       = parseFloat((new Date) / 1000)
+BEGINNINGTIME       = __getTime()
 
 # 3D系
 WEBGL               = undefined
@@ -164,6 +164,11 @@ _main               = null
 
 # デバッグ用LABEL
 _DEBUGLABEL         = undefined
+
+# FPS表示用
+_FPSGAUGE           = undefined
+__fpscounter        = 0
+__limittimefps      = 0
 
 # enchantのcoreオブジェクト
 core                = undefined
@@ -209,8 +214,6 @@ tm.main ->
                 return
             label.addChildTo @bg
 
-
-
             label = tm.display.Label("powerd by tmlib.js")
             label.x = param.width / 2
             label.y = param.height - 20
@@ -221,8 +224,6 @@ tm.main ->
             label.setFillStyle "#ffffff"
             label.counter = 0
             label.addChildTo @bg
-
-
 
             @bg.tweener.clear().fadeIn(100).call (->
                 if param.assets
@@ -276,12 +277,26 @@ tm.main ->
 
             if (DEBUG == true)
                 _DEBUGLABEL = new tm.display.Label()
-                _DEBUGLABEL.originX = 0
-                _DEBUGLABEL.originY = 0
-                _DEBUGLABEL.x = SCREEN_WIDTH / 2
-                _DEBUGLABEL.y = SCREEN_HEIGHT / 2
-                _DEBUGLABEL.align = "center"
+                _DEBUGLABEL.x = 0
+                _DEBUGLABEL.y = 16
+                _DEBUGLABEL.fontsize = 32
+                _DEBUGLABEL.align = "left"
+                _DEBUGLABEL.setOrigin(0.5, 0.5)
+                _DEBUGLABEL.setBaseline("middle")
                 _scenes[DEBUGSCENE].addChild(_DEBUGLABEL)
+                _FPSGAUGE = new tm.display.Sprite('_fpsgauge', 16, 1)
+                _FPSGAUGE.x = SCREEN_WIDTH - 8
+                _FPSGAUGE.y = 0
+                _FPSGAUGE.originX = 0
+                _FPSGAUGE.originY = 0
+                _FPSGAUGE.width = 16
+                _FPSGAUGE.height = 8
+                _FPSGAUGE.scaleY = 1.0
+                _FPSGAUGE.alpha = 0.5
+                _FPSGAUGE.frame = 0
+                _scenes[DEBUGSCENE].addChild(_FPSGAUGE)
+                __fpscounter = 0
+                __limittimefps = 0.0
 
             for i in [0...OBJECTNUM]
                 _objects[i] = new _originObject()
@@ -290,7 +305,18 @@ tm.main ->
             return
 
         onenterframe: ->
+            LAPSEDTIME = parseFloat((__getTime() - parseFloat(BEGINNINGTIME.toFixed(2))) / 1000.0)
+            # FPS表示（デバッグモード時のみ）
+            if (DEBUG)
+                __fpscounter++
+                if (__limittimefps < parseFloat(LAPSEDTIME))
+                    __limittimefps = LAPSEDTIME + 1.0
+                    scale = parseFloat(__fpscounter / FPS) * 100
+                    _FPSGAUGE.scaleY = scale
+                    __fpscounter = 0
+
             if (typeof gamepadProcedure == 'function')
+                # ゲームパッド処理
                 _GAMEPADSINFO = gamepadProcedure()
                 for num in [0..._GAMEPADSINFO.length]
                     if (!_GAMEPADSINFO[num]?)
@@ -386,7 +412,6 @@ tm.main ->
             #    clear:true
 
 
-            LAPSEDTIME = (parseFloat((new Date) / 1000) - parseFloat(BEGINNINGTIME).toFixed(2))
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
@@ -431,6 +456,7 @@ tm.main ->
 
     # メディアファイルのプリロード
     if (MEDIALIST?)
+        MEDIALIST['_fpsgauge'] = 'lib/fpsgauge.png'
         MEDIALIST['_notice'] = 'lib/notice.png'
         MEDIALIST['_execbutton'] = 'lib/execbutton.png'
         MEDIALIST['_pad_w'] = 'lib/pad_w.png'
@@ -468,8 +494,9 @@ debugwrite = (param)->
             labeltext = if (param.labeltext?) then param.labeltext else ""
         else
             labeltext = _DEBUGLABEL.text += if (param.labeltext?) then param.labeltext else ""
-        fontsize = if (param.fontsize?) then param.fontsize else 12
+        fontsize = if (param.fontsize?) then param.fontsize else 32
         fontcolor = if (param.fontcolor?) then param.fontcolor else "red"
+        _DEBUGLABEL.y = fontsize / 2
         _DEBUGLABEL.fontSize = fontsize
         _DEBUGLABEL.text = labeltext
         _DEBUGLABEL.fillStyle = fontcolor
