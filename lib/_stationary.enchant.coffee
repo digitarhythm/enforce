@@ -123,12 +123,7 @@ class _stationary
                         @_yback = @y = @sprite.y + @_diffy + @z
                         @_xsback = @xs = @sprite.vx
                         @_ysback = @ys = @sprite.vy
-
-                        @sprite.radius = @radius
-                        @sprite.density = @density
-                        @sprite.friction = @friction
-                        @sprite.restitution = @restitution
-
+                    
                     if (@opacity != @sprite.opacity)
                         if (@opacity < 0.0)
                             @opacity = 0.0
@@ -143,12 +138,12 @@ class _stationary
                     # コライダーを追随させる
                     if (@collider? && @collider.sprite?)
                         if (@collider._uniqueID != @_uniqueID)
-                            @collider.worldview = true
+                            @collider.worldview = @worldview
                             @collider.sprite.visible = DEBUG
                             @collider.visible = DEBUG
                             @collider.opacity = if (DEBUG) then 0.5 else 1.0
-                            @collider._xback = @collider.x = @x + @collider._offsetx
-                            @collider._yback = @collider.y = @y - @z + @collider._offsety
+                            @collider._xback = @collider.x = @collider.sprite.x = @x + @collider._offsetx
+                            @collider._yback = @collider.y = @collider.sprite.y = @y - @z + @collider._offsety
 
                     @sprite.visible = @visible
                     @sprite.scaleX  = @scaleX

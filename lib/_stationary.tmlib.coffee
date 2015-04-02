@@ -84,8 +84,7 @@ class _stationary
                 if (typeof @touchesCanceled == 'function' && @visible && @touchEnabled)
                     @touchesCanceled(pos)
 
-            @intersectFlag = true
-
+            @intersectFlag = true 
 
     #***************************************************************
     # デストラクター
@@ -119,9 +118,8 @@ class _stationary
                     # コライダーを追随させる
                     if (@collider? && @collider.sprite?)
                         if (@collider._uniqueID != @_uniqueID)
-                            @collider.worldview = true
-                            @collider.sprite.visible = DEBUG
-                            @collider.visible = DEBUG
+                            @collider.worldview = @worldview
+                            @collider.sprite.visible = @collider.visible = DEBUG
                             @collider.opacity = @collider.sprite.alpha = if (DEBUG) then 0.5 else 1.0
                             @collider._xback = @collider.x = @x - @collider._offsetx
                             @collider._yback = @collider.y = @y - @z + @collider._offsety

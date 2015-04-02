@@ -75,10 +75,8 @@ MAXSCENE            = (if (DEBUG) then DEBUGSCENE else _SYSTEMSCENE)
 
 # ワールドビュー
 _WORLDVIEW          =
-    sx: 0
-    sy: 0
-    ex: SCREEN_WIDTH
-    ey: SCREEN_HEIGHT
+    centerx: SCREEN_WIDTH / 2
+    centery: SCREEN_HEIGHT / 2
 
 # 数学式
 RAD                 = (Math.PI / 180.0)
@@ -417,8 +415,8 @@ tm.main ->
                     obj.motionObj.behavior()
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
-                    wx = if (obj.motionObj.worldview? && obj.motionObj.worldview) then _WORLDVIEW.sx else 0
-                    wy = if (obj.motionObj.worldview? && obj.motionObj.worldview) then _WORLDVIEW.sy else 0
+                    wx = if (obj.motionObj.worldview? && obj.motionObj.worldview) then (_WORLDVIEW.centerx - (SCREEN_WIDTH / 2)) else 0
+                    wy = if (obj.motionObj.worldview? && obj.motionObj.worldview) then (_WORLDVIEW.centery - (SCREEN_HEIGHT / 2)) else 0
                     switch (obj.motionObj._type)
                         when CONTROL
                             continue
@@ -1025,16 +1023,14 @@ resumeGame =->
 #**********************************************************************
 # ワールドビューの設定
 #**********************************************************************
-setWorldView = (sx, sy, ex = undefined, ey = undefined)->
-    if (!ex?)
-        ex = sx + SCREEN_WIDTH
-    if (!ey?)
-        ey = sy + SCREEN_HEIGHT
+setWorldView = (cx, cy)->
+    if (!cx?)
+        cx = SCREEN_WIDTH / 2
+    if (!cy?)
+        cy = SCREEN_HEIGHT / 2
     _WORLDVIEW =
-        sx: sx
-        sy: sy
-        ex: ex
-        ey: ey
+        centerx: cx
+        centery: cy
 
 #**********************************************************************
 # バーチャルゲームパッド
