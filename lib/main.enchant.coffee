@@ -484,21 +484,22 @@ window.onload = ->
                                 if (obj.motionObj._xback != obj.motionObj.x)
                                     obj.motionObj.sprite.x = obj.motionObj.x - obj.motionObj._diffx - wx
                                 if (obj.motionObj._yback != obj.motionObj.y)
-                                    obj.motionObj.sprite.y = obj.motionObj.y - obj.motionObj._diffy - obj.motionObj.z - wy
+                                    obj.motionObj.sprite.y = obj.motionObj.y - obj.motionObj._diffy - wy
                             else
                                 # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
-                                if (@_type == LABEL)
+                                if (obj.motionObj._type == LABEL)
                                     diffx = 0
                                     diffy = 0
                                 else
                                     diffx = obj.motionObj._diffx
                                     diffy = obj.motionObj._diffy
+
                                 if (obj.motionObj._reversePosFlag)
                                     obj.motionObj.x = obj.motionObj.sprite.x + diffx
-                                    obj.motionObj.y = obj.motionObj.sprite.y + diffy + obj.motionObj.z
+                                    obj.motionObj.y = obj.motionObj.sprite.y + diffy
                                 else
                                     obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - diffx - wx)
-                                    obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - diffy - obj.motionObj.z - wy)
+                                    obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - diffy - wy)
                         when MAP, EXMAP
                             obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - obj.motionObj._diffx - wx)
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - obj.motionObj._diffy - wy)
@@ -694,19 +695,19 @@ addObject = (param, parent = undefined)->
             _scenes[scene].addChild(motionsprite)
             # 値を代入
             #motionsprite.backgroundColor = "transparent"
-            #motionsprite.x = x - Math.floor(width / 2)
-            #motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
-            #motionsprite.opacity = opacity
+            motionsprite.x = x - Math.floor(width / 2)
+            motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
+            motionsprite.opacity = opacity
             #motionsprite.rotation = rotation
             #motionsprite.rotate = rotate
             #motionsprite.scaleX = scaleX
             #motionsprite.scaleY = scaleY
-            #motionsprite.visible = visible
-            #motionsprite.width = width
-            #motionsprite.height = height
-            #motionsprite.color = color
+            motionsprite.visible = visible
+            motionsprite.width = width
+            motionsprite.height = height
+            motionsprite.color = color
             motionsprite.text = ""
-            #motionsprite.textAlign = textalign
+            motionsprite.textAlign = textalign
             #motionsprite.font = fontsize+"px 'Arial'"
             # 動きを定義したオブジェクトを生成する
             retObject = @__setMotionObj
@@ -735,6 +736,8 @@ addObject = (param, parent = undefined)->
                 parent: parent
                 worldview: worldview
                 touchEnabled: touchEnabled
+                diffx: 0
+                diffy: 0
             return retObject
 
         #*****************************************************************

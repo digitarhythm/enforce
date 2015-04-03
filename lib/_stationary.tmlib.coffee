@@ -65,7 +65,7 @@ class _stationary
 
             @lastvisible = @visible
 
-            @sprite.setInteractive(true)
+            @sprite.setInteractive(@touchEnabled)
 
             @sprite.onpointingstart = (e)=>
                 pos = {x:e.app.pointing.x, y:e.app.pointing.y}
@@ -118,11 +118,12 @@ class _stationary
                     # コライダーを追随させる
                     if (@collider? && @collider.sprite?)
                         if (@collider._uniqueID != @_uniqueID)
+                            @collider._type = COLLIDER2D
                             @collider.worldview = @worldview
                             @collider.sprite.visible = @collider.visible = DEBUG
                             @collider.opacity = @collider.sprite.alpha = if (DEBUG) then 0.5 else 1.0
-                            @collider._xback = @collider.x = @x - @collider._offsetx
-                            @collider._yback = @collider.y = @y - @z + @collider._offsety
+                            @collider.x = @x - @collider._offsetx
+                            @collider.y = @y - @z + @collider._offsety
 
                     @sprite.visible = @visible
                     @sprite.scaleX  = @scaleX

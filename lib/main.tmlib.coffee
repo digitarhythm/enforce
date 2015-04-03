@@ -434,10 +434,12 @@ tm.main ->
                             # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
                             if (obj.motionObj._reversePosFlag)
                                 obj.motionObj.x = obj.motionObj.sprite.x + wx
-                                obj.motionObj.y = obj.motionObj.sprite.y + wy + obj.motionObj.z
+                                obj.motionObj.y = obj.motionObj.sprite.y + wy
                             else
                                 obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - wx)
-                                obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - wy - obj.motionObj.z)
+                                obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - wy)
+                                if (obj.motionObj._type == LABEL)
+                                    obj.motionObj.sprite.y += Math.floor(obj.motionObj.height / 2)
                         when MAP, EXMAP
                             rot = obj.motionObj.sprite.rotation
                             rot += obj.motionObj.rotation
@@ -543,7 +545,7 @@ addObject = (param, parent = undefined)->
     fontsize = if (param['fontsize']?) then param['fontsize'] else '16px'
     color = if (param['color']?) then param['color'] else 'white'
     labeltext = if (param['labeltext']?) then param['labeltext'].replace(/<br>/ig, "\n") else 'text'
-    textalign = if (param['textalign']?) then param['textalign'] else 'left'
+    textalign = if (param['textalign']?) then param['textalign'] else 'center'
     active = if (param['active']?) then param['active'] else true
     kind = if (param['kind']?) then param['kind'] else DYNAMIC_BOX
     collider = if (param['collider']?) then param['collider'] else undefined
@@ -642,10 +644,8 @@ addObject = (param, parent = undefined)->
             # ラベルを生成
             motionsprite = tm.display.Label(labeltext)
             # 値を代入
-            motionsprite.setOrigin(0.5, 0.5)
+            #motionsprite.setOrigin(0.5, 0.5)
             motionsprite.setPosition(x, y)
-            motionsprite.x = Math.floor(x)
-            motionsprite.y = Math.floor(y) - Math.floor(z)
             motionsprite.alpha = opacity
             motionsprite.rotation = rotation
             motionsprite.rotate = rotate
