@@ -122,8 +122,6 @@ class _stationary
                             @collider.worldview = @worldview
                             @collider.sprite.visible = @collider.visible = DEBUG
                             @collider.opacity = @collider.sprite.alpha = if (DEBUG) then 0.5 else 1.0
-                            @collider.x = @x - @collider._offsetx
-                            @collider.y = @y - @z + @collider._offsety
 
                     @sprite.visible = @visible
                     @sprite.scaleX  = @scaleX
@@ -177,7 +175,13 @@ class _stationary
                     @sprite.fontFamily = 'Arial'
                     @sprite.fillStyle = @color
                     @sprite.text = @labeltext
-                    @sprite.align = @textalign
+                    switch (@textalign)
+                        when 'center'
+                            @sprite.align = @textalign
+                        when 'right'
+                            @sprite.align = 'left'
+                        when 'left'
+                            @sprite.align = 'right'
 
                 when PRIMITIVE, COLLADA
                     if (@lastvisible != @visible)

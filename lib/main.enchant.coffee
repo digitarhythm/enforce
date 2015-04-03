@@ -473,7 +473,7 @@ window.onload = ->
                             obj.motionObj.sprite.x = Math.floor(obj.motionObj.x)
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y)
                             obj.motionObj.sprite.z = Math.floor(obj.motionObj.z)
-                        when SPRITE, LABEL, SURFACE, COLLIDER2D
+                        when SPRITE, LABEL, SURFACE
                             rot = parseFloat(obj.motionObj.rotation)
                             rot += parseFloat(obj.motionObj.rotate)
                             if (rot > 359.0)
@@ -500,6 +500,9 @@ window.onload = ->
                                 else
                                     obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - diffx - wx)
                                     obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - diffy - wy)
+                                    if (obj.motionObj._uniqueID != obj.motionObj.collider._uniqueID)
+                                        obj.motionObj.collider.sprite.x = obj.motionObj.collider.x = obj.motionObj.sprite.x + obj.motionObj._diffx - obj.motionObj.collider._diffx + obj.motionObj.collider._offsetx
+                                        obj.motionObj.collider.sprite.y = obj.motionObj.collider.y = obj.motionObj.sprite.y + obj.motionObj._diffy - obj.motionObj.collider._diffy + obj.motionObj.collider._offsety
                         when MAP, EXMAP
                             obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - obj.motionObj._diffx - wx)
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - obj.motionObj._diffy - wy)
@@ -736,8 +739,6 @@ addObject = (param, parent = undefined)->
                 parent: parent
                 worldview: worldview
                 touchEnabled: touchEnabled
-                diffx: 0
-                diffy: 0
             return retObject
 
         #*****************************************************************
@@ -990,6 +991,9 @@ __setMotionObj = (param)->
         mapheight = map.length * initparam['height']
         initparam['diffx'] = Math.floor(mapwidth / 2)
         initparam['diffy'] = Math.floor(mapheight / 2)
+    else if (_type == LABEL)
+        initparam['diffx'] = 0
+        initparam['diffy'] = 0
     else
         initparam['diffx'] = Math.floor(initparam['width'] / 2)
         initparam['diffy'] = Math.floor(initparam['height'] / 2)

@@ -424,7 +424,7 @@ tm.main ->
                             obj.motionObj.sprite.x = Math.floor(obj.motionObj.x)
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y)
                             obj.motionObj.sprite.z = Math.floor(obj.motionObj.z)
-                        when SPRITE, LABEL, SURFACE, COLLIDER2D
+                        when SPRITE, LABEL, SURFACE#, COLLIDER2D
                             rot = parseFloat(obj.motionObj.rotation)
                             rot += parseFloat(obj.motionObj.rotate)
                             if (rot > 359)
@@ -439,7 +439,11 @@ tm.main ->
                                 obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - wx)
                                 obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - wy)
                                 if (obj.motionObj._type == LABEL)
+                                    obj.motionObj.sprite.x += Math.floor(obj.motionObj.width / 2)
                                     obj.motionObj.sprite.y += Math.floor(obj.motionObj.height / 2)
+                                if (obj.motionObj._uniqueID != obj.motionObj.collider._uniqueID)
+                                    obj.motionObj.collider.sprite.x = obj.motionObj.collider.x = obj.motionObj.sprite.x + obj.motionObj.collider._offsetx
+                                    obj.motionObj.collider.sprite.y = obj.motionObj.collider.y = obj.motionObj.sprite.y + obj.motionObj.collider._offsety
                         when MAP, EXMAP
                             rot = obj.motionObj.sprite.rotation
                             rot += obj.motionObj.rotation
@@ -644,7 +648,7 @@ addObject = (param, parent = undefined)->
             # ラベルを生成
             motionsprite = tm.display.Label(labeltext)
             # 値を代入
-            #motionsprite.setOrigin(0.5, 0.5)
+            motionsprite.setOrigin(0.0, 0.0)
             motionsprite.setPosition(x, y)
             motionsprite.alpha = opacity
             motionsprite.rotation = rotation
