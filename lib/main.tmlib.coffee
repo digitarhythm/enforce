@@ -12,6 +12,10 @@
 
 # 定数定義
 
+# 色定義
+WHITE               = 0
+BLACK               = 1
+
 # オブジェクトの種類
 CONTROL             = 0
 SPRITE              = 1
@@ -93,6 +97,7 @@ PADBUTTONS          = []
 PADBUTTONS[0]       = [false, false]
 PADAXES             = []
 PADAXES[0]          = [0, 0]
+PADINFO             = []
 ANALOGSTICK         = []
 ANALOGSTICK[0]      = [[], []]
 _VGAMEPADCONTROL    = undefined
@@ -191,8 +196,8 @@ tm.main ->
         init: (param) ->
             @superInit()
             @bg = tm.display.Shape().addChildTo(@)
-            @bg.canvas.clearColor "#000000"
-            @bg.setOrigin 0, 0
+            @bg.canvas.clearColor("#000000")
+            @bg.setOrigin(0, 0)
             label = tm.display.Label("loading")
             label.x = param.width / 2
             label.y = param.height / 2
@@ -323,7 +328,8 @@ tm.main ->
                     PADBUTTONS[num] = _GAMEPADSINFO[num].padbuttons
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
-
+                    PADINFO[num] = []
+                    PADINFO[num].id = _GAMEPADSINFO[num].id
                 if (_VGAMEPADCONTROL? &&_VGAMEPADCONTROL.input.analog?)
                     vgpx1 = parseFloat(_VGAMEPADCONTROL.input.analog[HORIZONTAL])
                     vgpy1 = parseFloat(_VGAMEPADCONTROL.input.analog[VERTICAL])
@@ -405,11 +411,6 @@ tm.main ->
                 ANALOGSTICK[0][0][HORIZONTAL] = mx
                 ANALOGSTICK[0][0][VERTICAL] = my
 
-            #debugwrite
-            #    labeltext: sprintf("ax=%@, ay=%@, dx=%@, dy=%@, mx=%@, my=%@", ANALOGSTICK[0][0][HORIZONTAL], ANALOGSTICK[0][0][VERTICAL], PADAXES[0][HORIZONTAL], PADAXES[0][VERTICAL], mx, my)
-            #    clear:true
-
-
             for obj in _objects
                 if (obj.active == true && obj.motionObj != undefined && typeof(obj.motionObj.behavior) == 'function')
                     obj.motionObj.behavior()
@@ -432,15 +433,14 @@ tm.main ->
                             obj.motionObj.rotation = rot
                             obj.motionObj.sprite.rotation = parseInt(rot)
                             # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
+                            diffx = 0
+                            diffy = 0
                             if (obj.motionObj._reversePosFlag)
-                                obj.motionObj.x = obj.motionObj.sprite.x + wx
-                                obj.motionObj.y = obj.motionObj.sprite.y + wy
+                                obj.motionObj.x = obj.motionObj.sprite.x + wx + diffx
+                                obj.motionObj.y = obj.motionObj.sprite.y + wy + diffy
                             else
-                                obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - wx)
-                                obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - wy)
-                                if (obj.motionObj._type == LABEL)
-                                    obj.motionObj.sprite.x += Math.floor(obj.motionObj.width / 2)
-                                    obj.motionObj.sprite.y += Math.floor(obj.motionObj.height / 2)
+                                obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - wx - diffx)
+                                obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - wy - diffy)
                                 if (obj.motionObj._uniqueID != obj.motionObj.collider._uniqueID)
                                     obj.motionObj.collider.sprite.x = obj.motionObj.collider.x = obj.motionObj.sprite.x + obj.motionObj.collider._offsetx
                                     obj.motionObj.collider.sprite.y = obj.motionObj.collider.y = obj.motionObj.sprite.y + obj.motionObj.collider._offsety
@@ -460,6 +460,8 @@ tm.main ->
 
     # メディアファイルのプリロード
     if (MEDIALIST?)
+        MEDIALIST['_ascii_w'] = 'lib/ascii_w.png'
+        MEDIALIST['_ascii_b'] = 'lib/ascii_b.png'
         MEDIALIST['_fpsgauge'] = 'lib/fpsgauge.png'
         MEDIALIST['_notice'] = 'lib/notice.png'
         MEDIALIST['_execbutton'] = 'lib/execbutton.png'
@@ -499,7 +501,7 @@ debugwrite = (param)->
         else
             labeltext = _DEBUGLABEL.text += if (param.labeltext?) then param.labeltext else ""
         fontsize = if (param.fontsize?) then param.fontsize else 32
-        fontcolor = if (param.fontcolor?) then param.fontcolor else "red"
+        fontcolor = if (param.color?) then param.color else "white"
         _DEBUGLABEL.y = fontsize / 2
         _DEBUGLABEL.fontSize = fontsize
         _DEBUGLABEL.text = labeltext
@@ -648,7 +650,7 @@ addObject = (param, parent = undefined)->
             # ラベルを生成
             motionsprite = tm.display.Label(labeltext)
             # 値を代入
-            motionsprite.setOrigin(0.0, 0.0)
+            motionsprite.setOrigin(0.5, 0.5)
             motionsprite.setPosition(x, y)
             motionsprite.alpha = opacity
             motionsprite.rotation = rotation
@@ -1039,7 +1041,7 @@ setWorldView = (cx, cy)->
 #**********************************************************************
 # バーチャルゲームパッド
 #**********************************************************************
-createVirtualGamepad = (param)->
+createVirtualGamepad = (param = [])->
     if (param?)
         scale       = if (param.scale?)         then param.scale        else 1
         x           = if (param.x?)             then param.x            else (100 / 2) * scale
@@ -1053,7 +1055,6 @@ createVirtualGamepad = (param)->
         buttonscale = if (param.buttonscale?)   then param.buttonscale  else 1
         coord       = if (param.coord?)         then param.coord        else []
     else
-        param = []
         scale       = param.scale       = 1.0
         x           = param.x           = (100 / 2) * scale
         y           = param.y           = SCREEN_HEIGHT - ((100 / 2) * scale)

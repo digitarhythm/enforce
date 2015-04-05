@@ -42,7 +42,7 @@ echo '2.0' > $PROJ/lib/version
 cp -af $ENF/src/sample.coffee $PROJ/src/
 
 # ライブラリをコンパイル／生成
-coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.enchant.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/main.enchant.coffee $ENF/plugins/*.coffee
+coffee -b -j $PROJ/sysobject/enforce.core.js -c $ENF/lib/_originObject.coffee $ENF/lib/_stationary.enchant.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/_dispImageStrings.coffee $ENF/lib/main.enchant.coffee $ENF/plugins/*.coffee
 
 # 共用ライブラリコンパイル
 coffee -b -j $PROJ/sysobject/library.js -c $ENF/lib/library.coffee

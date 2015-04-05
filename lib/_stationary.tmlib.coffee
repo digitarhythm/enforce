@@ -175,13 +175,14 @@ class _stationary
                     @sprite.fontFamily = 'Arial'
                     @sprite.fillStyle = @color
                     @sprite.text = @labeltext
+                    #@sprite.align = @textalign
                     switch (@textalign)
                         when 'center'
-                            @sprite.align = @textalign
-                        when 'right'
-                            @sprite.align = 'left'
+                            @sprite.align = 'center'
                         when 'left'
                             @sprite.align = 'right'
+                        when 'right'
+                            @sprite.align = 'left'
 
                 when PRIMITIVE, COLLADA
                     if (@lastvisible != @visible)

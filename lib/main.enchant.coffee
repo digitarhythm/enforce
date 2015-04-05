@@ -12,6 +12,10 @@
 
 # 定数定義
 
+# 色定義
+WHITE               = 0
+BLACK               = 1
+
 # オブジェクトの種類
 CONTROL             = 0
 SPRITE              = 1
@@ -99,6 +103,7 @@ PADBUTTONS          = []
 PADBUTTONS[0]       = [false, false]
 PADAXES             = []
 PADAXES[0]          = [0, 0]
+PADINFO             = []
 ANALOGSTICK         = []
 ANALOGSTICK[0]      = [[0, 0], [0, 0]]
 _VGAMEPADCONTROL    = undefined
@@ -246,6 +251,8 @@ window.onload = ->
 
     # メディアファイルのプリロード
     if (MEDIALIST?)
+        MEDIALIST['_ascii_w'] = 'lib/ascii_w.png'
+        MEDIALIST['_ascii_b'] = 'lib/ascii_b.png'
         MEDIALIST['_fpsgauge'] = 'lib/fpsgauge.png'
         MEDIALIST['_notice'] = 'lib/notice.png'
         MEDIALIST['_execbutton'] = 'lib/execbutton.png'
@@ -375,6 +382,8 @@ window.onload = ->
                     PADBUTTONS[num] = _GAMEPADSINFO[num].padbuttons
                     PADAXES[num] = _GAMEPADSINFO[num].padaxes
                     ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
+                    PADINFO[num] = []
+                    PADINFO[num].id = _GAMEPADSINFO[num].id
                 if (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.analog?)
                     vgpx1 = parseFloat(_VGAMEPADCONTROL.input.analog[HORIZONTAL])
                     vgpy1 = parseFloat(_VGAMEPADCONTROL.input.analog[VERTICAL])
@@ -487,13 +496,8 @@ window.onload = ->
                                     obj.motionObj.sprite.y = obj.motionObj.y - obj.motionObj._diffy - wy
                             else
                                 # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
-                                if (obj.motionObj._type == LABEL)
-                                    diffx = 0
-                                    diffy = 0
-                                else
-                                    diffx = obj.motionObj._diffx
-                                    diffy = obj.motionObj._diffy
-
+                                diffx = obj.motionObj._diffx
+                                diffy = obj.motionObj._diffy
                                 if (obj.motionObj._reversePosFlag)
                                     obj.motionObj.x = obj.motionObj.sprite.x + diffx
                                     obj.motionObj.y = obj.motionObj.sprite.y + diffy
@@ -501,11 +505,13 @@ window.onload = ->
                                     obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - diffx - wx)
                                     obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - diffy - wy)
                                     if (obj.motionObj._uniqueID != obj.motionObj.collider._uniqueID)
-                                        obj.motionObj.collider.sprite.x = obj.motionObj.collider.x = obj.motionObj.sprite.x + obj.motionObj._diffx - obj.motionObj.collider._diffx + obj.motionObj.collider._offsetx
-                                        obj.motionObj.collider.sprite.y = obj.motionObj.collider.y = obj.motionObj.sprite.y + obj.motionObj._diffy - obj.motionObj.collider._diffy + obj.motionObj.collider._offsety
+                                        obj.motionObj.collider.sprite.x = obj.motionObj.collider.x = obj.motionObj.sprite.x + diffx - obj.motionObj.collider._diffx + obj.motionObj.collider._offsetx
+                                        obj.motionObj.collider.sprite.y = obj.motionObj.collider.y = obj.motionObj.sprite.y + diffy - obj.motionObj.collider._diffy + obj.motionObj.collider._offsety
                         when MAP, EXMAP
-                            obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - obj.motionObj._diffx - wx)
-                            obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - obj.motionObj._diffy - wy)
+                            diffx = obj.motionObj._diffx
+                            diffy = obj.motionObj._diffy
+                            obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - diffx - wx)
+                            obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - diffy - wy)
 
 
 #******************************************************************************
@@ -518,7 +524,7 @@ debugwrite = (param)->
         else
             labeltext = _DEBUGLABEL.text += if (param.labeltext?) then param.labeltext else ""
         fontsize = if (param.fontsize?) then param.fontsize else 32
-        fontcolor = if (param.fontcolor?) then param.fontcolor else "white"
+        fontcolor = if (param.color?) then param.color else "white"
         _DEBUGLABEL.font = fontsize+"px 'Arial'"
         _DEBUGLABEL.text = labeltext
         _DEBUGLABEL.color = fontcolor
@@ -991,9 +997,6 @@ __setMotionObj = (param)->
         mapheight = map.length * initparam['height']
         initparam['diffx'] = Math.floor(mapwidth / 2)
         initparam['diffy'] = Math.floor(mapheight / 2)
-    else if (_type == LABEL)
-        initparam['diffx'] = 0
-        initparam['diffy'] = 0
     else
         initparam['diffx'] = Math.floor(initparam['width'] / 2)
         initparam['diffy'] = Math.floor(initparam['height'] / 2)
