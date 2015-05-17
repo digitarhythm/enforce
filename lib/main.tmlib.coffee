@@ -434,7 +434,7 @@ tm.main ->
                             obj.motionObj.sprite.rotation = parseInt(rot)
                             # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
                             diffx = 0
-                            diffy = 0
+                            diffy = if (obj.motionObj._type == LABEL) then -(Math.floor(obj.motionObj.height / 2)) else 0
                             if (obj.motionObj._reversePosFlag)
                                 obj.motionObj.x = obj.motionObj.sprite.x + wx + diffx
                                 obj.motionObj.y = obj.motionObj.sprite.y + wy + diffy
@@ -663,7 +663,7 @@ addObject = (param, parent = undefined)->
             motionsprite.fillStyle = color
             motionsprite.text = labeltext
             motionsprite.fontSize = fontsize
-            motionsprite.align = textalign
+            motionsprite.align = 'left'
             motionsprite.fontFamily = 'Arial'
             motionsprite.setBaseline("middle")
             # スプライトを表示

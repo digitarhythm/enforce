@@ -1,4 +1,4 @@
-class [__classname__] extends _stationary
+class [__classname__] extends [__extendclass__]
     #**************************
     # character constructor
     #**************************

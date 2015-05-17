@@ -5,6 +5,8 @@ class _dispImageStrings extends _stationary
     constructor:(initparam)->
         super(initparam)
         @stringslist = undefined
+        @strwidth = 32
+        @strheight = 64
 
     #**************************
     # character destructor
@@ -48,6 +50,8 @@ class _dispImageStrings extends _stationary
     #    super(pos)
 
     dispStrings:(param = [])->
+        @width = param.labeltext.length * @strwidth
+        @height = @strheight
         if (!@stringslist?)
             @strsize = if (param.size?) then param.size else 1.0
             @labeltext = if (param.labeltext?) then param.labeltext else "text"
@@ -118,6 +122,7 @@ class _dispImageStrings extends _stationary
             scaleY: @strsize
             scene: @strscene
             opacity: @opacity
+            touchEnabled: false
             animnum: code
             animlist: [
                 [100, [ 0]], [100, [ 1]], [100, [ 2]], [100, [ 3]], [100, [ 4]], [100, [ 5]], [100, [ 6]], [100, [ 7]], 

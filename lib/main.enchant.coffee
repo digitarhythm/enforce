@@ -123,8 +123,6 @@ MOTION_ACCEL        = [x:0, y:0, z:0]
 MOTION_GRAVITY      = [x:0, y:0, z:0]
 MOTION_ROTATE       = [alpha:0, beta:0, gamma:0]
 
-# User Agent
-_useragent = window.navigator.userAgent.toLowerCase()
 # 標準ブラウザ
 if (_useragent.match(/^.*android.*?mobile safari.*$/i) != null && _useragent.match(/^.*\) chrome.*/i) == null)
     _defaultbrowser = true
@@ -342,6 +340,7 @@ window.onload = ->
             _DEBUGLABEL = new Label()
             _DEBUGLABEL.x = 0
             _DEBUGLABEL.y = 0
+            _DEBUGLABEL.width = SCREEN_WIDTH
             _DEBUGLABEL.color = "white"
             _DEBUGLABEL.font = "32px 'Arial'"
             _scenes[DEBUGSCENE].addChild(_DEBUGLABEL)
@@ -496,8 +495,12 @@ window.onload = ->
                                     obj.motionObj.sprite.y = obj.motionObj.y - obj.motionObj._diffy - wy
                             else
                                 # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
-                                diffx = obj.motionObj._diffx
-                                diffy = obj.motionObj._diffy
+                                if (obj.motionObj._type == LABEL)
+                                    diffx = 0
+                                    diffy = 0
+                                else
+                                    diffx = obj.motionObj._diffx
+                                    diffy = obj.motionObj._diffy
                                 if (obj.motionObj._reversePosFlag)
                                     obj.motionObj.x = obj.motionObj.sprite.x + diffx
                                     obj.motionObj.y = obj.motionObj.sprite.y + diffy
@@ -704,8 +707,12 @@ addObject = (param, parent = undefined)->
             _scenes[scene].addChild(motionsprite)
             # 値を代入
             #motionsprite.backgroundColor = "transparent"
-            motionsprite.x = x - Math.floor(width / 2)
-            motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
+
+            #motionsprite.x = x - Math.floor(width / 2)
+            #motionsprite.y = y - Math.floor(height / 2) - Math.floor(z)
+            motionsprite.x = x
+            motionsprite.y = y - Math.floor(z)
+            
             motionsprite.opacity = opacity
             #motionsprite.rotation = rotation
             #motionsprite.rotate = rotate
