@@ -135,4 +135,3 @@ dispImageStrings = (param)->
         color: color
         scene: scene
     return obj
-

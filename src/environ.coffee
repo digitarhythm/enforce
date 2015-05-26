@@ -16,6 +16,7 @@ FPS             = 60                        # FPS
 GRAVITY_X       = 0.0                       # box2d用水平方向重力
 GRAVITY_Y       = 9.8                       # box2d用垂直方向重力
 GAMEPADMIX      = false                     # ゲームパッドとアナログコントローラーの値を合算
+WEBGL           = false                     # WebGLフラグ
 
 # preloading image list ***********************************************************************************
 MEDIALIST =

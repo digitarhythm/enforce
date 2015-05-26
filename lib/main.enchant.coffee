@@ -1,10 +1,10 @@
-#***********************************************************************
+#******************************************************************************
 # enforce game engine(enchant)
 #
 # 2014.04.04 ver2.0
 #
 # Coded by Kow Sakazaki
-#***********************************************************************
+#******************************************************************************
 
 #******************************************************************************
 # 初期化処理
@@ -146,7 +146,6 @@ BEGINNINGTIME       = undefined
 __FRAMETIME         = 0.0
 
 # 3D系
-WEBGL               = undefined
 OCULUS              = undefined
 RENDERER            = undefined
 CAMERA              = undefined
@@ -159,17 +158,6 @@ DEVICE_HEIGHT = _frame[1]
 if (!SCREEN_WIDTH? && !SCREEN_HEIGHT?)
     SCREEN_WIDTH = DEVICE_WIDTH
     SCREEN_HEIGHT = DEVICE_HEIGHT
-
-# アニメーション管理
-__requestID = ( =>
-    return window.requestAnimationFrame ||
-    window.webkitRequestAnimationFrame ||
-    window.mozRequestAnimationFrame ||
-    window.oRequestAnimationFrame ||
-    window.msRequestAnimationFrame ||
-    (callback)=>
-        window.setTimeout(callback, 1000 / 60);
-)() 
 
 # 動作状況
 ACTIVATE            = true
@@ -202,6 +190,17 @@ rootScene3d         = undefined
 # enchantのrootScene
 rootScene           = undefined
 
+# アニメーション管理
+__requestID = ( =>
+    return window.requestAnimationFrame ||
+    window.webkitRequestAnimationFrame ||
+    window.mozRequestAnimationFrame ||
+    window.oRequestAnimationFrame ||
+    window.msRequestAnimationFrame ||
+    (callback)=>
+        window.setTimeout(callback, 1000 / 60);
+)() 
+
 #******************************************************************************
 # 起動時の処理
 #******************************************************************************
@@ -212,9 +211,11 @@ enchant.ENV.MOUSE_ENABLED = false
 enchant.ENV.SOUND_ENABLED_ON_MOBILE_SAFARI = false
 
 # ゲーム起動時の処理
-window.onload = ->
+window.addEventListener 'load', (e)=>
+    window.removeEventListener('load', arguments.callee, false)
+
     # ゲーム起動時間
-    BEGINNINGTIME       = __getTime()
+    BEGINNINGTIME = __getTime()
     # アスペクト比
     ASPECT = (SCREEN_WIDTH / SCREEN_HEIGHT).toFixed(2)
     # enchant初期化
@@ -296,18 +297,19 @@ window.onload = ->
         _scenes[WEBGLSCENE] = rootScene3d
 
         # スポットライト生成
-        #dlight = new DirectionalLight()
+        #DLIGHT = new DirectionalLight()
+        #DLIGHT.color = [1.0, 1.0, 1.0]
         #dlight.directionX = 0
         #dlight.directionY = 100
         #dlight.directionZ = 0
-        #dlight.color = [1.0, 1.0, 1.0]
-        #rootScene3d.setDirectionalLight(dlight)
+        rootScene3d.setDirectionalLight(DLIGHT)
 
         # 環境光ライト生成
-        #alight = new AmbientLight()
+        #ALIGHT = new AmbientLight()
+        #ALIGHT.color = [1.0, 1.0, 1.0]
         #alight.directionX = 0
         #alight.directionY = 100
-        #rootScene3d.setAmbientLight(alight)
+        rootScene3d.setAmbientLight(ALIGHT)
 
         # カメラ生成
         CAMERA = new Camera3D()
@@ -320,7 +322,6 @@ window.onload = ->
         rootScene3d.setCamera(CAMERA)
     else
         rootScene.backgroundColor = BGCOLOR
-        WEBGL = false
 
     if (DEBUG == true)
         core.debug()
@@ -515,7 +516,7 @@ window.onload = ->
                             diffy = obj.motionObj._diffy
                             obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - diffx - wx)
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - diffy - wy)
-
+, false
 
 #******************************************************************************
 # デバッグ用関数

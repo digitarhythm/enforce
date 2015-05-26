@@ -7,5 +7,10 @@ fi
 CWD=`pwd`
 ENF=$(cd $(dirname $0)/..;pwd)
 CLSNAME=$1
+ORGNAME=$2
 
-sed -e "s/\[__classname__\]/$CLSNAME/" $ENF/lib/stationary.coffee > $CWD/src/$CLSNAME.coffee
+if [ -z "$ORGNAME" ]; then
+    sed -e  "s/\[__classname__\]/$CLSNAME/" -e "s/\[__extendclass__\]/_stationary/" $ENF/lib/stationary.coffee > $CWD/src/$CLSNAME.coffee
+else
+    sed -e  "s/\[__classname__\]/$CLSNAME/" -e "s/\[__extendclass__\]/$ORGNAME/" $ENF/lib/stationary.coffee > $CWD/src/$CLSNAME.coffee
+fi

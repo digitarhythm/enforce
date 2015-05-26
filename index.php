@@ -1,8 +1,8 @@
 <?php
 $ini = parse_ini_file("lib/config.ini", true);
 $library = $ini['ENVIRON']['LIBRARY'];
-$webgl = $ini['ENVIRON']['WEBGL'] ? 1 : 0;
 $gametitle = $ini['ENVIRON']['TITLE'];
+$webgl = $ini['ENVIRON']['WEBGL'];
 ?>
 <!DOCTYPE html>
 <html>
@@ -51,8 +51,8 @@ $gametitle = $ini['ENVIRON']['TITLE'];
 ?>
     <script type="text/javascript" src="sysobject/library.js"></script>
     <script type="text/javascript">
-        WEBGL = <?= $webgl?>;
         _POSTPARAM = separateGETquery();
+        _useragent = window.navigator.userAgent.toLowerCase();
     </script>
 	<script type="text/javascript" src="usrobject/environ.js"></script>
     <script type="text/javascript" src="sysobject/enforce.core.js"></script>
