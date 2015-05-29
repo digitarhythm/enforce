@@ -4,16 +4,19 @@ $ini = parse_ini_file("lib/config.ini", true);
 $library = $ini['ENVIRON']['LIBRARY'];
 $eftmp = dirname(__FILE__);
 
-// enforce system directory
-$ENF = preg_replace("/\s/i", "\ ", realpath("$eftmp/.."));
 // working directory
-$PROJ = preg_replace("/\s/i", "\ ", getcwd());
+$TMPPROJ = preg_replace("/\s/i", "\ ", getcwd());
 
 // check develop mode
-if (!is_file("$PROJ/index.php")) {
+if (!is_file("$TMPPROJ/index.php")) {
     echo "It does not become a development mode.\n";
     exit;
 }
+
+// enforce system directory
+$ENF = preg_replace("/\s/i", "\ ", realpath("$eftmp/.."));
+// working directory
+$PROJ = preg_replace("/\s/i", "\ ", $TMPPROJ);
 
 // directory make
 exec("mkdir -p $PROJ/lib");
