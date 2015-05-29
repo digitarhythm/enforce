@@ -5,9 +5,9 @@ $library = $ini['ENVIRON']['LIBRARY'];
 $eftmp = dirname(__FILE__);
 
 // enforce system directory
-$ENF = realpath("$eftmp/..");
+$ENF = preg_replace("/\s/i", "\ ", realpath("$eftmp/.."));
 // working directory
-$PROJ = getcwd();
+$PROJ = preg_replace("/\s/i", "\ ", getcwd());
 
 // check develop mode
 if (!is_file("$PROJ/index.php")) {
@@ -31,7 +31,6 @@ exec("cp -af $ENF/index.php $PROJ/");
 exec("cp -af $ENF/codit $PROJ/");
 exec("cp -af $ENF/extlib/* $PROJ/extlib/");
 exec("cp -af $ENF/lib/*.png $PROJ/lib/");
-//exec("cp -af $ENF/media/picture/* $PROJ/media/picture/");
 exec("cp -af $ENF/media/sound/* $PROJ/media/sound/");
 exec("cp -af $ENF/media/model/* $PROJ/media/model/");
 
@@ -44,7 +43,7 @@ exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/sysobject/.htaccess > /dev/null")
 exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/usrobject/.htaccess > /dev/null");
 exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/plugins/.htaccess > /dev/null");
 exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/lib/.htaccess > /dev/null");
-exec("cp -af $ENF/lib/htaccess.noaccess $PROJ/src/.htaccess > /dev/null");
+exec("cp -af $ENF/lib/htaccess.noaccess  $PROJ/src/.htaccess > /dev/null");
 
 if ($library == "enchant") {
     // enchantライブラリ生成
