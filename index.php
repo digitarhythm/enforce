@@ -47,6 +47,13 @@ $webgl = $ini['ENVIRON']['WEBGL'];
         <script type="text/javascript" src="extlib/tmlib.min.js"></script>
         <script type="text/javascript" src="extlib/Box2dWeb-2.1.a.3.min.js"></script>
 <?php
+        if ($webgl == true) {
+?>
+            <script type="text/javascript" src="extlib/three.min.js"></script>
+            <script type="text/javascript" src="extlib/ColladaLoader.js"></script>
+            <script type="text/javascript" src="extlib/TrackballControls.js"></script>
+<?php
+        }
     }
 ?>
     <script type="text/javascript" src="sysobject/library.js"></script>
