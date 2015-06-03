@@ -8,8 +8,8 @@
 
 # static values setting ***********************************************************************************
 DEBUG           = true                      # デバッグモード
-SCREEN_WIDTH    = 1080                      # 画面の幅
-SCREEN_HEIGHT   = 1920                      # 画面の高さ
+SCREEN_WIDTH    = 800                       # 画面の幅
+SCREEN_HEIGHT   = 1280                      # 画面の高さ
 BGCOLOR         = "black"                   # 背景色
 OBJECTNUM       = 256                       # キャラの最大数
 FPS             = 60                        # FPS
