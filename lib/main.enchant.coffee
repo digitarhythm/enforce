@@ -291,7 +291,7 @@ window.addEventListener 'load', (e)=>
         _scenes[i] = scene
         rootScene.addChild(scene)
 
-    if (WEBGL && isWebGL())
+    if (WEBGL != undefined && WEBGL && isWebGL())
         # 3Dシーンを生成
         rootScene3d = new Scene3D()
         _scenes[WEBGLSCENE] = rootScene3d
@@ -322,6 +322,7 @@ window.addEventListener 'load', (e)=>
         rootScene3d.setCamera(CAMERA)
     else
         rootScene.backgroundColor = BGCOLOR
+        WEBGL = false
 
     if (DEBUG == true)
         core.debug()
