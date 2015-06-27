@@ -16,7 +16,12 @@ FPS             = 60                        # FPS
 GRAVITY_X       = 0.0                       # box2d用水平方向重力
 GRAVITY_Y       = 9.8                       # box2d用垂直方向重力
 GAMEPADMIX      = false                     # ゲームパッドとアナログコントローラーの値を合算
-WEBGL           = false                     # WebGLフラグ
+
+FOGCOLOR        = 0xffffff                  # 霧の色
+FOGLEVEL        = 0                         # 霧の濃さ
+VIEWANGLE       = 90                        # 視野角
+VIEWNEAR        = 1                         # 最短描画距離
+VIEWFAR         = 1000                      # 最長描画距離
 
 # preloading image list ***********************************************************************************
 MEDIALIST =

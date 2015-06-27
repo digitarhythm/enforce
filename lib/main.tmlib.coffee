@@ -130,17 +130,28 @@ else if (_useragent.match(/.*chrome\/.* safari\/.*/))
 else
     _browserMajorClass = "unknown"
 
+# レンダリングサイド
+FRONTSIDE           = 0
+BACKSIDE            = 1
+DOUBLESIDE          = 2
+
 # ゲーム起動時からの経過時間（秒）
 LAPSEDTIME          = 0
 # ゲーム起動時のUNIXTIME
 BEGINNINGTIME       = __getTime()
 
 # 3D系
-WEBGL               = undefined
+WEBGL               = WEBGL
 OCULUS              = undefined
 RENDERER            = undefined
 CAMERA              = undefined
 LIGHT               = undefined
+
+# 3Dスクリーンサイズ
+PIXELRATIO          = window.devicePixelRatio
+BROWSER_WIDTH       = window.innerWidth
+BROWSER_HEIGHT      = window.innerHeight + if (_browserMajorClass == "chrome") then 48 else -8
+ASPECT              = BROWSER_WIDTH / BROWSER_HEIGHT
 
 # デバイスサイズ
 _frame = getBounds()
@@ -258,8 +269,9 @@ tm.main ->
             core.background = BGCOLOR
             rootScene = @
             for i in [0..MAXSCENE]
-                scene = tm.display.CanvasElement().addChildTo(rootScene)
-                _scenes[i] = scene
+                if (i != WEBGLSCENE)
+                    scene = tm.display.CanvasElement().addChildTo(rootScene)
+                    _scenes[i] = scene
 
             gravity = new Box2D.Common.Math.b2Vec2(GRAVITY_X, GRAVITY_Y)
             box2dworld = new Box2D.Dynamics.b2World(gravity, true)
@@ -278,7 +290,58 @@ tm.main ->
             EASINGVALUE[QUINT]   = ["easeInOutQuint",   "easeInQuint",  "easeOutQuint"]
             EASINGVALUE[SINE]    = ["easeInOutSine",    "easeInSine",   "easeOutSine"]
 
-            if (DEBUG == true)
+            if (WEBGL? && WEBGL)
+                # 3Dレンダラー生成
+                _RENDERER = new THREE.WebGLRenderer({antialias:true})
+                _RENDERER.shadowMapEnabled = true
+                _RENDERER.setSize(BROWSER_WIDTH, BROWSER_HEIGHT)
+                _RENDERER.setClearColor(0x101010, 1.0)
+                webglelm = document.getElementById('webgl')
+                webglelm.appendChild(_RENDERER.domElement)
+                # 3Dシーン生成
+                rootScene3d = new THREE.Scene()
+                _scenes[WEBGLSCENE] = rootScene3d
+                rootScene3d.fog = new THREE.FogExp2(FOGCOLOR, FOGLEVEL)
+                # 3Dカメラ生成
+                CAMERA = new THREE.PerspectiveCamera(VIEWANGLE, ASPECT, VIEWNEAR, VIEWFAR)
+                CAMERA.up.set(0, 1, 0)
+                CAMERA.position.set(0, 0, 0)
+                CAMERA.lookAt(new THREE.Vector3(0, 0, 0))
+                rootScene3d.add(CAMERA)
+                # デフォルトライト生成
+                _DLIGHT = new THREE.DirectionalLight(0xffffff, 1.0)
+                _DLIGHT.position = new THREE.Vector3(0.0, 1000.0, 0.0)
+                _DLIGHT.castShadow = true
+                rootScene3d.add(_DLIGHT)
+                # 環境光オブジェクト(LIGHT2)の設定
+                _ALIGHT = new THREE.AmbientLight(0xffffff)
+                _ALIGHT.castShadow = true
+                rootScene3d.add(_ALIGHT)
+            else
+                WEBGL = false
+            
+            # デバッグ用文字列スプライトと3Dの地面を生成
+            if (DEBUG)
+                if (WEBGL)
+                    geometry = new THREE.PlaneGeometry(500, 500, 50, 50)
+                    material = new THREE.MeshPhongMaterial {
+                        color: 0xffffff
+                        side: THREE.DoubleSide
+                        transparent: true
+                        opacity: 0.3
+                        blending: THREE.NormalBlending
+                        wireframe: true
+                        #specular: specular
+                        #shininess: shininess
+                        #ambient: ambient
+                        #emissive: emissive
+                        #metal: metal
+                    }
+                    grid = new THREE.Mesh(geometry, material)
+                    grid.rotation.x = 90 * RAD
+                    grid.position.set(0, 0, 0)
+                    rootScene3d.add(grid)
+
                 _DEBUGLABEL = new tm.display.Label()
                 _DEBUGLABEL.x = 0
                 _DEBUGLABEL.y = 16
@@ -301,9 +364,11 @@ tm.main ->
                 __fpscounter = 0
                 __limittimefps = 0.0
 
+            cameraControl(false)
             for i in [0...OBJECTNUM]
                 _objects[i] = new _originObject()
             _main = new enforceMain()
+            cameraControl(true)
 
             return
 
@@ -1119,6 +1184,20 @@ dispDefaultBrowserCheck = (func)->
             func()
     else
         func()
+
+#**********************************************************************
+# 3Dカメラ操作
+#**********************************************************************
+cameraControl = (flag)->
+    if (CAMERA?)
+        switch (flag)
+            when true
+                CAMERA.far = VIEWFAR
+                CAMERA.near = VIEWNEAR
+            when false
+                CAMERA.far = 0
+                CAMERA.near = 0
+        CAMERA.updateProjectionMatrix()
 
 
 #**********************************************************************

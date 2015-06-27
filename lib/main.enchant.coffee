@@ -210,8 +210,10 @@ enchant()
 enchant.ENV.MOUSE_ENABLED = false
 enchant.ENV.SOUND_ENABLED_ON_MOBILE_SAFARI = false
 
+
 # ゲーム起動時の処理
-window.addEventListener 'load', (e)=>
+#window.addEventListener 'load', (e)=>
+document.addEventListener 'DOMContentLoaded', ->
     window.removeEventListener('load', arguments.callee, false)
 
     # ゲーム起動時間
@@ -291,7 +293,7 @@ window.addEventListener 'load', (e)=>
         _scenes[i] = scene
         rootScene.addChild(scene)
 
-    if (WEBGL != undefined && WEBGL && isWebGL())
+    if (isWEBGL != undefined && isWEBGL && isWebGL())
         # 3Dシーンを生成
         rootScene3d = new Scene3D()
         _scenes[WEBGLSCENE] = rootScene3d
@@ -322,7 +324,7 @@ window.addEventListener 'load', (e)=>
         rootScene3d.setCamera(CAMERA)
     else
         rootScene.backgroundColor = BGCOLOR
-        WEBGL = false
+        isWEBGL = false
 
     if (DEBUG == true)
         core.debug()

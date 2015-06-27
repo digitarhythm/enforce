@@ -31,7 +31,6 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 ?>
         <script type="text/javascript" src="extlib/Box2dWeb-2.1.a.3.min.js"></script>
         <script type="text/javascript" src="extlib/box2d.enchant.js"></script>
-        <script type="text/javascript" src="extlib/socket.io-1.3.0.js"></script>
 <?php
         if ($webgl == true) {
 ?>
@@ -56,12 +55,14 @@ $webgl = $ini['ENVIRON']['WEBGL'];
         }
     }
 ?>
+    <script type="text/javascript" src="extlib/socket.io-1.3.0.js"></script>
     <script type="text/javascript" src="sysobject/library.js"></script>
+	<script type="text/javascript" src="usrobject/environ.js"></script>
     <script type="text/javascript">
         _POSTPARAM = separateGETquery();
         _useragent = window.navigator.userAgent.toLowerCase();
+        WEBGL = <?php echo $webgl ?>;
     </script>
-	<script type="text/javascript" src="usrobject/environ.js"></script>
     <script type="text/javascript" src="sysobject/enforce.core.js"></script>
 <?php
     // #################################################################################
@@ -94,10 +95,13 @@ $webgl = $ini['ENVIRON']['WEBGL'];
         }
     </style>
 </head>
-<body bgcolor="#303030">
+<body>
 <?php
     if ($library == "tmlib") {
         echo "<canvas id='stage'></canvas>";
+    }
+    if ($webgl) {
+        echo "<div id='webgl' style='position: absolute; left:0px; top:0px;'></div>";
     }
 ?>
 </body>
