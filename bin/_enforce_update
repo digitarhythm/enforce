@@ -31,7 +31,6 @@ exec("mkdir -p $PROJ/usrobject");
 
 // system file copy
 exec("cp -af $ENF/index.php $PROJ/");
-exec("cp -af $ENF/codit $PROJ/");
 exec("cp -af $ENF/extlib/* $PROJ/extlib/");
 exec("cp -af $ENF/lib/*.png $PROJ/lib/");
 exec("cp -af $ENF/media/sound/* $PROJ/media/sound/");

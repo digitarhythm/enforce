@@ -3,9 +3,6 @@
 opt=$1
 opt2=$2
 opt3=$3
-LIB=`pwd`"/lib"
-ENF=$(cd $(dirname $0)/..;pwd)
-cwd=$(cd $(dirname $0);pwd)
 
 ##################################################
 # process codejs
@@ -27,10 +24,19 @@ fi
 # enforce version check
 ##################################################
 if [ "$opt" != "new" ]; then
-    if [ ! -f "./lib/version" ]; then
-        echo "Please perform in a package directory."
+    wdir=$(pwd)
+    while [ ! -f "./lib/version" ]; do
+      cd "${wdir}/.."
+      wdir=$(pwd)
+      if [ "${wdir}" = "/" ]; then
+        echo "Not found project directory."
         exit
-    fi
+      fi
+    done
+
+    LIB=`pwd`"/lib"
+    ENF=$(cd $(dirname $0)/..;pwd)
+    cwd=$(cd $(dirname $0);pwd)
 
     OLDIFS=$IFS
     IFS=
@@ -48,7 +54,7 @@ if [ "$opt" != "new" ]; then
       version2=${BASH_REMATCH[1]}${BASH_REMATCH[2]}
     fi
 
-    if [ ${version2} -ne 20 ]; then
+    if [ ${version2} -ne 20 -a ${version2} -ne 21 ]; then
         echo "version unmatched."
         exit
     fi
@@ -117,7 +123,6 @@ static)
 		exit
 	fi
 	if [ -f "./index.php" ]; then
-        rm -rf ./codit
 		${cwd}/_enforce_static > ./index.html
 		rm -rf ./index.php
 	fi
