@@ -10,7 +10,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
   <meta charset="UTF-8">
   <title><?php echo $gametitle;?></title>
   <meta http-equiv="x-ua-compatible" content="IE=Edge">
-  <meta property='og:image' content='lib/gameiconicon.png'>
+  <meta property='og:image' content='lib/gameicon.png'>
 <?php
   if ($gametitle != "") {
     echo "<meta property='og:title' content='$gametitle'>\n";
