@@ -63,6 +63,8 @@ class _stationary
       @touchEnabled = initparam['touchEnabled']
 
       @sprite.touchEnabled = @touchEnabled
+      @sprite.visible = @visible
+      @sprite.opacity = @opacity
 
       @animnum_back = @animnum
 
