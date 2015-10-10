@@ -1,4 +1,3 @@
-# motionObj, kind, x, y, xs, ys, g, image, chara_w, chara_h, opacity, animlist, anime, visible
 class sample extends _stationary
     #**************************
     # character constructor
