@@ -62,8 +62,17 @@ $webgl = $ini['ENVIRON']['WEBGL'];
     _useragent = window.navigator.userAgent.toLowerCase();
   </script>
   <script type="text/javascript" src="usrobject/environ.js"></script>
-  <script type="text/javascript" src="sysobject/enforce.core.js"></script>
 <?php
+  if ($library == "enchant") {
+?>
+    <script type="text/javascript" src="sysobject/enforce.core.enchant.js"></script>
+<?php
+  } else {
+?>
+    <script type="text/javascript" src="sysobject/enforce.core.tmlib.js"></script>
+<?php
+  }
+
   // #################################################################################
   // プラグインスクリプト読み込み
   // #################################################################################
