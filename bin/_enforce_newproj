@@ -43,7 +43,9 @@ echo '2.0' > $PROJ/lib/version
 cp -af $ENF/src/sample.coffee $PROJ/src/
 
 # ライブラリをコンパイル／生成
-cat $ENF/lib/_originObject.coffee $ENF/lib/_stationary.enchant.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/_dispImageStrings.coffee $ENF/lib/main.enchant.coffee $ENF/plugins/*.coffee | coffee --stdio -b -c > $PROJ/sysobject/enforce.core.js
+cat $ENF/lib/_originObject.coffee $ENF/lib/_stationary.enchant.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/_dispImageStrings.coffee $ENF/lib/main.enchant.coffee $ENF/plugins/*.coffee | coffee --stdio -b -c > $PROJ/sysobject/enforce.core.enchant.js
+# tmlibライブラリ生成
+cat $ENF/lib/_originObject.coffee $ENF/lib/_stationary.tmlib.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/_dispImageStrings.coffee $ENF/lib/main.tmlib.coffee $ENF/plugins/*.coffee | coffee --stdio -b -c > $PROJ/sysobject/enforce.core.tmlib.js
 
 # 共用ライブラリコンパイル
 coffee -b -o $PROJ/sysobject -c $ENF/lib/library.coffee
