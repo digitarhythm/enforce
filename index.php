@@ -58,6 +58,7 @@ $webgl = $ini['ENVIRON']['WEBGL'];
 ?>
   <script type="text/javascript" src="sysobject/library.js"></script>
   <script type="text/javascript">
+    WEBGL = <?= $webgl ?>;
     _POSTPARAM = separateGETquery();
     _useragent = window.navigator.userAgent.toLowerCase();
   </script>
