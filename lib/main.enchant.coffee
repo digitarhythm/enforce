@@ -291,7 +291,6 @@ window.addEventListener 'load', (e)=>
     _scenes[i] = scene
     rootScene.addChild(scene)
 
-  JSLog("WEBGL=%@, isWebGL=%@", WEBGL, isWebGL)
   if (WEBGL != undefined && WEBGL && isWebGL())
     # 3Dシーンを生成
     rootScene3d = new Scene3D()
