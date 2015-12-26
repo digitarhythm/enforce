@@ -15,7 +15,7 @@ if (strlen($webgl) == 0) {
     <meta charset="UTF-8">
     <title><?php echo $gametitle;?></title>
     <meta http-equiv="x-ua-compatible" content="IE=Edge">
-    <meta property='og:image' content='lib/gameicon.png'>
+    <meta property='og:image' content='gameicon.png'>
 <?php
     if ($gametitle != "") {
         echo "<meta property='og:title' content='$gametitle'>\n";
