@@ -43,6 +43,10 @@ getBounds =->
   frame = [parseInt(document.documentElement.clientWidth - 1), parseInt(document.documentElement.clientHeight - 1)]
   return frame
 
+isMobile =->
+    mobile = if (_useragent.match(/.*iphone.*/) || _useragent.match(/.*android.*/)) then true else false
+    return mobile
+
 getKeyDirection =->
   dir = {
     x: 0
