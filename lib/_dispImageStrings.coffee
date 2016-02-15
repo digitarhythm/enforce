@@ -6,7 +6,8 @@ class _dispImageStrings extends _stationary
         super(initparam)
         @stringslist = undefined
         @strwidth = 32
-        @strheight = 64
+        @strheight = 32
+        JSLog('hoge')
 
     #**************************
     # character destructor
@@ -60,6 +61,7 @@ class _dispImageStrings extends _stationary
             @strsize = if (param.size?) then param.size else 1.0
             @labeltext = if (param.labeltext?) then param.labeltext else "text"
             @strcolor = if (param.color?) then param.color else 0
+            JSLog("strcolor=%@", @strcolor)
             @strscene = if (param.scene?) then param.scene else GAMESCENE_SUB2
             @stringslist = []
 
@@ -77,7 +79,7 @@ class _dispImageStrings extends _stationary
         else
             @strsize = param.size if (param.size?)
             @labeltext = param.labeltext.toString() if (param.labeltext?)
-            @strcolor = param.color if (param.color?)
+            @strcolor = if (param.color?) then param.color else 0
             image = if (@strcolor == 0) then "_ascii_w" else "_ascii_b"
             @strscene = param.scene if (param.scene?)
 

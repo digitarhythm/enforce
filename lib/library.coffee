@@ -122,10 +122,12 @@ dispImageStrings = (param)->
   x = if (param.x?) then param.x else 0
   y = if (param.y?) then param.y else 0
   size = if (param.size?) then param.size else 1.0
-  color = if (param.color?) then param.color else 0
+  color = if (param.color?) then param.color else 'white'
   scene = if (param.scene?) then param.scene else GAMESCENE_SUB2
   opacity = if (param.opacity?) then param.opacity else 1.0
   labeltext = if (param.labeltext?) then param.labeltext else "text"
+
+  colorcode = if (color == 'white') then 0 else 1
 
   obj = addObject
     type: CONTROL
@@ -133,9 +135,11 @@ dispImageStrings = (param)->
     x: x
     y: y
     opacity: opacity
+
   obj.dispStrings
     size: size
     labeltext: labeltext
-    color: color
+    color: colorcode
     scene: scene
   return obj
+
