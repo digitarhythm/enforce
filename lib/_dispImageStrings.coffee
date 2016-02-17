@@ -25,6 +25,7 @@ class _dispImageStrings extends _stationary
         switch @_processnumber
             when 0
                 for obj in @stringslist
+                    JSLog("opacity=%@", @opacity)
                     obj.opacity = @opacity
                     obj.x = @x
                     obj.y = @y
