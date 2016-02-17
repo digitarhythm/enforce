@@ -4,9 +4,13 @@ $library = $ini['ENVIRON']['LIBRARY'];
 $gametitle = $ini['ENVIRON']['TITLE'];
 $webgl = $ini['ENVIRON']['WEBGL'];
 if (strlen($webgl) == 0) {
-    $webgl = false;
+    $webgl = 0;
 } else {
-    $webgl = $ini['ENVIRON']['WEBGL'];
+    if ($ini['ENVIRON']['WEBGL'] == 'true') {
+        $webgl = 1;
+    } else {
+        $webgl = 0;
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -38,7 +42,7 @@ if (strlen($webgl) == 0) {
         <script type="text/javascript" src="extlib/box2d.enchant.js"></script>
         <script type="text/javascript" src="extlib/socket.io-1.3.0.js"></script>
 <?php
-        if ($webgl == TRUE) {
+        if ($webgl) {
 ?>
             <script type="text/javascript" src="extlib/gl-matrix-min.js"></script>
             <script type="text/javascript" src="extlib/gl.enchant.js"></script>
@@ -52,7 +56,7 @@ if (strlen($webgl) == 0) {
         <script type="text/javascript" src="extlib/tmlib.min.js"></script>
         <script type="text/javascript" src="extlib/Box2dWeb-2.1.a.3.min.js"></script>
 <?php
-        if ($webgl == TRUE) {
+        if ($webgl) {
 ?>
             <script type="text/javascript" src="extlib/three.min.js"></script>
             <script type="text/javascript" src="extlib/ColladaLoader.js"></script>
@@ -63,7 +67,7 @@ if (strlen($webgl) == 0) {
 ?>
     <script type="text/javascript" src="sysobject/library.js"></script>
     <script type="text/javascript">
-        WEBGL = <?= $webgl ?>
+        WEBGL = <?= $webgl ?>;
         _POSTPARAM = separateGETquery();
         _useragent = window.navigator.userAgent.toLowerCase();
     </script>
