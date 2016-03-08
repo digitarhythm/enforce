@@ -590,6 +590,10 @@ addObject = (param, parent = undefined)->
   worldview = if (param['worldview']?) then param['worldview'] else false
   touchEnabled = if (param['touchEnabled']?) then param['touchEnabled'] else true
 
+  tmp = __getNullObject()
+  if (tmp == -1)
+      return undefined
+
   if (motionObj == null)
     motionObj = undefined
 
