@@ -590,6 +590,10 @@ addObject = (param, parent = undefined)->
     worldview = if (param['worldview']?) then param['worldview'] else false
     touchEnabled = if (param['touchEnabled']?) then param['touchEnabled'] else true
 
+    tmp = __getNullObject()
+    if (tmp == -1)
+        return undefined
+
     if (motionObj == null)
         motionObj = undefined
 
@@ -951,49 +955,49 @@ addObject = (param, parent = undefined)->
 __setMotionObj = (param)->
     # 動きを定義したオブジェクトを生成する
     initparam =
-        x                         : if (param['x']?) then param['x'] else 0
-        y                         : if (param['y']?) then param['y'] else 0
-        z                         : if (param['z']?) then param['z'] else 0
-        xs                        : if (param['xs']?) then param['xs'] else 0
-        ys                        : if (param['ys']?) then param['ys'] else 0
-        zs                        : if (param['zs']?) then param['zs'] else 0
-        visible             : if (param['visible']?) then param['visible'] else true
-        scaleX                : if (param['scaleX']?) then param['scaleX'] else 1.0
-        scaleY                : if (param['scaleY']?) then param['scaleY'] else 1.0
-        scaleZ                : if (param['scaleZ']?) then param['scaleZ'] else 1.0
-        radius                : if (param['radius']?) then param['radius'] else 0.0
-        radius2             : if (param['radius2']?) then param['radius2'] else 0.0
-        size                    : if (param['size']?) then param['size'] else 1.0
-        gravity             : if (param['gravity']?) then param['gravity'] else 0
+        x             : if (param['x']?)             then param['x'] else 0
+        y             : if (param['y']?)             then param['y'] else 0
+        z             : if (param['z']?)             then param['z'] else 0
+        xs            : if (param['xs']?)            then param['xs'] else 0
+        ys            : if (param['ys']?)            then param['ys'] else 0
+        zs            : if (param['zs']?)            then param['zs'] else 0
+        visible       : if (param['visible']?)       then param['visible'] else true
+        scaleX        : if (param['scaleX']?)        then param['scaleX'] else 1.0
+        scaleY        : if (param['scaleY']?)        then param['scaleY'] else 1.0
+        scaleZ        : if (param['scaleZ']?)        then param['scaleZ'] else 1.0
+        radius        : if (param['radius']?)        then param['radius'] else 0.0
+        radius2       : if (param['radius2']?)       then param['radius2'] else 0.0
+        size          : if (param['size']?)          then param['size'] else 1.0
+        gravity       : if (param['gravity']?)       then param['gravity'] else 0
         intersectFlag : if (param['intersectFlag']?) then param['intersectFlag'] else true
-        width                 : if (param['width']?) then param['width'] else SCREEN_WIDTH
-        height                : if (param['height']?) then param['height'] else SCREEN_HEIGHT
-        animlist            : if (param['animlist']?) then param['animlist'] else undefined
-        animnum             : if (param['animnum']?) then param['animnum'] else 0
-        image                 : if (param['image']?) then param['image'] else undefined
-        visible             : if (param['visible']?) then param['visible'] else true
-        opacity             : if (param['opacity']?) then param['opacity'] else 0
-        rotation            : if (param['rotation']?) then param['rotation'] else 0.0
-        rotate                : if (param['rotate']?) then param['rotate'] else 0.0
-        motionsprite    : if (param['motionsprite']?) then param['motionsprite'] else 0
-        fontsize            : if (param['fontsize']?) then param['fontsize'] else '16'
-        color                 : if (param['color']?) then param['color'] else 'white'
-        labeltext         : if (param['labeltext']?) then param['labeltext'] else 'text'
-        textalign         : if (param['textalign']?) then param['textalign'] else 'left'
-        parent                : if (param['parent']?) then param['parent'] else undefined
-        density             : if (param['density']?) then param['density'] else 1.0
-        friction            : if (param['friction']?) then param['friction'] else 0.5
-        restitution     : if (param['restitution']?) then param['restitution'] else 0.1
-        active                : if (param['active']?) then param['active'] else true
-        kind                    : if (param['kind']?) then param['kind'] else undefined
-        rigid                 : if (param['rigid']?) then param['rigid'] else undefined
-        context             : if (param['context']?) then param['context'] else undefined
-        surface             : if (param['surface']?) then param['surface'] else undefined
-        collider            : if (param['collider']?) then param['collider'] else undefined
-        offsetx             : if (param['offsetx']?) then param['offsetx'] else 0
-        offsety             : if (param['offsety']?) then param['offsety'] else 0
-        worldview         : if (param['worldview']?) then param['worldview'] else false
-        touchEnabled    : if (param['touchEnabled']?) then param['touchEnabled'] else true
+        width         : if (param['width']?)         then param['width'] else SCREEN_WIDTH
+        height        : if (param['height']?)        then param['height'] else SCREEN_HEIGHT
+        animlist      : if (param['animlist']?)      then param['animlist'] else undefined
+        animnum       : if (param['animnum']?)       then param['animnum'] else 0
+        image         : if (param['image']?)         then param['image'] else undefined
+        visible       : if (param['visible']?)       then param['visible'] else true
+        opacity       : if (param['opacity']?)       then param['opacity'] else 0
+        rotation      : if (param['rotation']?)      then param['rotation'] else 0.0
+        rotate        : if (param['rotate']?)        then param['rotate'] else 0.0
+        motionsprite  : if (param['motionsprite']?)  then param['motionsprite'] else 0
+        fontsize      : if (param['fontsize']?)      then param['fontsize'] else '16'
+        color         : if (param['color']?)         then param['color'] else 'white'
+        labeltext     : if (param['labeltext']?)     then param['labeltext'] else 'text'
+        textalign     : if (param['textalign']?)     then param['textalign'] else 'left'
+        parent        : if (param['parent']?)        then param['parent'] else undefined
+        density       : if (param['density']?)       then param['density'] else 1.0
+        friction      : if (param['friction']?)      then param['friction'] else 0.5
+        restitution   : if (param['restitution']?)   then param['restitution'] else 0.1
+        active        : if (param['active']?)        then param['active'] else true
+        kind          : if (param['kind']?)          then param['kind'] else undefined
+        rigid         : if (param['rigid']?)         then param['rigid'] else undefined
+        context       : if (param['context']?)       then param['context'] else undefined
+        surface       : if (param['surface']?)       then param['surface'] else undefined
+        collider      : if (param['collider']?)      then param['collider'] else undefined
+        offsetx       : if (param['offsetx']?)       then param['offsetx'] else 0
+        offsety       : if (param['offsety']?)       then param['offsety'] else 0
+        worldview     : if (param['worldview']?)     then param['worldview'] else false
+        touchEnabled  : if (param['touchEnabled']?)  then param['touchEnabled'] else true
 
     scene = if (param['scene']?) then param['scene'] else GAMESCENE_SUB1
     _type = if (param['_type']?) then param['_type'] else SPRITE
