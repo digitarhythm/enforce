@@ -484,18 +484,18 @@ window.addEventListener 'load', (e)=>
                             obj.motionObj.sprite.y = Math.floor(obj.motionObj.y)
                             obj.motionObj.sprite.z = Math.floor(obj.motionObj.z)
                         when SPRITE, LABEL, SURFACE
-                            rot = parseFloat(obj.motionObj.rotation)
-                            rot += parseFloat(obj.motionObj.rotate)
-                            if (rot > 359.0)
-                                rot = rot % 360
-                            obj.motionObj.rotation = rot
-                            obj.motionObj.sprite.rotation = parseInt(rot)
                             if (obj.motionObj.rigid)
                                 if (obj.motionObj._xback != obj.motionObj.x)
                                     obj.motionObj.sprite.x = obj.motionObj.x - obj.motionObj._diffx - wx
                                 if (obj.motionObj._yback != obj.motionObj.y)
                                     obj.motionObj.sprite.y = obj.motionObj.y - obj.motionObj._diffy - wy
                             else
+                                rot = parseFloat(obj.motionObj.rotation)
+                                rot += parseFloat(obj.motionObj.rotate)
+                                if (rot >= 360.0)
+                                    rot = rot % 360
+                                obj.motionObj.rotation = rot
+                                obj.motionObj.sprite.rotation = parseInt(rot)
                                 # _reversePosFlagは、Timeline適用中はここの処理内では座標操作はせず、スプライトの座標をオブジェクトの座標に代入している
                                 if (obj.motionObj._type == LABEL)
                                     diffx = 0
@@ -653,6 +653,7 @@ addObject = (param, parent = undefined)->
                 motionsprite.width = 0
                 motionsprite.height = 0
                 motionsprite.image = ""
+
 
             # スプライトを表示
             _scenes[scene].addChild(motionsprite)
