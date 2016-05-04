@@ -380,11 +380,12 @@ window.addEventListener 'load', (e)=>
                 for num in [0..._GAMEPADSINFO.length]
                     if (!_GAMEPADSINFO[num]?)
                         continue
-                    PADBUTTONS[num] = _GAMEPADSINFO[num].padbuttons
-                    PADAXES[num] = _GAMEPADSINFO[num].padaxes
-                    ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
+                    padobj = _GAMEPADSINFO[num]
+                    PADBUTTONS[num] = padobj.padbuttons
+                    PADAXES[num] = padobj.padaxes
+                    ANALOGSTICK[num] = padobj.analogstick
                     PADINFO[num] = []
-                    PADINFO[num].id = _GAMEPADSINFO[num].id
+                    PADINFO[num].id = padobj.id
                 if (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.analog?)
                     vgpx1 = parseFloat(_VGAMEPADCONTROL.input.analog[HORIZONTAL])
                     vgpy1 = parseFloat(_VGAMEPADCONTROL.input.analog[VERTICAL])

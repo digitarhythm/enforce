@@ -325,11 +325,11 @@ tm.main ->
           if (!_GAMEPADSINFO[num]?)
             continue
           padobj = _GAMEPADSINFO[num]
-          PADBUTTONS[num] = _GAMEPADSINFO[num].padbuttons
-          PADAXES[num] = _GAMEPADSINFO[num].padaxes
-          ANALOGSTICK[num] = _GAMEPADSINFO[num].analogstick
+          PADBUTTONS[num] = padobj.padbuttons
+          PADAXES[num] = padobj.padaxes
+          ANALOGSTICK[num] = padobj.analogstick
           PADINFO[num] = []
-          PADINFO[num].id = _GAMEPADSINFO[num].id
+          PADINFO[num].id = padobj.id
         if (_VGAMEPADCONTROL? &&_VGAMEPADCONTROL.input.analog?)
           vgpx1 = parseFloat(_VGAMEPADCONTROL.input.analog[HORIZONTAL])
           vgpy1 = parseFloat(_VGAMEPADCONTROL.input.analog[VERTICAL])
@@ -346,7 +346,7 @@ tm.main ->
       ANALOGSTICK[0][0][VERTICAL]  = parseFloat(vgpy1 + vgpy2)
 
       key = core.keyboard
-        
+
       if (key.getKey("space") || key.getKey("z") || (_VGAMEPADCONTROL? && _VGAMEPADCONTROL.input.buttons[0]? && _VGAMEPADCONTROL.input.buttons[0]))
         PADBUTTONS[0][0] = true
       else if (!_GAMEPADSINFO[0]?)
