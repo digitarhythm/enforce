@@ -20,17 +20,10 @@ class sample extends _stationary
             when 0
                 if (@y > SCREEN_HEIGHT - (@height / 2))
                     @y = SCREEN_HEIGHT - (@height / 2)
-                    @ys = -@ys
 
-                if (@x > SCREEN_WIDTH - @width / 2)
-                    @x = SCREEN_WIDTH - @width / 2
-                    @xs = -@xs
-                    @scaleX = -@scaleX
-
-                if (@x < @width / 2)
-                    @x = @width / 2
-                    @xs = -@xs
-                    @scaleX = -@scaleX
+                button = PADBUTTONS[0]
+                if (button[0])
+                    @ys = -24
 
     #**************************
     # touch event
