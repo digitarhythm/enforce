@@ -117,8 +117,8 @@ _getXBOX360Controller = (browser, buttons, axes)->
         padbuttons[2] = buttons[2].pressed
         padbuttons[3] = buttons[3].pressed
 
-        padbuttons[4] = buttons[6].pressed
-        padbuttons[5] = buttons[4].pressed
+        padbuttons[4] = buttons[4].pressed
+        padbuttons[5] = buttons[5].pressed
 
         padbuttons[6] = buttons[8].pressed
         padbuttons[7] = buttons[9].pressed
