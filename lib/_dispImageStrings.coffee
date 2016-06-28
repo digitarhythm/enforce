@@ -7,7 +7,6 @@ class _dispImageStrings extends _stationary
         @stringslist = undefined
         @strwidth = 32
         @strheight = 32
-        JSLog('hoge')
 
     #**************************
     # character destructor
@@ -25,7 +24,6 @@ class _dispImageStrings extends _stationary
         switch @_processnumber
             when 0
                 for obj in @stringslist
-                    JSLog("opacity=%@", @opacity)
                     obj.opacity = @opacity
                     obj.x = @x
                     obj.y = @y
@@ -61,7 +59,6 @@ class _dispImageStrings extends _stationary
             @strsize = if (param.size?) then param.size else 1.0
             @labeltext = if (param.labeltext?) then param.labeltext else "text"
             @strcolor = if (param.color?) then param.color else 0
-            JSLog("strcolor=%@", @strcolor)
             @strscene = if (param.scene?) then param.scene else GAMESCENE_SUB2
             @stringslist = []
 

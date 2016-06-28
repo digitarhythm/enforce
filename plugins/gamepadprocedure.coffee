@@ -1,6 +1,9 @@
 _start_rt = 0
 _start_lt = 0
 
+#============================================================================
+# メイン処理
+#============================================================================
 _GAMEPADPROCEDURE =(browser, gamepadsinfo)->
     padresult = []
     for padnum in [0...gamepadsinfo.length]
@@ -12,8 +15,8 @@ _GAMEPADPROCEDURE =(browser, gamepadsinfo)->
         buttons = gamepad.buttons
         axes = gamepad.axes
         index = gamepad.index
-        #mapping = gamepad.mapping
         connected = gamepad.connected
+        mapping = gamepad.mapping
         id = gamepad.id
 
         ###
@@ -53,30 +56,41 @@ _GAMEPADPROCEDURE =(browser, gamepadsinfo)->
 
     return padresult
 
+#============================================================================
+# コントローラーの種類で処理を分ける
+#============================================================================
 _getControllerValue = (browser, kind, buttons, axes)->
     ret = undefined
     if (kind.match(/.*xbox.*/))
         # ゲームパッドボタン情報取得
-        # 各種ゲームパッドで共通の情報が取れるがボタンが8つなので、それ以降のボタン情報は破棄する
+        # 各種ゲームパッドで共通の情報が取れるがボタンが13個なので、それ以降のボタン情報は破棄する
         max = 13
         ret = _getXBOX360Controller(browser, buttons, axes)
     else if (kind.match(/.*psx.*/))
         # ゲームパッドボタン情報取得
-        # 各種ゲームパッドで共通の情報が取れるがボタンが8つなので、それ以降のボタン情報は破棄する
+        # 各種ゲームパッドで共通の情報が取れるがボタンが13個なので、それ以降のボタン情報は破棄する
         max = 13
         ret = _getPSXController(browser, buttons, axes)
     else if (kind.match(/.*bsgp1204p.*/))
         # ゲームパッドボタン情報取得
-        # 各種ゲームパッドで共通の情報が取れるがボタンが8つなので、それ以降のボタン情報は破棄する
+        # 各種ゲームパッドで共通の情報が取れるがボタンが13個なので、それ以降のボタン情報は破棄する
         max = 13
         ret = _getBSGP1204pController(browser, buttons, axes)
+    else if (kind.match(/.*elecom_u3613m.*/))
+        # ゲームパッドボタン情報取得
+        # 各種ゲームパッドで共通の情報が取れるがボタンが13個なので、それ以降のボタン情報は破棄する
+        max = 13
+        ret = _getU3613MController(browser, buttons, axes)
     else
         # ゲームパッドボタン情報取得
-        # 各種ゲームパッドで共通の情報が取れるがボタンが8つなので、それ以降のボタン情報は破棄する
+        # 各種ゲームパッドで共通の情報が取れるがボタンが13個なので、それ以降のボタン情報は破棄する
         max = 8
         ret = _getOtherController(browser, buttons, axes)
     return ret
 
+#============================================================================
+# XBOX360コントローラー
+#============================================================================
 _getXBOX360Controller = (browser, buttons, axes)->
     padbuttons = []
     analogstick = []
@@ -145,6 +159,9 @@ _getXBOX360Controller = (browser, buttons, axes)->
 
     return ret
 
+#============================================================================
+# PS2コントローラー
+#============================================================================
 _getPSXController = (browser, buttons, axes)->
     padbuttons = []
     analogstick = []
@@ -193,20 +210,23 @@ _getPSXController = (browser, buttons, axes)->
         padbuttons[12] = 0
 
         analogstick[0] = [axes[0], axes[1]]
-        analogstick[1] = [axes[2], axes[3]]
+        analogstick[1] = [axes[2], axes[5]]
 
         ret = [padbuttons, analogstick]
 
     return ret
 
+#============================================================================
+# iBuffaloコントローラー
+#============================================================================
 _getBSGP1204pController = (browser, buttons, axes)->
     padbuttons = []
     analogstick = []
     if (browser == "firefox")
-        padbuttons[0] = buttons[0].pressed
+        padbuttons[0] = buttons[2].pressed
         padbuttons[1] = buttons[1].pressed
-        padbuttons[2] = buttons[2].pressed
-        padbuttons[3] = buttons[3].pressed
+        padbuttons[2] = buttons[3].pressed
+        padbuttons[3] = buttons[0].pressed
 
         padbuttons[4] = buttons[6].pressed
         padbuttons[5] = buttons[7].pressed
@@ -227,10 +247,10 @@ _getBSGP1204pController = (browser, buttons, axes)->
 
         ret = [padbuttons, analogstick]
     else if (browser == "chrome")
-        padbuttons[0] = buttons[0].pressed
+        padbuttons[0] = buttons[2].pressed
         padbuttons[1] = buttons[1].pressed
-        padbuttons[2] = buttons[2].pressed
-        padbuttons[3] = buttons[3].pressed
+        padbuttons[2] = buttons[3].pressed
+        padbuttons[3] = buttons[0].pressed
 
         padbuttons[4] = buttons[6].pressed
         padbuttons[5] = buttons[7].pressed
@@ -247,12 +267,72 @@ _getBSGP1204pController = (browser, buttons, axes)->
         padbuttons[12] = 0
 
         analogstick[0] = [axes[0], axes[1]]
-        analogstick[1] = [axes[2], axes[5]]
+        analogstick[1] = [axes[2], axes[3]]
 
         ret = [padbuttons, analogstick]
 
     return ret
 
+#============================================================================
+# ELECOMコントローラー
+#============================================================================
+_getU3613MController = (browser, buttons, axes)->
+    padbuttons = []
+    analogstick = []
+    if (browser == "firefox")
+        padbuttons[0] = buttons[2].pressed
+        padbuttons[1] = buttons[3].pressed
+        padbuttons[2] = buttons[0].pressed
+        padbuttons[3] = buttons[1].pressed
+
+        padbuttons[4] = buttons[4].pressed
+        padbuttons[5] = buttons[5].pressed
+
+        padbuttons[6] = buttons[10].pressed
+        padbuttons[7] = buttons[11].pressed
+
+        padbuttons[8] = parseFloat(buttons[6].value)
+        padbuttons[9] = parseFloat(buttons[7].value)
+
+        padbuttons[10] = buttons[8].pressed
+        padbuttons[11] = buttons[9].pressed
+
+        padbuttons[12] = 0
+
+        analogstick[0] = [axes[0], axes[1]]
+        analogstick[1] = [axes[2], axes[3]]
+
+        ret = [padbuttons, analogstick]
+    else if (browser == "chrome")
+        padbuttons[0] = buttons[2].pressed
+        padbuttons[1] = buttons[3].pressed
+        padbuttons[2] = buttons[0].pressed
+        padbuttons[3] = buttons[1].pressed
+
+        padbuttons[4] = buttons[8].pressed
+        padbuttons[5] = buttons[9].pressed
+
+        padbuttons[6] = buttons[10].pressed
+        padbuttons[7] = buttons[11].pressed
+
+        padbuttons[8] = parseFloat(if (buttons[4].pressed) then 1.0 else 0.0)
+        padbuttons[9] = parseFloat(if (buttons[5].pressed) then 1.0 else 0.0)
+
+        padbuttons[10] = buttons[6].pressed
+        padbuttons[11] = buttons[7].pressed
+
+        padbuttons[12] = 0
+
+        analogstick[0] = [axes[0], axes[1]]
+        analogstick[1] = [axes[2], axes[3]]
+
+        ret = [padbuttons, analogstick]
+
+    return ret
+
+#============================================================================
+# その他のコントローラー
+#============================================================================
 _getOtherController = (browser, buttons, axes)->
     padbuttons = []
     analogstick = []
@@ -291,6 +371,7 @@ _getOtherController = (browser, buttons, axes)->
 
     return ret
 
+#============================================================================
 
 _getGamePadKind = (id)->
     kind = "unknown"
@@ -298,8 +379,10 @@ _getGamePadKind = (id)->
         kind = "xbox360.wired"
     else if (id.match(/.*d9d.*3013.*/))
         kind = "psx.wired"
-    else if (id.match(/.*1dd8.*0010.*/))
+    else if (id.match(/.*1dd8.*10.*/))
         kind = "ibuffalo.bsgp1204p"
+    else if (id.match(/.*JC-U3613M.*/))
+        kind = "elecom_u3613m"
 
     return kind
 
