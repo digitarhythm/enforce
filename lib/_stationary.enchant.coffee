@@ -363,8 +363,9 @@ class _stationary
     #***************************************************************
     isCollision:(x, y)->
         if (@_type == MAP || @_type == EXMAP)
-            ret = @sprite.hitTest(x, y)
-            JSLog("x=%@, y=%@, hit=%@", x, y, ret)
+            dx = @_diffx - @x
+            dy = @_diffy - @y
+            ret = @sprite.hitTest(x + dx, y + dy)
         else
             ret = false
 
