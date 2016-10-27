@@ -9,7 +9,7 @@ class _stationary
         @_endflag = false
         @_returnflag = false
         @_autoRemove = false
-        @_animTime = LAPSEDTIME * 1000
+        @_animTime = 0.0
         @_reversePosFlag = false
 
         @sprite = initparam['motionsprite']
@@ -159,13 +159,14 @@ class _stationary
                         animtmp = @animlist[@animnum]
                         animtime = animtmp[0]
                         animpattern = animtmp[1]
-                        if (LAPSEDTIME * 1000 > @_animTime + animtime)
+                        @_animTime += 1.0 / FPS
+                        if (@_animTime > 1.0 / 1000.0 * animtime)
+                            @_animTime = 0.0
                             if (@_dispframe >= animpattern.length)
                                 @_dispframe = 0
                             framenum = animpattern[@_dispframe]
                             @sprite.frameIndex = framenum
                             @sprite.frame = framenum
-                            @_animTime = LAPSEDTIME * 1000
                             @_dispframe++
                             if (@_dispframe >= animpattern.length)
                                 if (@_endflag == true)
@@ -243,9 +244,11 @@ class _stationary
                     @opacity_back = @sprite.opacity
                     @sprite.visible = @visible
 
-        if (@_waittime > 0 && LAPSEDTIME > @_waittime)
-            @_waittime = 0
-            @_processnumber = @_nextprocessnum
+        if (@_waittime > 0.0)
+            @_waittime -= (1.0  / FPS)
+            if (@_waittime <= 0.0)
+                @_waittime = 0.0
+                @_processnumber = @_nextprocessnum
 
     #***************************************************************
     # WebGLオブジェクトにクォータニオンを設定する
@@ -312,7 +315,7 @@ class _stationary
     # 指定した秒数だけ待って次のプロセスへ
     #***************************************************************
     waitjob:(wtime)->
-        @_waittime = parseFloat(LAPSEDTIME) + wtime
+        @_waittime = wtime / 1000.0
         @_nextprocessnum = @_processnumber + 1
         @_processnumber = -1
 
