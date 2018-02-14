@@ -2,8 +2,8 @@ class sample extends _stationary
     #**************************
     # character constructor
     #**************************
-    constructor:(@sprite)->
-        super(@sprite)
+    constructor:(param)->
+        super(param)
 
     #**************************
     # character destructor
