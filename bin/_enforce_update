@@ -53,5 +53,5 @@ exec("cat $ENF/lib/_originObject.coffee $ENF/lib/_stationary.enchant.coffee $ENF
 exec("cat $ENF/lib/_originObject.coffee $ENF/lib/_stationary.tmlib.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/_dispImageStrings.coffee $ENF/lib/main.tmlib.coffee $ENF/plugins/*.coffee | coffee --stdio -b -c > $PROJ/sysobject/enforce.core.tmlib.js");
 
 // 共用ライブラリコンパイル
-exec("coffee -b -o $PROJ/sysobject -c $ENF/lib/library.coffee");
+exec(" coffee -b -o $PROJ/sysobject -c $ENF/lib/library.coffee");
 ?>
