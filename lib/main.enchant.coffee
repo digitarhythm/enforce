@@ -324,10 +324,11 @@ window.addEventListener 'load', (e)=>
     rootScene.backgroundColor = BGCOLOR
     WEBGL = false
 
-  if (DEBUG == true)
-    core.debug()
-  else
-    core.start()
+  #if (DEBUG == true)
+  #  core.debug()
+  #else
+  #  core.start()
+  core.start()
 
 #******************************************************************************
 # 起動時の処理
