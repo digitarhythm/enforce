@@ -4,7 +4,7 @@ OPT=$1
 CWD=`pwd`
 
 if [ -z "$OPT" ]; then
-    coffee -b -o $CWD/usrobject -c $CWD/src/
+    coffee -bMo $CWD/usrobject -c $CWD/src/
 elif [ "$OPT" = "-w" ]; then
-    coffee -b -w -o $CWD/usrobject -c $CWD/src/
+    coffee -bwMo $CWD/usrobject -c $CWD/src/
 fi
