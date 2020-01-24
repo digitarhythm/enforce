@@ -49,8 +49,8 @@ cat $ENF/lib/_originObject.coffee $ENF/lib/_stationary.enchant.coffee $ENF/lib/_
 cat $ENF/lib/_originObject.coffee $ENF/lib/_stationary.tmlib.coffee $ENF/lib/_vanalogpad.coffee $ENF/lib/_vgamebutton.coffee $ENF/lib/_vgamepadcontrol.coffee $ENF/lib/_dispImageStrings.coffee $ENF/lib/main.tmlib.coffee $ENF/plugins/*.coffee | coffee --stdio -bMc > $PROJ/sysobject/enforce.core.tmlib.js
 
 # 共用ライブラリコンパイル
-coffee1 -bMo $PROJ/sysobject -c $ENF/lib/library.coffee
+coffee -bMo $PROJ/sysobject -c $ENF/lib/library.coffee
 
 # ユーザーファイルをコンパイル
-coffee1 -bMo $PROJ/usrobject -c $PROJ/src/*.coffee
+coffee -bMo $PROJ/usrobject -c $PROJ/src/*.coffee
 
