@@ -73,23 +73,33 @@ if (strlen($webgl) == 0) {
     </script>
     <script type="text/javascript" src="usrobject/environ.js"></script>
 <?php
-    if ($library == "enchant") {
-?>
-        <script type="text/javascript" src="sysobject/enforce.core.enchant.js"></script>
-<?php
-    } else {
-?>
-        <script type="text/javascript" src="sysobject/enforce.core.tmlib.js"></script>
-<?php
+    $srcdir = "./sysobject";
+    $dir = opendir($srcdir);
+    while ($fname = readdir($dir)) {
+        if (is_dir($srcdir."/".$fname) || preg_match("/^\..*/", $fname)) {
+            continue;
+        }
+        preg_match("/^(..?)\_stationary\.(.*?)\.js/", $fname, $match);
+        preg_match("/^(..?)\_main\.(.*?)\.js/", $fname, $match2);
+        if (count($match) > 2) {
+            if ($match[2] == $library) {
+                echo "<script type='text/javascript' src='sysobject/".$match[1]."_stationary.".$library.".js'></script>";
+            }
+        } else if (count($match2) > 2) {
+            if ($match2[2] == $library) {
+                echo "<script type='text/javascript' src='sysobject/".$match2[1]."_main.".$library.".js'></script>";
+            }
+        } else {
+            echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
+        }
     }
-
     // #################################################################################
     // プラグインスクリプト読み込み
     // #################################################################################
-	$srcdir = "./plugins";
-	$dir = opendir($srcdir);
-	while ($fname = readdir($dir)) {
-        if (is_dir($srcdir."/".$fname) || preg_match("/environ.js/", $fname) || preg_match("/^\..*/", $fname)) {
+    $srcdir = "./plugins";
+    $dir = opendir($srcdir);
+    while ($fname = readdir($dir)) {
+        if (is_dir("$srcdir/$fname") || preg_match("/^\..*/", $fname)) {
             continue;
         }
         echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
@@ -97,14 +107,14 @@ if (strlen($webgl) == 0) {
     // #################################################################################
     // アプリケーションスクリプト読み込み
     // #################################################################################
-	$srcdir = "./usrobject";
-	$dir = opendir($srcdir);
-	while ($fname = readdir($dir)) {
-        if (is_dir($srcdir."/".$fname) || preg_match("/environ.js/", $fname) || preg_match("/^\..*/", $fname)) {
+    $srcdir = "./usrobject";
+    $dir = opendir($srcdir);
+    while ($fname = readdir($dir)) {
+        if (is_dir($srcdir."/".$fname) || preg_match("/^\..*/", $fname)) {
           continue;
         }
         echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
-	}
+    }
 ?>
     <style type="text/css">
         body {

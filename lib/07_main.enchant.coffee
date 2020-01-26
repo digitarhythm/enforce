@@ -191,13 +191,13 @@ rootScene3d     = undefined
 rootScene       = undefined
 
 # アニメーション管理
-__requestID = ( =>
+__requestID = ( ->
   return window.requestAnimationFrame ||
   window.webkitRequestAnimationFrame ||
   window.mozRequestAnimationFrame ||
   window.oRequestAnimationFrame ||
   window.msRequestAnimationFrame ||
-  (callback)=>
+  (callback)->
     window.setTimeout(callback, 1000 / 60)
 )()
 
@@ -211,7 +211,9 @@ enchant.ENV.MOUSE_ENABLED = false
 enchant.ENV.SOUND_ENABLED_ON_MOBILE_SAFARI = false
 
 # ゲーム起動時の処理
-window.addEventListener 'load', (e)=>
+#window.addEventListener 'load', (e)->
+window.onload = ->
+
   window.removeEventListener('load', arguments.callee, false)
 
   # ゲーム起動時間
@@ -273,10 +275,10 @@ window.addEventListener 'load', (e)=>
   rootScene = core.rootScene
 
   # モーションセンサーのイベント登録
-  window.addEventListener 'devicemotion', (e)=>
+  window.addEventListener 'devicemotion', (e)->
     MOTION_ACCEL = e.acceleration
     MOTION_GRAVITY = e.accelerationIncludingGravity
-  window.addEventListener 'deviceorientation', (e)=>
+  window.addEventListener 'deviceorientation', (e)->
     MOTION_ROTATE.alpha = e.alpha
     MOTION_ROTATE.beta = e.beta
     MOTION_ROTATE.gamma = e.gamma
@@ -519,7 +521,7 @@ window.addEventListener 'load', (e)=>
               diffy = obj.motionObj._diffy
               obj.motionObj.sprite.x = Math.floor(obj.motionObj.x - diffx - wx)
               obj.motionObj.sprite.y = Math.floor(obj.motionObj.y - diffy - wy)
-, false
+#, false
 
 #******************************************************************************
 # デバッグ用関数
@@ -1239,7 +1241,7 @@ dispDefaultBrowserCheck = (func)->
       ]
       scaleX: cautionscale
       scaleY: cautionscale
-    okbutton.sprite.ontouchstart = (e)=>
+    okbutton.sprite.ontouchstart = (e)->
       removeObject(caution)
       removeObject(okbutton)
       func()

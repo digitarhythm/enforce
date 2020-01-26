@@ -2,13 +2,10 @@
 
 OPT=$1
 CWD=`pwd`
+COMPILER=`which coffee`
 
 if [ -z "$OPT" ]; then
-    coffee -bMo $CWD/usrobject -c $CWD/src/
+    ${COMPILER} -bMo $CWD/usrobject -c $CWD/src/
 elif [ "$OPT" = "-w" ]; then
-<<<<<<< HEAD
-    coffee -bMw -o $CWD/usrobject -c $CWD/src/
-=======
-    coffee -bwMo $CWD/usrobject -c $CWD/src/
->>>>>>> 5339732adc8adcc30f2b2e44ad283ea568ee0b72
+    ${COMPILER} -bMw -o $CWD/usrobject -c $CWD/src/
 fi
