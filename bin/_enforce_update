@@ -48,21 +48,12 @@ exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/plugins/.htaccess > /dev/null");
 exec("cp -af $ENF/lib/htaccess.noindexes $PROJ/lib/.htaccess > /dev/null");
 exec("cp -af $ENF/lib/htaccess.noaccess  $PROJ/src/.htaccess > /dev/null");
 
-// 共用ライブラリコンパイル
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/library.coffee");
-
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/01_originObject.coffee");
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/03_vanalogpad.coffee");
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/04_vgamebutton.coffee");
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/05_vgamepadcontrol.coffee");
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/06_dispImageStrings.coffee");
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/plugins/*.coffee");
-
 // enchantライブラリ生成
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/02_stationary.enchant.coffee");
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/07_main.enchant.coffee");
+exec("cat $ENF/lib/originObject.coffee $ENF/lib/stationary.enchant.coffee $ENF/lib/vanalogpad.coffee $ENF/lib/vgamebutton.coffee $ENF/lib/vgamepadcontrol.coffee $ENF/lib/dispImageStrings.coffee $ENF/lib/main.enchant.coffee $ENF/plugins/*.coffee | $compiler -bMsc > $PROJ/sysobject/enforcelib_enchant.js");
 
 // tmlibライブラリ生成
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/02_stationary.tmlib.coffee");
-exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/07_main.tmlib.coffee");
+exec("cat $ENF/lib/originObject.coffee $ENF/lib/stationary.tmlib.coffee $ENF/lib/vanalogpad.coffee $ENF/lib/vgamebutton.coffee $ENF/lib/vgamepadcontrol.coffee $ENF/lib/dispImageStrings.coffee $ENF/lib/main.tmlib.coffee $ENF/plugins/*.coffee | $compiler -bMsc > $PROJ/sysobject/enforcelib_tmlib.js");
+
+// 共用ライブラリコンパイル
+exec("$compiler -o $PROJ/sysobject -bMc $ENF/lib/library.coffee");
 ?>

@@ -72,6 +72,7 @@ if (strlen($webgl) == 0) {
         _useragent = window.navigator.userAgent.toLowerCase();
     </script>
     <script type="text/javascript" src="usrobject/environ.js"></script>
+    <script type="text/javascript" src="sysobject/enforcelib.js"></script>
 <?php
     $srcdir = "./sysobject";
     $dir = opendir($srcdir);
@@ -79,15 +80,10 @@ if (strlen($webgl) == 0) {
         if (is_dir($srcdir."/".$fname) || preg_match("/^\..*/", $fname)) {
             continue;
         }
-        preg_match("/^(..?)\_stationary\.(.*?)\.js/", $fname, $match);
-        preg_match("/^(..?)\_main\.(.*?)\.js/", $fname, $match2);
-        if (count($match) > 2) {
-            if ($match[2] == $library) {
-                echo "<script type='text/javascript' src='sysobject/".$match[1]."_stationary.".$library.".js'></script>";
-            }
-        } else if (count($match2) > 2) {
-            if ($match2[2] == $library) {
-                echo "<script type='text/javascript' src='sysobject/".$match2[1]."_main.".$library.".js'></script>";
+        preg_match("/^enforcelib_(.*?)\.js/", $fname, $match);
+        if (count($match) > 1) {
+            if ($match[1] == $library) {
+                echo "<script type='text/javascript' src='sysobject/enforcelib_".$library.".js'></script>";
             }
         } else {
             echo "<script type='text/javascript' src='$srcdir/$fname'></script>\n";
